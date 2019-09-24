@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
         unique: true
     },
     email: {
-        type: mongoose.SchemaType.Email,
+        type: mongoose.SchemaTypes.Email,
         required: true,
         unique: true
     },
@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     phone: {
-        type: Number,
+        type: String,
         required: true
     },
     address: {
@@ -48,7 +48,7 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['Admin', 'User'],
+        enum: ['Super_Admin', 'Admin', 'User'],
         required: true
     },
     isVerified: {
