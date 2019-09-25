@@ -4,7 +4,6 @@ var { success, error } = require('../helpers/response');
 var multer = require('multer');
 var cloudinary = require('cloudinary');
 var datauri = require('datauri');
-var upload = require('../middlewares/multer');
 var uploader = multer().single('image');
 
 exports.createInsurance = async (req, res) => {
@@ -97,7 +96,7 @@ exports.uploadphoto = async (req, res) => {
                     {new: true})
                     .then((insurance) => {
                         return res.status(201).json(
-                            response.successResponse('Updated!', insurance)
+                            success('Updated!', insurance)
                         )
                     })
             })   

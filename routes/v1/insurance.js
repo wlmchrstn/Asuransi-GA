@@ -6,7 +6,7 @@ var upload = require('../../middlewares/multer');
 
 router.post('/', insuranceController.createInsurance);
 
-// router.post('/upload/:id', upload.single('image'), insuranceController.uploadphoto);
+router.post('/:id', upload.single('image'), insuranceController.uploadphoto);
 
 router.get('/', insuranceController.ShowAllInsurance);
 
