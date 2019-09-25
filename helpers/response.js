@@ -1,15 +1,17 @@
-const success = (results, messages)=>{
+const success = (messages, data)=>{
     return{
         success: true,
         message: messages,
-        result: results
+        result: data
     }
 }
 
-const error = (err)=>{
+const error = (message, err, code)=>{
     return{
         success: false,
-        error: err
+        message: message,
+        error: err,
+        code: code
     }
 }
 
