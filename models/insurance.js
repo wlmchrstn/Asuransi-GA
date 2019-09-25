@@ -17,16 +17,12 @@ const insuranceSchema = mongoose.Schema({
         type: Number,
         required: true
     },
-    guaranteeNumber: {
-        type: String,
-        required: true
-    },
-    dueDate: {
-        type: Date,
-        required: true
-    },
     policy: {
         type: String,
+        required: true
+    },
+    agreement: {
+        type:Boolean,
         required: true
     }
 })
