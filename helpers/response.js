@@ -1,16 +1,18 @@
-const success = (results, messages)=>{
-    return{
+const success = (messages, data)=>{
+    return ({
         success: true,
         message: messages,
-        result: results
-    }
+        result: data
+    })
 }
 
-const error = (err)=>{
-    return{
+const error = (message, err, code ) => {
+    return ({
         success: false,
-        error: err
-    }
+        message: message,
+        result: err,
+        code: code
+    })
 }
 
 module.exports = {success,error};
