@@ -10,7 +10,7 @@ const error = (message, err, code ) => {
     return ({
         success: false,
         message: message,
-        result: err,
+        error: err,
         code: code
     })
 }
