@@ -20,13 +20,9 @@ const insuranceSchema = mongoose.Schema({
     policy: {
         type: String,
         required: true
-    },
-    agreement: {
-        type:Boolean,
-        required: true
     }
 })
 
-var Insurance = mongoose.model('Insurance', insuranceSchema)
+var insurance = mongoose.model('insurance', insuranceSchema)
 
-module.exports = Insurance
+module.exports = insurance
