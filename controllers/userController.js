@@ -110,32 +110,32 @@ module.exports = {
             // find user by username
             let user = await User.findOne({
                 username: req.body.login
-            }).select(['_id','username','password'])
+            }).select(['_id','username','password','role'])
             if(!user){
                 // find user by email if by username is not found
                 let email = await User.findOne({
                     email: req.body.login
-                }).select(['_id','email','password'])
+                }).select(['_id','email','password','role'])
                 if(!email){
-                    res.status(404,'Invalid username/email!')
+                    res.status(404).json(error('Invalid username/email!'))
                 }
                 // check validation
                 let isCorrect = await bcrypt.compare(req.body.password, email.password)
                 if(!isCorrect){
-                    res.status(403).json('Password incorrect!')
+                    res.status(403).json(error('Password incorrect!'))
                 }
                 // create token
                 let token = jwt.sign({_id: email._id}, process.env.LOGIN, {expiresIn: '1h'})
-                res.status(200).json(token, 'Token created! Access given!')
+                res.status(200).json(success(token, 'Token created! Access given!'))
             }
             // check validation
             let isValid = await bcrypt.compare(req.body.password, email.password)
             if(!isValid){
-                res.status(403).json('Password incorrect!')
+                res.status(403).json(error('Password incorrect!'))
             }
             // create token
             let tokens = jwt.sign({_id: user._id}, process.env.LOGIN, {expiresIn: '1h'})
-            res.status(200).json(tokens, 'Token created! Access given!')
+            res.status(200).json(success(tokens, 'Token created! Access given!'))
         }
         catch(err){
             res.status(422).json(error('Failed to login!'))
