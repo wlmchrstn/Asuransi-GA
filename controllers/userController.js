@@ -43,7 +43,9 @@ module.exports = {
 
     async createAdmin(req, res){
         try{
+            // create hashed password
             let pwd = bcrypt.hashSync(req.body.password, saltRounds)
+            // create admin
             let admin = await User.create({
                 username:req.body.username,
                 email:req.body.email,
@@ -57,11 +59,13 @@ module.exports = {
                 role:'Admin',
                 isVerified:true
             })
+            // resolve
             let result = {
                 _id: admin._id,
                 username: admin.username,
                 email: admin.email
             }
+            // response
             res.status(201).json(success(result, "Admin created!"))   
         }
         catch(err){
@@ -71,7 +75,9 @@ module.exports = {
 
     async createUser(req, res){
         try{
+            // create hashed password
             let pwd = bcrypt.hashSync(req.body.password, saltRounds)
+            // create user
             let user = await User.create({
                 username:req.body.username,
                 email:req.body.email,
@@ -85,11 +91,13 @@ module.exports = {
                 role:'User',
                 isVerified:true
             })
+            // resolve
             let result = {
                 _id: user._id,
                 name: user.name,
                 username: user.username
             }
+            // response
             res.status(201).json(success(result, "User created!"))
         }
         catch(err){
@@ -99,27 +107,33 @@ module.exports = {
     
     async login(req, res){
         try{
+            // find user by username
             let user = await User.findOne({
                 username: req.body.login
             }).select(['_id','username','password'])
             if(!user){
+                // find user by email if by username is not found
                 let email = await User.findOne({
                     email: req.body.login
                 }).select(['_id','email','password'])
                 if(!email){
                     res.status(404,'Invalid username/email!')
                 }
+                // check validation
                 let isCorrect = await bcrypt.compare(req.body.password, email.password)
                 if(!isCorrect){
                     res.status(403).json('Password incorrect!')
                 }
+                // create token
                 let token = jwt.sign({_id: email._id}, process.env.LOGIN, {expiresIn: '1h'})
                 res.status(200).json(token, 'Token created! Access given!')
             }
+            // check validation
             let isValid = await bcrypt.compare(req.body.password, email.password)
             if(!isValid){
                 res.status(403).json('Password incorrect!')
             }
+            // create token
             let tokens = jwt.sign({_id: user._id}, process.env.LOGIN, {expiresIn: '1h'})
             res.status(200).json(tokens, 'Token created! Access given!')
         }
