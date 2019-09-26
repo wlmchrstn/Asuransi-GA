@@ -215,6 +215,10 @@ module.exports = {
     },
 
     async update(req, res){
+        if(req.body.password){
+            let pwd = bcrypt.hashSync(req.body.password, saltRounds)
+            req.body.password = pwd
+        }
         try{
             let user = await User.findByIdAndUpdate(req.decoded._id, req.body)
             res.status(200).json(success('Update user success', user))
@@ -239,10 +243,7 @@ module.exports = {
 
         /*  istanbul ignore if */
         if (!fileUp) {
-            return res.status(415).send({
-                success: false,
-                message: 'No file received: Unsupported Media Type'
-            })
+            return res.status(415).json(error('No file received: Unsupported Media Type', req.file, 415))
         }
 
         const dUri = new datauri()
@@ -251,18 +252,18 @@ module.exports = {
             var file = dUri.format(`${req.file.originalname}-${Date.now()}`, req.file.buffer);
             cloudinary.uploader.upload(file.content)
                 .then(data => {
-                    User.findByIdAndUpdate({_id: req.params.id},
+                    User.findByIdAndUpdate({_id: req.decoded._id},
                         {$set: {image: data.secure_url}},
                         {new: true})
                         .then((user) => {
                             return res.status(201).json(
-                                success('Updated!', user)
+                                success('Image uploaded!', user)
                             )
                         })
                 })   
                 .catch(err => {
                     /* istanbul ignore next */
-                    res.status(400).json(error('Upload image falied', err.message, 400));
+                    res.status(400).json(error('Upload image falied', err, 400));
                 })
         })
 
