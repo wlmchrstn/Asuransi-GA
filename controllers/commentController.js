@@ -1,12 +1,15 @@
 const Comment = require('../models/comment.js');
 const { success, error } = require('../helpers/response.js');
+const Insurance = require('../models/insurance')
 
 module.exports= {
     async addComment(req, res) {
+        let insurance = await Insurance.findById(req.params.insurance)
+        if (!insurance) {return res.status(404).json(error('Insurance not found!', insurance, 404))}
         Comment.create({
             users: req.decoded._id,
             insurances: req.params.insurance,
-            body: req.body.comment,
+            comment: req.body.comment,
             rating: req.body.rating
         })
             .then(result => {
