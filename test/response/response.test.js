@@ -20,9 +20,9 @@ describe('Response Helpers', function() {
      })
 
      it('Error response show oke', function () {
-        var response = success('success', sampleData)
-        expect(response.success).to.be.true
-        expect(response.result).to.be.a('object')
+        var response = error('failed', errSample)
+        expect(response.success).to.be.false
+        expect(response.result).to.be.a('error')
     })
 
 }) 
