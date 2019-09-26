@@ -9,11 +9,11 @@ var uploader = multer().single('image');
 exports.createInsurance = async (req, res) => {
     
     var {
-        title, description, image, price
+        title, description, image, price, isPromo
     } = req.body
 
     var newInsurance = new insurance({
-        title, description, image, price
+        title, description, image, price, isPromo
     })
 
     newInsurance.save()

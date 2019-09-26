@@ -15,6 +15,9 @@ const insuranceSchema = mongoose.Schema({
     price: {
         type: Number,
         required: true
+    },
+    isPromo: {
+        type: Boolean
     }
 })
 
