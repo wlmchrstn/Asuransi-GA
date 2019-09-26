@@ -1,46 +1,41 @@
-const express = require('express');
-const router = express.Router();
-const multer = require('multer');
-const insurance = require('../../models/insurance');
-const { success, error } = require('../../helpers/response');
-const cloudinary = require('cloudinary');
-const datauri = require('datauri');
-const upload = require('../../middlewares/multer');
-const uploader = multer().single('image')
+/* istanbul ignore file */
+const router = require('express').Router();
+const Insurance = require('../../models/insurance.js');
+const multer= require('multer');
+const Datauri = require('datauri');
+const datauri = new Datauri();
+const cloudinary = require('cloudinary').v2
+const {success, error} = require('../../helpers/response.js');
 
+require('dotenv').config();
 
-router.post('/:id', upload.single('image'), (req, res) => {
-
-    var fileUp = req.file
-
-    /*  istanbul ignore if */
-    if (!fileUp) {
-        return res.status(415).send({
-            success: false,
-            message: 'No file received: Unsupported Media Type'
-        })
-    }
-
-    const dUri = new datauri()
-
-    uploader(req, res, err => {
-        var file = dUri.format(`${req.file.originalname}-${Date.now()}`, req.file.buffer);
-        cloudinary.uploader.upload(file.content)
-            .then(data => {
-                insurance.updateOne({_id: req.params.id},
-                    {$set: {image: data.secure_url}},
-                    {new: true})
-                    .then((insurance) => {
-                        return res.status(201).json(
-                            success('Updated!', insurance)
-                        )
-                    })
-            })   
-            .catch(err => {
-                /* istanbul ignore next */
-                res.send(err);
-            })
-    })
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
 })
+
+const upload = multer().single('preview')
+
+// Upload Single File
+router.post('/:id', upload, function(req, res){
+                        const file = datauri.format(`${req.file.originalname}-${Date.now()}`, req.file.buffer);
+                        cloudinary.uploader.upload(file.content)
+                        .then(data =>{
+                            Insurance.findOneAndUpdate({_id: req.params.id},
+                                {
+                                    $set: {image: data.url},
+                                    
+                                }, 
+                                {new: true}, 
+                                function(err, result){    
+                                   res.status(200).json( success(result, 'Picture uploaded!') )
+                                }
+                            )
+                        })
+                        .catch(err => {
+                            res.status(422).json( error('Unexpected error! Failed to upload picture!') );
+                            })
+                    })
 
 module.exports = router;
