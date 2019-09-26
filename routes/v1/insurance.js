@@ -3,7 +3,7 @@ var router = express.Router();
 var insuranceController = require('../../controllers/insuranceController');
 var upload = require('../../middlewares/multer');
 var auth = require('../../middlewares/auth');
-var permission = require('../../middlewares/permission')
+var {permission} = require('../../middlewares/permission')
 
 
 router.post('/', auth.isAuthenticated, permission, insuranceController.createInsurance);

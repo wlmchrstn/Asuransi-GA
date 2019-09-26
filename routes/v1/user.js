@@ -1,7 +1,7 @@
 const router = require('express').Router()
-const {isAuthenticated} = require('../../middlewares/auth')
-const permission = require('../../middlewares/permission')
-const superPermission = require('../../middlewares/super')
+const { isAuthenticated } = require('../../middlewares/auth')
+const { permission, superPermission } = require('../../middlewares/permission')
+// const superPermission = require('../../middlewares/super')
 const {createSuperAdmin, createAdmin, createClient, login, 
         verify, resendVerify, show, update, deleteUser,
         uploadImage, showAdmin} = require('../../controllers/userController')//initiate userController

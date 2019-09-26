@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema({
     },
     image: {
         type: String,
-        default: '/home/ayumhrn/project/backend/public/images/profpict.png'
+        default: 'https://res.cloudinary.com/ayumhrn/image/upload/v1569487841/fo1jogrqffevwvulwkyo.png'
     },
     birthPlace: {
         type: String,
