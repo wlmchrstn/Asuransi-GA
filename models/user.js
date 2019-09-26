@@ -49,7 +49,7 @@ const userSchema = new mongoose.Schema({
     role: {
         type: String,
         enum: ['Super_Admin', 'Admin', 'User'],
-        required: true
+        default: 'User'
     },
     isVerified: {
         type: Boolean,
@@ -57,6 +57,10 @@ const userSchema = new mongoose.Schema({
     },
     token: {
         type: String,
+        required: false
+    },
+    expToken: {
+        type: Date,
         required: false
     }
 })
