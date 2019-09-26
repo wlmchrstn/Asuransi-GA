@@ -23,16 +23,16 @@ const userSchema = new mongoose.Schema({
     },
     phone: {
         type: String,
-        required: true
+        required: false
     },
     address: {
         type: String,
-        required: true
+        required: false
     },
     gender: {
         type: String,
         enum: ['Male', 'Female'],
-        required: true
+        required: false
     },
     image: {
         type: String,
@@ -40,11 +40,11 @@ const userSchema = new mongoose.Schema({
     },
     birthPlace: {
         type: String,
-        required: true
+        required: false
     },
     birthDate: {
         type: Date,
-        required: true
+        required: false
     },
     role: {
         type: String,
