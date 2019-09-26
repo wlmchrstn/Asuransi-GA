@@ -8,6 +8,11 @@ const {success, error} = require('../helpers/response')
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
+var multer = require('multer');
+var cloudinary = require('cloudinary');
+var datauri = require('datauri');
+var uploader = multer().single('image');
+
 module.exports = {
 
     async createSuperAdmin(req, res){
@@ -204,6 +209,11 @@ module.exports = {
         res.status(200).json(success('Show user details', user))
     },
 
+    async showAdmin(req, res){
+        let user = await User.find({role: 'Admin'})
+        res.status(200).json(success('Show user details', user))
+    },
+
     async update(req, res){
         try{
             let user = await User.findByIdAndUpdate(req.decoded._id, req.body)
@@ -222,5 +232,40 @@ module.exports = {
         catch(err){
             res.status(400).json(error('Delete user failed', err.message, 400))
         }
+    },
+
+    async uploadImage(req, res){
+        var fileUp = req.file
+
+        /*  istanbul ignore if */
+        if (!fileUp) {
+            return res.status(415).send({
+                success: false,
+                message: 'No file received: Unsupported Media Type'
+            })
+        }
+
+        const dUri = new datauri()
+
+        uploader(req, res, err => {
+            var file = dUri.format(`${req.file.originalname}-${Date.now()}`, req.file.buffer);
+            cloudinary.uploader.upload(file.content)
+                .then(data => {
+                    User.findByIdAndUpdate({_id: req.params.id},
+                        {$set: {image: data.secure_url}},
+                        {new: true})
+                        .then((user) => {
+                            return res.status(201).json(
+                                success('Updated!', user)
+                            )
+                        })
+                })   
+                .catch(err => {
+                    /* istanbul ignore next */
+                    res.status(400).json(error('Upload image falied', err.message, 400));
+                })
+        })
+
     }
+
 }
