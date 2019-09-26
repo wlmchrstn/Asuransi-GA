@@ -9,6 +9,7 @@ var indexRouter = require('./routes/index');
 var userRouter = require('./routes/v1/user')//initiate userRouter
 var insuranceRouter = require('./routes/v1/insurance');
 var promoRouter = require('./routes/v1/promo');
+var commentRouter = require('./routes/v1/comment');
 
 var app = express();
 
@@ -54,6 +55,7 @@ app.use('/', indexRouter);
 app.use('/user', userRouter)//use userRouter
 app.use('/insurance', insuranceRouter);
 app.use('/promo', promoRouter);
+app.use('/comment', commentRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
