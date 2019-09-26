@@ -10,15 +10,10 @@ const insuranceSchema = mongoose.Schema({
         required: true
     },
     image: {
-        type: String,
-        required: true
+        type: String
     },
     price: {
         type: Number,
-        required: true
-    },
-    policy: {
-        type: String,
         required: true
     }
 })
