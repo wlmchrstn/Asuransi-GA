@@ -12,10 +12,12 @@ router.post('/:id', auth.isAuthenticated, permission, upload.single('image'), in
 
 router.get('/', insuranceController.ShowAllInsurance);
 
-router.get('/:id', insuranceController.ShowOneInsurance);
+router.get('/detail/:id', insuranceController.ShowOneInsurance);
 
 router.put('/:id', auth.isAuthenticated, permission, insuranceController.updateInsurance);
 
 router.delete('/delete/:id', auth.isAuthenticated, permission, insuranceController.deleteInsurance);
+
+router.get('/search', insuranceController.Search)
 
 module.exports = router;
