@@ -4,6 +4,8 @@ const bcrypt = require('bcrypt')
 saltRounds = 10
 const funcHelper = require('../helpers/funcHelper')
 const {success, error} = require('../helpers/response')
+const { sendResetPassword } = require('../services/nodemailer')
+require('dotenv').config()
 
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -266,6 +268,46 @@ module.exports = {
                 })
         })
 
+    },
+
+    async sendResetPassword(req, res){
+
+        var email = req.body.email;
+
+        sendResetPassword(email, res)
+    },
+
+    async changePassword (req, res) {
+
+        var token = req.params.token;
+
+        var password = req.body.password;
+
+        var decoded = jwt.verify(token, process.env.SECRET_KEY);
+
+        if (!decoded) {
+            return res.status(404).json(
+                error('The token is expired or invalid', err, 404)
+            )
+        }
+
+        bcrypt.hash(password, 10, (err, hash) => {
+
+            if (err) throw err;
+
+            User.updateOne(
+                { _id: decoded._id},
+                { $set: {password: hash}},
+                {new: true})
+                .exec()
+                .then(() => {
+                    return res.status(201).json(
+                        success('Password successfully updated!')
+                    )
+                }) 
+        })
     }
+    
+
 
 }
