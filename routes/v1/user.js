@@ -4,7 +4,7 @@ const {permission, superPermission} = require('../../middlewares/permission')
 const upload = require('../../middlewares/multer');
 const {createSuperAdmin, createAdmin, createClient, login, 
         verify, resendVerify, show, update, deleteUser,
-        uploadImage, showAdmin} = require('../../controllers/userController')
+        uploadImage, showAdmin, sendResetPassword, changePassword} = require('../../controllers/userController')
 
 router.post('/super', createSuperAdmin)
 router.post('/admin', isAuthenticated, superPermission, createAdmin)
@@ -17,7 +17,8 @@ router.put('/update', isAuthenticated, update)
 router.delete('/deleteAdmin/:id', isAuthenticated, superPermission, deleteUser)
 router.post('/upload', isAuthenticated, upload.single('image'), uploadImage)
 router.get('/showAdmin/', isAuthenticated, superPermission, showAdmin)
-
+router.post('/reset-password', sendResetPassword);
+router.post('/reset/:token', changePassword);
 
 
 module.exports = router
