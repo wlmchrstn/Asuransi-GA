@@ -77,7 +77,6 @@ exports.uploadphoto = async (req, res) => {
 
     var fileUp = req.file
 
-    /*  istanbul ignore if */
     if (!fileUp) {
         return res.status(415).send({
             success: false,
@@ -101,7 +100,6 @@ exports.uploadphoto = async (req, res) => {
                     })
             })   
             .catch(err => {
-                /* istanbul ignore next */
                 res.send(err);
             })
     })

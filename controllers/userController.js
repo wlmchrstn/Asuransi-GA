@@ -47,9 +47,9 @@ module.exports = {
 
     async createAdmin(req, res){
         try{
-            // create hashed password
+
             let pwd = bcrypt.hashSync(req.body.password, saltRounds)
-            // create admin
+
             let admin = await User.create({
                 username:req.body.username,
                 email:req.body.email,
@@ -63,13 +63,13 @@ module.exports = {
                 role:'Admin',
                 isVerified:true
             })
-            // resolve
+
             let result = {
                 _id: admin._id,
                 username: admin.username,
                 email: admin.email
             }
-            // response
+
             res.status(201).json(success(result, "Admin created!"))   
         }
         catch(err){
@@ -79,13 +79,13 @@ module.exports = {
 
     async createClient(req, res){
         try{
-            // create hashed password
+
             let pwd         = bcrypt.hashSync(req.body.password, saltRounds)
-            // craete token verify
+
             var token       = funcHelper.token(20);
-            // create expToken
+
             var expToken    = new Date(new Date().setHours(new Date().getHours() + 6))
-            // create user
+
             let user = await User.create({
                 username:req.body.username,
                 email:req.body.email,
@@ -100,7 +100,7 @@ module.exports = {
                 expToken: expToken
 
             })
-            // send email verification
+
             var to               = req.body.email
             var from             = 'AGA@insurance.com'
             var subject          = 'Email verification in AGA';
@@ -111,13 +111,13 @@ module.exports = {
                 html            += '<br><br>Thanks';
                 
             await funcHelper.mail(to, from, subject, html)
-            // resolve
+
             let result = {
                 _id: user._id,
                 name: user.name,
                 username: user.username
             }
-            // response
+
             res.status(201).json(success(result, "Client created!"))
         }
         catch(err){
@@ -126,7 +126,7 @@ module.exports = {
     },
 
     
-    // verify email
+
     async verify(req, res){
         try {
             let token = req.params.token;
@@ -147,9 +147,9 @@ module.exports = {
 
     async resendVerify(req, res){
         try {
-            // create token verify
+
             var token       = funcHelper.token(20);
-            // create expToken
+
             var expToken    = new Date(new Date().setHours(new Date().getHours() + 6))
 
             let user = await User.findOneAndUpdate({email:req.body.email}, {token: token, expToken: expToken})
@@ -170,7 +170,7 @@ module.exports = {
                 name: user.name,
                 username: user.username
             }
-            // response
+
             res.status(201).json(success(result, "Email verification has been send!"))
 
         }
@@ -182,20 +182,20 @@ module.exports = {
     
     async login(req, res){
         try{
-            // find user by username
+
             let user = await User.findOne({$or: [{email: req.body.login},{username: req.body.login}]})
          
-            // check email verification
+
             if(user.isVerified!=true){
                 return res.status(403).json(error('Please verify email first', '', 403))
             }
 
-            // check validation
+
             let isValid = await bcrypt.compare(req.body.password, user.password)
             if(!isValid){
                 return res.status(403).json(error('Password incorrect!', err.message, 403))
             }
-            // create token
+
             let token = jwt.sign({_id: user._id, role: user.role}, process.env.SECRET_KEY, {expiresIn: '1h'})
             return res.status(200).json(success('Token created! Access given!', token))
         }
@@ -239,9 +239,9 @@ module.exports = {
     },
 
     async uploadImage(req, res){
+
         var fileUp = req.file
 
-        /*  istanbul ignore if */
         if (!fileUp) {
             return res.status(415).json(error('No file received: Unsupported Media Type', req.file, 415))
         }
@@ -262,7 +262,6 @@ module.exports = {
                         })
                 })   
                 .catch(err => {
-                    /* istanbul ignore next */
                     res.status(400).json(error('Upload image falied', err, 400));
                 })
         })
