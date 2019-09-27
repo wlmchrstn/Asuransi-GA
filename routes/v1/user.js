@@ -1,10 +1,23 @@
 const router = require('express').Router()
-const {createSuperAdmin, createAdmin, create, login} = require('../../controllers/userController')//initiate userController
-//const {authenticate, merchantAuthenticate, customerAuthenticate} = require('../middlewares/authenticate')
+const {isAuthenticated}= require('../../middlewares/auth')
+const {permission, superPermission} = require('../../middlewares/permission')
+const upload = require('../../middlewares/multer');
+const {createSuperAdmin, createAdmin, createClient, login, 
+        verify, resendVerify, show, update, deleteUser,
+        uploadImage, showAdmin} = require('../../controllers/userController')
 
-router.post('/super', createSuperAdmin)//create super admin router
-router.post('/admin', createAdmin)//create admin router
-router.post('/client', create)//create admin router
-router.post('/login', login)//create admin router
+router.post('/super', createSuperAdmin)
+router.post('/admin', isAuthenticated, superPermission, createAdmin)
+router.post('/client', createClient)
+router.post('/login', login)    
+router.get('/verify/:token', verify)
+router.post('/verify', resendVerify)
+router.get('/show', isAuthenticated, show)
+router.put('/update', isAuthenticated, update)
+router.delete('/deleteAdmin/:id', isAuthenticated, superPermission, deleteUser)
+router.post('/upload', isAuthenticated, upload.single('image'), uploadImage)
+router.get('/showAdmin/', isAuthenticated, superPermission, showAdmin)
+
+
 
 module.exports = router

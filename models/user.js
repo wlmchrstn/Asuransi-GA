@@ -23,33 +23,33 @@ const userSchema = new mongoose.Schema({
     },
     phone: {
         type: String,
-        required: true
+        required: false
     },
     address: {
         type: String,
-        required: true
+        required: false
     },
     gender: {
         type: String,
         enum: ['Male', 'Female'],
-        required: true
+        required: false
     },
     image: {
         type: String,
-        required: false
+        default: 'https://res.cloudinary.com/ayumhrn/image/upload/v1569487841/fo1jogrqffevwvulwkyo.png'
     },
     birthPlace: {
         type: String,
-        required: true
+        required: false
     },
     birthDate: {
         type: Date,
-        required: true
+        required: false
     },
     role: {
         type: String,
         enum: ['Super_Admin', 'Admin', 'User'],
-        required: true
+        default: 'User'
     },
     isVerified: {
         type: Boolean,
@@ -57,6 +57,10 @@ const userSchema = new mongoose.Schema({
     },
     token: {
         type: String,
+        required: false
+    },
+    expToken: {
+        type: Date,
         required: false
     }
 })

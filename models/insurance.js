@@ -10,27 +10,17 @@ const insuranceSchema = mongoose.Schema({
         required: true
     },
     image: {
-        type: String,
-        required: true
+        type: String
     },
     price: {
         type: Number,
         required: true
     },
-    guaranteeNumber: {
-        type: String,
-        required: true
-    },
-    dueDate: {
-        type: Date,
-        required: true
-    },
-    policy: {
-        type: String,
-        required: true
+    isPromo: {
+        type: Boolean
     }
 })
 
-var Insurance = mongoose.model('Insurance', insuranceSchema)
+var insurance = mongoose.model('insurance', insuranceSchema)
 
-module.exports = Insurance
+module.exports = insurance
