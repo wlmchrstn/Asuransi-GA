@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
+    "start": "node app.js",
     "dev": "nodemon app.js",
     "test": "nyc --reporter=html --reporter=text mocha -recursive ./test --timeout 10000 --exit"
   },
