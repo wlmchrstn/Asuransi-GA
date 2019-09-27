@@ -18,33 +18,38 @@ var uploader = multer().single('image');
 module.exports = {
 
     async createSuperAdmin(req, res){
+        try{
+            let hash = bcrypt.hashSync('12345', saltRounds)
 
-        let hash = bcrypt.hashSync('12345', saltRounds)
+            let data = await User.create({
 
-        let data = await User.create({
-
-            username: 'super_admin',
-            email: 'super@gmail.com',
-            name: 'super admin',
-            password: hash,
-            phone: '082342543654',
-            address: 'superAdminHouse',
-            gender: 'Male',
-            birthPlace: 'superAdminPlace',
-            birthDate: 10102010,
-            role: 'Super_Admin',
-            isVerified: true,
+                username: 'super_admin',
+                email: 'super@gmail.com',
+                name: 'super admin',
+                password: hash,
+                phone: '082342543654',
+                address: 'superAdminHouse',
+                gender: 'Male',
+                birthPlace: 'superAdminPlace',
+                birthDate: 10102010,
+                role: 'Super_Admin',
+                isVerified: true,
 
             })
 
-        let result = {
+            let result = {
             
-            username: data.username,
-            name: data.name,
-            gender: data.gender
+                username: data.username,
+                name: data.name,
+                gender: data.gender
 
-        }    
-        res.status(201).json(success(result,"Super admin created!"))
+            }    
+            res.status(201).json(success("Super admin created!", result))
+        }
+        catch(err){
+            res.status(400).json(error("You can only create super admin once", err.message, 400))
+        }
+        
     },
 
     async createAdmin(req, res){
@@ -72,7 +77,7 @@ module.exports = {
                 email: admin.email
             }
 
-            res.status(201).json(success(result, "Admin created!"))   
+            res.status(201).json(success("Admin created!", result))   
         }
         catch(err){
             res.status(422).json(error('Failed to create admin!', err.message, 422))
@@ -120,7 +125,7 @@ module.exports = {
                 username: user.username
             }
 
-            res.status(201).json(success(result, "Client created!"))
+            res.status(201).json(success("Client created!", result))
         }
         catch(err){
             res.status(422).json(error('Failed to create client!', err, 422))
