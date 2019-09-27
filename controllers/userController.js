@@ -302,7 +302,7 @@ module.exports = {
                 .exec()
                 .then(() => {
                     return res.status(201).json(
-                        success('Password successfully updated!', )
+                        success('Password successfully updated!')
                     )
                 }) 
         })

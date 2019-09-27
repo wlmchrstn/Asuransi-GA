@@ -1,4 +1,4 @@
 # AGA (Asuransi Glints Academy)
 
-## This is API for application AGA (Asurasni GLints Academy)
+## This is API for application AGA (Asuransi Glints Academy)
 

@@ -1,0 +1,33 @@
+image: node:latest
+
+stages:
+#   - test
+  - deploy
+
+# test:
+#   stage: test
+#   variables:
+#     DB_TEST: 'mongodb+srv://ayumhrn:Ayumaharani98@cluster0-sjlmn.mongodb.net/test?retryWrites=true&w=majority'
+#     SECRET_KEY: 'KeyAdalahKunci'
+#     NODE_ENV: 'test'
+#     CLOUDINARY_CLOUD_NAME: "ayumhrn"
+#     CLOUDINARY_API_KEY: '486724194775295'
+#     CLOUDINARY_API_SECRET: "PY0AeFB7C_hw8YhY43pZb9hLK6E"
+#   script: 
+#   - npm install
+#   - npm test
+#   only: 
+#   - master
+
+deploy-to-heroku:
+  type: deploy
+  stage: deploy
+  image: ruby:latest
+  script:
+    - apt-get update -qy
+    - apt-get install -y ruby-dev
+    - gem install dpl
+    - dpl --provider=heroku --app=$HEROKU_APPNAME --api-key=$HEROKU_APIKEY
+  
+  only:
+    - master
