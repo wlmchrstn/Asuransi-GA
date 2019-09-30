@@ -1,7 +1,6 @@
 var multer = require('multer');
 var cloudinary = require('cloudinary');
 var path = require('path');
-require('dotenv').config()
 
 cloudinary.config({
     api_key: process.env.CLOUDINARY_API_KEY,

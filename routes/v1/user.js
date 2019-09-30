@@ -20,5 +20,4 @@ router.get('/showAdmin/', isAuthenticated, superPermission, showAdmin)
 router.post('/reset-password', sendResetPassword);
 router.post('/reset/:token', changePassword);
 
-
 module.exports = router

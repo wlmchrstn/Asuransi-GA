@@ -18,6 +18,10 @@ var uploader = multer().single('image');
 module.exports = {
 
     async createSuperAdmin(req, res){
+        let user = User.findOne({role: 'Super_Admin'}).select('role')
+        if(user){
+            return res.status(400).json(error("You can only create super admin once", err.message, 400))
+        }
         try{
             let hash = bcrypt.hashSync('12345', saltRounds)
 
@@ -77,7 +81,7 @@ module.exports = {
                 email: admin.email
             }
 
-            res.status(201).json(success(result, "Admin created!"))   
+            res.status(201).json(success("Admin created!", result))   
         }
         catch(err){
             res.status(422).json(error('Failed to create admin!', err.message, 422))
@@ -125,7 +129,7 @@ module.exports = {
                 username: user.username
             }
 
-            res.status(201).json(success(result, "Client created!"))
+            res.status(201).json(success("Client created!", result))
         }
         catch(err){
             res.status(422).json(error('Failed to create client!', err, 422))
@@ -312,7 +316,4 @@ module.exports = {
                 }) 
         })
     }
-    
-
-
 }
