@@ -35,7 +35,7 @@ module.exports = {
                 address: 'superAdminHouse',
                 gender: 'Male',
                 birthPlace: 'superAdminPlace',
-                birthDate: 10102010,
+                birthDate: '10-10-2010',
                 role: 'Super_Admin',
                 isVerified: true,
 
@@ -116,7 +116,7 @@ module.exports = {
             var from             = 'AGA@insurance.com'
             var subject          = 'Email verification in AGA';
 
-            var link             = "http://"+req.get('host')+"/user/verify/"+token;
+            var link             = "http://"+req.get('host')+"/apix/user/verify/"+token;
             var html             = 'Plese click link bellow, if you register at aga_insurance.com<br>';
                 html            += '<br><strong><a href='+link+'>'+"Verify Email"+'</a></strong>';
                 html            += '<br><br>Thanks';
@@ -126,7 +126,8 @@ module.exports = {
             let result = {
                 _id: user._id,
                 name: user.name,
-                username: user.username
+                username: user.username,
+                token: user.token
             }
 
             res.status(201).json(success("Client created!", result))
@@ -169,7 +170,7 @@ module.exports = {
             var from             = 'AGA@insurance.com'
             var subject          = 'Resend mail verification in AGA';
 
-            var link             = "http://"+req.get('host')+"/user/verify/"+token;
+            var link             = "http://"+req.get('host')+"/api/user/verify/"+token;
             var html             = 'Plese click link bellow, to verify email at aga_insurance.com<br>';
                 html            += '<br><strong><a href='+link+'>'+"Verify Email"+'</a></strong>';
                 html            += '<br><br>Thanks';

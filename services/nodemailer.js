@@ -34,7 +34,7 @@ exports.sendResetPassword = async (email, res) => {
         to: email,
         subject: 'Reset Password',
         html: `<p>Klik link dibawah ini untuk reset password</p>
-        <a href="http://localhost:3000/user/reset/${token}" target="_blank">Reset Password</a>`
+        <a href="http://asuransi-glints-academy.herokuapp.com/api/user/reset/${token}" target="_blank">Reset Password</a>`
     })
     .then(() => res.status(200).json(
         success(`Email sent to ${email}`)
