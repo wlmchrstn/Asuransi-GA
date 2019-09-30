@@ -18,9 +18,9 @@ var uploader = multer().single('image');
 module.exports = {
 
     async createSuperAdmin(req, res){
-        let user = User.findOne({role: 'Super_Admin'}).select('role')
+        let user = await User.findOne({role: 'Super_Admin'}).select('role')
         if(user){
-            return res.status(400).json(error("You can only create super admin once", err.message, 400))
+            return res.status(400).json(error("You can only create super admin once", "-", 400))
         }
         try{
             let hash = bcrypt.hashSync('12345', saltRounds)
