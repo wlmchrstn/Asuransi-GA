@@ -208,7 +208,7 @@ module.exports = {
             }
 
             let token = jwt.sign({_id: user._id, role: user.role}, process.env.SECRET_KEY, {expiresIn: '1h'})
-            return res.status(200).json(success('Token created! Access given!', token))
+            return res.status(200).json(success('Token created! Access given!', token, user._id, user.role))
         }
         catch(err){
             res.status(422).json(error('Failed to login!', err, 422))

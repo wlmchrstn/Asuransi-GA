@@ -1,8 +1,10 @@
-const success = (messages, data)=>{
+const success = (messages, data, id, role)=>{
     return ({
         success: true,
         message: messages,
-        result: data
+        result: data,
+        id: id,
+        role: role
     })
 }
 
