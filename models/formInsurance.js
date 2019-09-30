@@ -15,12 +15,6 @@ const formSchema = new mongoose.Schema({
         required: true,
         uppercase: true
     },
-    surname: {
-        type: String,
-        required: false,
-        uppercase: true,
-        default: "-"
-    },
     NIK: {
         type: Number,
         required: true
