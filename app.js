@@ -10,6 +10,7 @@ var userRouter = require('./routes/v1/user')//initiate userRouter
 var insuranceRouter = require('./routes/v1/insurance');
 var promoRouter = require('./routes/v1/promo');
 var commentRouter = require('./routes/v1/comment');
+var formRouter = require('./routes/v1/form');
 
 var app = express();
 
@@ -56,6 +57,7 @@ app.use('/user', userRouter)//use userRouter
 app.use('/insurance', insuranceRouter);
 app.use('/promo', promoRouter);
 app.use('/comment', commentRouter);
+app.use('/form', formRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
