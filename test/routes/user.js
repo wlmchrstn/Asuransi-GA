@@ -132,5 +132,31 @@ describe ('USER CONTROLLER',()=>{
             })
     })
 
+    it("POST /api/user/client should create client", done=>{
+        chai.request(server)
+            .post('/api/user/client')
+            .send(testClient)
+            .end((err,res)=>{
+                res.should.have.status(201)
+                res.body.should.have.property('success').equal(true)
+                res.body.should.have.property('message').equal("Client created!")
+                res.body.should.have.property('result')
+                tokenEmail = res.body.result.token
+                done()
+            })
+    })
+
+    it("GET /api/user/verify/:token should verify email", done=>{
+        chai.request(server)
+            .get(`/api/user/verify/${tokenEmail}`)
+            .end((err,res)=>{
+                res.should.have.status(200)
+                res.body.should.have.property('success').equal(true)
+                res.body.should.have.property('message').equal("email verified success")
+                res.body.should.have.property('result')
+                done()
+            })
+    })
+
 
 })

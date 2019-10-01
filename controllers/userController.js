@@ -121,7 +121,7 @@ module.exports = {
                 html            += '<br><strong><a href='+link+'>'+"Verify Email"+'</a></strong>';
                 html            += '<br><br>Thanks';
                 
-            await funcHelper.mail(to, from, subject, html)
+            // await funcHelper.mail(to, from, subject, html)
 
             let result = {
                 _id: user._id,
