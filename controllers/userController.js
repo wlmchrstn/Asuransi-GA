@@ -20,7 +20,7 @@ module.exports = {
     async createSuperAdmin(req, res){
         let user = await User.findOne({role: 'Super_Admin'}).select('role')
         if(user){
-            return res.status(400).json(error("You can only create super admin once", "", 400))
+            return res.status(400).json(error("You can only create super admin once", "-", 400))
         }
         try{
             let hash = bcrypt.hashSync('12345', saltRounds)
@@ -35,7 +35,7 @@ module.exports = {
                 address: 'superAdminHouse',
                 gender: 'Male',
                 birthPlace: 'superAdminPlace',
-                birthDate: 10102010,
+                birthDate: '10-10-2010',
                 role: 'Super_Admin',
                 isVerified: true,
 
@@ -116,17 +116,18 @@ module.exports = {
             var from             = 'AGA@insurance.com'
             var subject          = 'Email verification in AGA';
 
-            var link             = "http://"+req.get('host')+"/user/verify/"+token;
+            var link             = "http://"+req.get('host')+"/apix/user/verify/"+token;
             var html             = 'Plese click link bellow, if you register at aga_insurance.com<br>';
                 html            += '<br><strong><a href='+link+'>'+"Verify Email"+'</a></strong>';
                 html            += '<br><br>Thanks';
                 
-            await funcHelper.mail(to, from, subject, html)
+            // await funcHelper.mail(to, from, subject, html)
 
             let result = {
                 _id: user._id,
                 name: user.name,
-                username: user.username
+                username: user.username,
+                token: user.token
             }
 
             res.status(201).json(success("Client created!", result))
@@ -169,7 +170,7 @@ module.exports = {
             var from             = 'AGA@insurance.com'
             var subject          = 'Resend mail verification in AGA';
 
-            var link             = "http://"+req.get('host')+"/user/verify/"+token;
+            var link             = "http://"+req.get('host')+"/api/user/verify/"+token;
             var html             = 'Plese click link bellow, to verify email at aga_insurance.com<br>';
                 html            += '<br><strong><a href='+link+'>'+"Verify Email"+'</a></strong>';
                 html            += '<br><br>Thanks';
@@ -225,7 +226,7 @@ module.exports = {
 
     async showAdmin(req, res){
         let user = await User.find({role: 'Admin'})
-        res.status(200).json(success('Show user details', user))
+        res.status(200).json(success('Show all admin', user))
     },
 
     async update(req, res){
