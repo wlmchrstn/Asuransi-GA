@@ -42,6 +42,14 @@ exports.ShowAllInsurance = async (req, res) => {
 
 exports.ShowOneInsurance = async (req, res) => {
 
+    let insuranceExist = await insurance.findById({_id: req.params.id})
+
+    if (!insuranceExist) {
+        return res.status(404).json(
+            error('Not Found', "", 404)
+        )
+    }
+
     insurance.findById({ _id: req.params.id })
         .select('-__v')
         .then((insurance) => {
@@ -61,13 +69,21 @@ exports.updateInsurance = async (req, res) => {
             )
         })
         .catch(err => {
-            res.status(400).json(
-                error('Update Insurance Failed', err.message, 400)
+            res.status(406).json(
+                error('Update Insurance Failed', err.message, 406)
             )
         })
 }
 
 exports.deleteInsurance = async (req, res) => {
+
+    let insuranceExist = await insurance.findById({_id: req.params.id})
+
+    if (!insuranceExist) {
+        return res.status(404).json(
+            error('Not Found', "", 404)
+        )
+    }
 
     insurance.findOneAndRemove({ _id: req.params.id })
         .then((insurance) => {

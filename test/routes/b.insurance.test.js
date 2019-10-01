@@ -9,10 +9,8 @@ chai.use(chaiHttp);
 
 let token;
 let fakeToken = 'thisisfaketoken'
+let fakeId = '5d92cf8c3a0f164515577b21'
 let file = '/home/ayumhrn/project/backend/public/images/profpict.png'
-let wrongfile = '/home/ayumhrn/project/backend/app.js'
-
-
 
 describe('Insurance', function() {
 
@@ -36,7 +34,7 @@ describe('Insurance', function() {
     })
 
 
-    beforeEach(function (done) {
+    before(function (done) {
         chai.request(server)
             .post('/api/user/login')
             .send({
@@ -60,19 +58,19 @@ describe('Insurance', function() {
             .send({
                 title: 'Asuransi Kesehatan',
                 description: 'Asuransi Kesehatan',
-                price: '15000'
+                price: '15000',
+                isPromo: 0
             })
             .set('Authorization', token)
             .end(function(err, res) {
                 insurance_id = res.body.result._id
-                console.log(insurance_id)
                 expect(res).to.have.status(201)
                 expect(res).to.be.an('object')
                 done()
             })
     })
 
-    it('CREATE FAILED INSURANCE SHOULD SHOW OK', function(done) {
+    it('CREATE FAILED INSURANCE SHOULD SHOW ERROR', function(done) {
 
         chai.request(server)
             .post('/api/insurance/create')
@@ -111,6 +109,17 @@ describe('Insurance', function() {
             })
     })
 
+    it('SHOW ONE INSURANCE THAT IS NOT FOUND SHOULD SHOW ERROR', function(done) {
+
+        chai.request(server)
+            .get('/api/insurance/detail/5d92cf8c3a0f164515577b21')
+            .end(function(err, res) {
+                expect(res).to.have.status(404)
+                expect(res).to.be.an('object')
+                done()
+            })
+    })
+
     it('UPDATE INSURANCE SHOULD SHOW OK', function(done) {
 
         chai.request(server)
@@ -135,13 +144,13 @@ describe('Insurance', function() {
                 price: "ab"
             })
             .end(function(err, res) {
-                expect(res).to.have.status(400)
+                expect(res).to.have.status(406)
                 expect(res).to.be.an('object')
                 done()
             })
     })
 
-    it('UPLOAD FOTO SHOULD SHOW OK', function (done) {
+    it('UPLOAD FOTO SHOULD SHOW OK', function () {
 
         chai.request(server)
             .post(`/api/insurance/${insurance_id}`)
@@ -150,7 +159,6 @@ describe('Insurance', function() {
             .end(function (err, res) {
                 expect(res).to.have.status(201)
                 expect(res).to.be.an('object')
-                done()
             })
     })
 
@@ -172,6 +180,18 @@ describe('Insurance', function() {
             .set('Authorization', token)
             .end(function(err, res) {
                 expect(res).to.have.status(200)
+                expect(res).to.be.an('object')
+                done()
+            })
+    })
+
+    it('DELETE INSURACE, THAT IS NOT EXIST SHOULD SHOW ERROR', function(done) {
+
+        chai.request(server)
+            .delete(`/api/insurance/delete/5d92cf8c3a0f164515577b21`)
+            .set('Authorization', token)
+            .end(function(err, res) {
+                expect(res).to.have.status(404)
                 expect(res).to.be.an('object')
                 done()
             })
