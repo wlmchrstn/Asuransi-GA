@@ -5,7 +5,6 @@ module.exports = {
     async createForm(req, res) {
         try{
             let userId = req.decoded._id
-            console.log(userId)
             let form = await Form.create(req.body)
             form.users = userId
             form.insurances = req.params.id

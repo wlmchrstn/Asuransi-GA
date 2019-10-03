@@ -6,7 +6,7 @@ var auth = require('../../middlewares/auth');
 var {permission} = require('../../middlewares/permission')
 
 
-router.post('/', auth.isAuthenticated, permission, insuranceController.createInsurance);
+router.post('/create', auth.isAuthenticated, permission, insuranceController.createInsurance);
 
 router.post('/:id', auth.isAuthenticated, permission, upload.single('image'), insuranceController.uploadphoto);
 
@@ -16,7 +16,7 @@ router.get('/detail/:id', insuranceController.ShowOneInsurance);
 
 router.put('/:id', auth.isAuthenticated, permission, insuranceController.updateInsurance);
 
-router.delete('/delete/:id', auth.isAuthenticated, permission, insuranceController.deleteInsurance);
+router.delete('/delete/:id', insuranceController.deleteInsurance);
 
 router.get('/search', insuranceController.Search)
 

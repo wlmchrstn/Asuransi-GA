@@ -7,7 +7,7 @@ var datauri = require('datauri');
 var uploader = multer().single('image');
 
 exports.createInsurance = async (req, res) => {
-    
+
     var {
         title, description, image, price, isPromo
     } = req.body
@@ -42,7 +42,15 @@ exports.ShowAllInsurance = async (req, res) => {
 
 exports.ShowOneInsurance = async (req, res) => {
 
-    insurance.findById({_id: req.params.id})
+    let insuranceExist = await insurance.findById({_id: req.params.id})
+
+    if (!insuranceExist) {
+        return res.status(404).json(
+            error('Not Found', "", 404)
+        )
+    }
+
+    insurance.findById({ _id: req.params.id })
         .select('-__v')
         .then((insurance) => {
             return res.status(200).json(
@@ -53,18 +61,31 @@ exports.ShowOneInsurance = async (req, res) => {
 
 exports.updateInsurance = async (req, res) => {
 
-    insurance.findByIdAndUpdate({_id: req.params.id},
-        {$set: req.body}, {new: true})
+    insurance.findByIdAndUpdate({ _id: req.params.id },
+        { $set: req.body }, { new: true })
         .then((insurance) => {
             return res.status(201).json(
                 success('Successfully updated!', insurance)
+            )
+        })
+        .catch(err => {
+            res.status(406).json(
+                error('Update Insurance Failed', err.message, 406)
             )
         })
 }
 
 exports.deleteInsurance = async (req, res) => {
 
-    insurance.findOneAndRemove({_id: req.params.id})
+    let insuranceExist = await insurance.findById({_id: req.params.id})
+
+    if (!insuranceExist) {
+        return res.status(404).json(
+            error('Not Found', "", 404)
+        )
+    }
+
+    insurance.findOneAndRemove({ _id: req.params.id })
         .then((insurance) => {
             return res.status(200).json(
                 success('Successfully deleted!', insurance)
@@ -77,6 +98,7 @@ exports.uploadphoto = async (req, res) => {
 
     var fileUp = req.file
 
+    /*  istanbul ignore if */
     if (!fileUp) {
         return res.status(415).send({
             success: false,
@@ -90,16 +112,19 @@ exports.uploadphoto = async (req, res) => {
         var file = dUri.format(`${req.file.originalname}-${Date.now()}`, req.file.buffer);
         cloudinary.uploader.upload(file.content)
             .then(data => {
-                insurance.findByIdAndUpdate({_id: req.params.id},
-                    {$set: {image: data.secure_url}},
-                    {new: true})
+            /* istanbul ignore next */
+                insurance.findByIdAndUpdate({ _id: req.params.id },
+                    { $set: { image: data.secure_url } },
+                    { new: true })
                     .then((insurance) => {
+                        /* istanbul ignore next */
                         return res.status(201).json(
                             success('Updated!', insurance)
                         )
                     })
-            })   
+            })
             .catch(err => {
+                /* istanbul ignore next */
                 res.send(err);
             })
     })
@@ -109,14 +134,7 @@ exports.uploadphoto = async (req, res) => {
 exports.Search = async (req, res) => {
     insurance.find(req.query)
         .then(result => {
-            if(result) {
-                res.status(200).json(success('Here is the result!', result))
-            }
-            else if(!result) {
-                res.status(404).json(error('Insurance not found!', result, 404))
-            }
-        })
-        .catch(err => {
-            res.status(422).json(error('Failed to search item!', err, 422))
+            return res.status(200).json(success('Here is the result!', result))
+
         })
 }

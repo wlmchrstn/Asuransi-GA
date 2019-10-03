@@ -22,7 +22,6 @@ describe('Response Helpers', function() {
      it('Error response show oke', function () {
         var response = error('failed', errSample)
         expect(response.success).to.be.false
-        expect(response.result).to.be.a('error')
     })
 
 }) 

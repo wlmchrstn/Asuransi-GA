@@ -22,37 +22,33 @@ module.exports = {
         if(user){
             return res.status(400).json(error("You can only create super admin once", "-", 400))
         }
-        try{
-            let hash = bcrypt.hashSync('12345', saltRounds)
+        
+        let hash = bcrypt.hashSync('12345', saltRounds)
 
-            let data = await User.create({
+        let data = await User.create({
 
-                username: 'super_admin',
-                email: 'super@gmail.com',
-                name: 'super admin',
-                password: hash,
-                phone: '082342543654',
-                address: 'superAdminHouse',
-                gender: 'Male',
-                birthPlace: 'superAdminPlace',
-                birthDate: 10102010,
-                role: 'Super_Admin',
-                isVerified: true,
+            username: 'super_admin',
+            email: 'super@gmail.com',
+            name: 'super admin',
+            password: hash,
+            phone: '082342543654',
+            address: 'superAdminHouse',
+            gender: 'Male',
+            birthPlace: 'superAdminPlace',
+            birthDate: '10-10-2010',
+            role: 'Super_Admin',
+            isVerified: true,
 
-            })
+        })
 
-            let result = {
-            
-                username: data.username,
-                name: data.name,
-                gender: data.gender
+        let result = {
+        
+            username: data.username,
+            name: data.name,
+            gender: data.gender
 
-            }    
-            res.status(201).json(success("Super admin created!", result))
-        }
-        catch(err){
-            res.status(400).json(error("You can only create super admin once", err.message, 400))
-        }
+        }    
+        res.status(201).json(success("Super admin created!", result))
         
     },
 
@@ -116,7 +112,7 @@ module.exports = {
             var from             = 'AGA@insurance.com'
             var subject          = 'Email verification in AGA';
 
-            var link             = "http://"+req.get('host')+"/user/verify/"+token;
+            var link             = "http://"+req.get('host')+"/apix/user/verify/"+token;
             var html             = 'Plese click link bellow, if you register at aga_insurance.com<br>';
                 html            += '<br><strong><a href='+link+'>'+"Verify Email"+'</a></strong>';
                 html            += '<br><br>Thanks';
@@ -126,7 +122,8 @@ module.exports = {
             let result = {
                 _id: user._id,
                 name: user.name,
-                username: user.username
+                username: user.username,
+                token: user.token
             }
 
             res.status(201).json(success("Client created!", result))
@@ -142,14 +139,13 @@ module.exports = {
         try {
             let token = req.params.token;
             let users = await User.findOne({ token: token }).select('expToken')
-            if(Date.now()<users.expToken){
-                User.findOneAndUpdate({token: req.params.token}, {isVerified: true}, (err, data)=>{
-                    res.status(200).json(success("email verified success", data))
-                })
+            /* istanbul ignore next */
+            if(Date.now()>users.expToken){
+                return res.status(400).json(error('Token expired, please resend email confirm', err.message, 400))
             }
-            else{
-                res.status(400).json(error('Token expired, please resend email confirm', err.message, 400))
-            }
+            let user = await User.findOneAndUpdate({token: req.params.token}, {isVerified: true})
+            res.status(200).json(success("email verified success", user))
+            
         }
         catch(err){
             res.status(422).json(error("Invalid token", err.message, 422))
@@ -169,7 +165,7 @@ module.exports = {
             var from             = 'AGA@insurance.com'
             var subject          = 'Resend mail verification in AGA';
 
-            var link             = "http://"+req.get('host')+"/user/verify/"+token;
+            var link             = "http://"+req.get('host')+"/api/user/verify/"+token;
             var html             = 'Plese click link bellow, to verify email at aga_insurance.com<br>';
                 html            += '<br><strong><a href='+link+'>'+"Verify Email"+'</a></strong>';
                 html            += '<br><br>Thanks';
@@ -179,10 +175,11 @@ module.exports = {
             let result = {
                 _id: user._id,
                 name: user.name,
-                username: user.username
+                username: user.username,
+                token: user.token
             }
 
-            res.status(201).json(success(result, "Email verification has been send!"))
+            res.status(201).json(success("Email verification has been send!", result))
 
         }
         catch(err){
@@ -195,20 +192,16 @@ module.exports = {
         try{
 
             let user = await User.findOne({$or: [{email: req.body.login},{username: req.body.login}]})
-         
-
-            if(user.isVerified!=true){
-                return res.status(403).json(error('Please verify email first', '', 403))
-            }
-
-
             let isValid = await bcrypt.compare(req.body.password, user.password)
-            if(!isValid){
-                return res.status(403).json(error('Password incorrect!', err.message, 403))
-            }
 
-            let token = jwt.sign({_id: user._id, role: user.role}, process.env.SECRET_KEY, {expiresIn: '1h'})
-            return res.status(200).json(success('Token created! Access given!', token, user._id, user.role))
+            if(user.isVerified!=true) return res.status(403).json(error('Please verify email first', '', 403))
+
+            bcrypt.compare(req.body.password, user.password, function(err, data){
+                if(data!=true) return res.status(403).json(error('Password incorrect!', err, 403))
+                let token = jwt.sign({_id: user._id, role: user.role}, process.env.SECRET_KEY, {expiresIn: '1h'})
+                return res.status(200).json(success('Token created! Access given!', token, user._id, user.role))
+            })
+        
         }
         catch(err){
             res.status(422).json(error('Failed to login!', err, 422))
@@ -222,12 +215,13 @@ module.exports = {
 
     async showAdmin(req, res){
         let user = await User.find({role: 'Admin'})
-        res.status(200).json(success('Show user details', user))
+        res.status(200).json(success('Show all admin', user))
     },
 
     async update(req, res){
+        /* istanbul ignore if */
         if(req.body.password){
-            let pwd = bcrypt.hashSync(req.body.password, saltRounds)
+            let pwd = await bcrypt.hashSync(req.body.password, saltRounds)
             req.body.password = pwd
         }
         try{
@@ -249,6 +243,17 @@ module.exports = {
         }
     },
 
+    async selectUser(req, res){
+        try{
+            let user = await User.findOne({_id: req.params.id, role: 'Admin'})
+            res.status(200).json(success('Show user success', user))
+        }
+        catch(err){
+            res.status(400).json(error('Show user failed', err.message, 400))
+        }
+    },
+
+    /* istanbul ignore next */
     async uploadImage(req, res){
 
         var fileUp = req.file
@@ -278,42 +283,27 @@ module.exports = {
         })
 
     },
-
     async sendResetPassword(req, res){
 
         var email = req.body.email;
 
         sendResetPassword(email, res)
     },
-
+   
     async changePassword (req, res) {
+        try{
+            var token = req.params.token;
 
-        var token = req.params.token;
+            let pwd = await bcrypt.hashSync(req.body.password, saltRounds)
 
-        var password = req.body.password;
+            var decoded = await jwt.verify(token, process.env.SECRET_KEY);
 
-        var decoded = jwt.verify(token, process.env.SECRET_KEY);
+            await User.updateOne({_id: decoded._id},{password: pwd})
+            res.status(201).json(success('Password successfully updated!'))
 
-        if (!decoded) {
-            return res.status(404).json(
-                error('The token is expired or invalid', err, 404)
-            )
         }
-
-        bcrypt.hash(password, 10, (err, hash) => {
-
-            if (err) throw err;
-
-            User.updateOne(
-                { _id: decoded._id},
-                { $set: {password: hash}},
-                {new: true})
-                .exec()
-                .then(() => {
-                    return res.status(201).json(
-                        success('Password successfully updated!')
-                    )
-                }) 
-        })
+        catch(err){
+            res.status(404).json(error('The token is expired or invalid', err, 404))
+        }
     }
 }
