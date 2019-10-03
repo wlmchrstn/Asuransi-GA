@@ -19,10 +19,9 @@ describe('Response Helpers', function() {
          expect(response.result).to.be.a('object')
      })
 
-    //  it('Error response show oke', function () {
-    //     var response = error('failed', errSample)
-    //     expect(response.success).to.be.false
-    //     expect(response.result).to.be.a('error')
-    // })
+     it('Error response show oke', function () {
+        var response = error('failed', errSample)
+        expect(response.success).to.be.false
+    })
 
 }) 

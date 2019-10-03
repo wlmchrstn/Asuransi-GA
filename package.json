@@ -24,6 +24,7 @@
     "jade": "~1.11.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.7.1",
+    "mongoose-paginate": "^5.0.3",
     "mongoose-type-email": "^1.0.11",
     "mongoose-unique-validator": "^2.0.3",
     "morgan": "~1.9.1",
