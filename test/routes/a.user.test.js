@@ -263,6 +263,32 @@ describe ('USER CONTROLLER',()=>{
             })
     })
 
+    it("GET /api/user/selectAdmin/:id should select admin", done=>{
+        chai.request(server)
+            .get(`/api/user/selectAdmin/${admin._id}`)
+            .set('Authorization', tokenLogin)
+            .end((err,res)=>{
+                res.should.have.status(200)
+                res.body.should.have.property('success').equal(true)
+                res.body.should.have.property('message').equal('Show user success')
+                res.body.should.have.property('result')
+                done()
+            })
+    })
+
+    it("GET /api/user/selectAdmin/:id should not select admin", done=>{
+        chai.request(server)
+            .get(`/api/user/selectAdmin/5d95daf6c24bf672`)
+            .set('Authorization', tokenLogin)
+            .end((err,res)=>{
+                res.should.have.status(400)
+                res.body.should.have.property('success').equal(false)
+                res.body.should.have.property('message').equal('Show user failed')
+                res.body.should.have.property('error')
+                done()
+            })
+    })
+
     it("DELETE /api/user/deleteAdmin/:id should not delete admin", done=>{
         chai.request(server)
             .delete(`/api/user/deleteAdmin/mdkskjasi7`)
@@ -353,4 +379,5 @@ describe ('USER CONTROLLER',()=>{
                 done()
             })
     })
+    
 })

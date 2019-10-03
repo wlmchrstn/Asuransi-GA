@@ -2,7 +2,7 @@ const router = require('express').Router()
 const {isAuthenticated}= require('../../middlewares/auth')
 const {permission, superPermission} = require('../../middlewares/permission')
 const upload = require('../../middlewares/multer');
-const {createSuperAdmin, createAdmin, createClient, login, 
+const {createSuperAdmin, createAdmin, createClient, login, selectUser,
         verify, resendVerify, show, update, deleteUser,
         uploadImage, showAdmin, sendResetPassword, changePassword} = require('../../controllers/userController')
 
@@ -15,6 +15,7 @@ router.post('/verify', resendVerify)
 router.get('/show', isAuthenticated, show)
 router.put('/update', isAuthenticated, update)
 router.delete('/deleteAdmin/:id', isAuthenticated, superPermission, deleteUser)
+router.get('/selectAdmin/:id', isAuthenticated, superPermission, selectUser)
 router.post('/upload', isAuthenticated, upload.single('image'), uploadImage)
 router.get('/showAdmin/', isAuthenticated, superPermission, showAdmin)
 router.post('/reset-password', sendResetPassword);

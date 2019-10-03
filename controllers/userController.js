@@ -242,6 +242,17 @@ module.exports = {
             res.status(400).json(error('Delete user failed', err.message, 400))
         }
     },
+
+    async selectUser(req, res){
+        try{
+            let user = await User.findOne({_id: req.params.id, role: 'Admin'})
+            res.status(200).json(success('Show user success', user))
+        }
+        catch(err){
+            res.status(400).json(error('Show user failed', err.message, 400))
+        }
+    },
+
     /* istanbul ignore next */
     async uploadImage(req, res){
 
