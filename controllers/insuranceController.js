@@ -112,10 +112,12 @@ exports.uploadphoto = async (req, res) => {
         var file = dUri.format(`${req.file.originalname}-${Date.now()}`, req.file.buffer);
         cloudinary.uploader.upload(file.content)
             .then(data => {
+            /* istanbul ignore next */
                 insurance.findByIdAndUpdate({ _id: req.params.id },
                     { $set: { image: data.secure_url } },
                     { new: true })
                     .then((insurance) => {
+                        /* istanbul ignore next */
                         return res.status(201).json(
                             success('Updated!', insurance)
                         )
