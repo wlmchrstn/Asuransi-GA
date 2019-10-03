@@ -83,7 +83,7 @@ describe ('USER CONTROLLER',()=>{
     it("POST /api/user/admin should not create admin", done=>{
         chai.request(server)
             .post('/api/user/admin')
-            .set('Authorization', `${tokenLogin}`)
+            .set('Authorization', tokenLogin)
             .end((err,res)=>{
                 res.should.have.status(422)
                 res.body.should.have.property('success').equal(false)
@@ -92,16 +92,17 @@ describe ('USER CONTROLLER',()=>{
             })
     })
 
-    it("POST /api/user/admin should create super admin", done=>{
+    it("POST /api/user/admin should create admin", done=>{
         chai.request(server)
             .post('/api/user/admin')
-            .set('Authorization', `${tokenLogin}`)
+            .set('Authorization', tokenLogin)
             .send(testAdmin)
             .end((err,res)=>{
                 res.should.have.status(201)
                 res.body.should.have.property('success').equal(true)
                 res.body.should.have.property('message').equal("Admin created!")
                 res.body.should.have.property('result')
+                admin = res.body.result
                 done()
             })
     })
@@ -109,7 +110,7 @@ describe ('USER CONTROLLER',()=>{
     it("POST /api/user/show should show user profile", done=>{
         chai.request(server)
             .get('/api/user/show')
-            .set('Authorization', `${tokenLogin}`)
+            .set('Authorization', tokenLogin)
             .end((err,res)=>{
                 res.should.have.status(200)
                 res.body.should.have.property('success').equal(true)
@@ -122,7 +123,7 @@ describe ('USER CONTROLLER',()=>{
     it("POST /api/user/showAdmin should show all admin", done=>{
         chai.request(server)
             .get('/api/user/showAdmin')
-            .set('Authorization', `${tokenLogin}`)
+            .set('Authorization', tokenLogin)
             .end((err,res)=>{
                 res.should.have.status(200)
                 res.body.should.have.property('success').equal(true)
@@ -146,6 +147,44 @@ describe ('USER CONTROLLER',()=>{
             })
     })
 
+    it("POST /api/user/login should not login because unverify email", done=>{
+        chai.request(server)
+            .post('/api/user/login')
+            .send({login: 'client', password: '12345'})
+            .end((err,res)=>{
+                res.should.have.status(403)
+                res.body.should.have.property('success').equal(false)
+                res.body.should.have.property('message').equal('Please verify email first')
+                res.body.should.have.property('error')
+                done()
+            })
+    })
+    
+    it("POST /api/user/client should not create client", done=>{
+        chai.request(server)
+            .post('/api/user/client')
+            .send({name: "agam"})
+            .end((err,res)=>{
+                res.should.have.status(422)
+                res.body.should.have.property('success').equal(false)
+                res.body.should.have.property('message').equal('Failed to create client!')
+                res.body.should.have.property('error')
+                done()
+            })
+    })
+
+    it("GET /api/user/verify/:token should not verify email", done=>{
+        chai.request(server)
+            .get(`/api/user/verify/asjknkdg5a7ajk7`)
+            .end((err,res)=>{
+                res.should.have.status(422)
+                res.body.should.have.property('success').equal(false)
+                res.body.should.have.property('message').equal("Invalid token")
+                res.body.should.have.property('error')
+                done()
+            })
+    })
+
     it("GET /api/user/verify/:token should verify email", done=>{
         chai.request(server)
             .get(`/api/user/verify/${tokenEmail}`)
@@ -158,5 +197,160 @@ describe ('USER CONTROLLER',()=>{
             })
     })
 
+    it("POST /api/user/login should not login because unverify email", done=>{
+        chai.request(server)
+            .post('/api/user/login')
+            .send({login: 'client', password: '1234567'})
+            .end((err,res)=>{
+                res.should.have.status(403)
+                res.body.should.have.property('success').equal(false)
+                res.body.should.have.property('message').equal('Password incorrect!')
+                done()
+            })
+    })
 
+    it("POST /api/user/verify should not resend verify email", done=>{
+        chai.request(server)
+            .post(`/api/user/verify`)
+            .send({email: 'agam@gmail.com'})
+            .end((err,res)=>{
+                res.should.have.status(400)
+                res.body.should.have.property('success').equal(false)
+                res.body.should.have.property('message').equal("Incorrect email")
+                res.body.should.have.property('error')
+                done()
+            })
+    })
+
+    it("POST /api/user/verify should resend verify email", done=>{
+        chai.request(server)
+            .post(`/api/user/verify`)
+            .send(testClient)
+            .end((err,res)=>{
+                res.should.have.status(201)
+                res.body.should.have.property('success').equal(true)
+                res.body.should.have.property('message').equal("Email verification has been send!")
+                res.body.should.have.property('result')
+                done()
+            })
+    })
+
+    it("PUT /api/user/update should update user", done=>{
+        chai.request(server)
+            .put(`/api/user/update`)
+            .send({phone: '082342543653'})
+            .set('Authorization', tokenLogin)
+            .end((err,res)=>{
+                res.should.have.status(200)
+                res.body.should.have.property('success').equal(true)
+                res.body.should.have.property('message').equal('Update user success')
+                res.body.should.have.property('result')
+                done()
+            })
+    })
+    
+    it("PUT /api/user/update should not update user", done=>{
+        chai.request(server)
+            .put(`/api/user/update`)
+            .send({birthDate: "ahgsjsagk"})
+            .set('Authorization', tokenLogin)
+            .end((err,res)=>{
+                res.should.have.status(400)
+                res.body.should.have.property('success').equal(false)
+                res.body.should.have.property('message').equal('Update user failed')
+                res.body.should.have.property('error')
+                done()
+            })
+    })
+
+    it("DELETE /api/user/deleteAdmin/:id should not delete admin", done=>{
+        chai.request(server)
+            .delete(`/api/user/deleteAdmin/mdkskjasi7`)
+            .set('Authorization', tokenLogin)
+            .end((err,res)=>{
+                res.should.have.status(400)
+                res.body.should.have.property('success').equal(false)
+                res.body.should.have.property('message').equal('Delete user failed')
+                res.body.should.have.property('error')
+                done()
+            })
+    })
+
+    it("DELETE /api/user/deleteAdmin/:id should delete admin", done=>{
+        chai.request(server)
+            .delete(`/api/user/deleteAdmin/${admin._id}`)
+            .set('Authorization', tokenLogin)
+            .end((err,res)=>{
+                res.should.have.status(200)
+                res.body.should.have.property('success').equal(true)
+                res.body.should.have.property('message').equal('Delete user success')
+                res.body.should.have.property('result')
+                done()
+            })
+    })
+
+    it("POST /api/user/admin should create admin", done=>{
+        chai.request(server)
+            .post('/api/user/admin')
+            .set('Authorization', tokenLogin)
+            .send(testAdmin)
+            .end((err,res)=>{
+                res.should.have.status(201)
+                res.body.should.have.property('success').equal(true)
+                res.body.should.have.property('message').equal("Admin created!")
+                res.body.should.have.property('result')
+                done()
+            })
+    })
+
+    it("POST /api/user/reset-password should not send reset password email", done=>{
+        chai.request(server)
+            .post(`/api/user/reset-password`)
+            .end((err,res)=>{
+                res.should.have.status(404)
+                res.body.should.have.property('success').equal(false)
+                res.body.should.have.property('message').equal('Register and verifvy email first')
+                res.body.should.have.property('error')
+                done()
+            })
+    })
+
+    it("POST /api/user/reset-password should send reset password email", done=>{
+        chai.request(server)
+            .post(`/api/user/reset-password`)
+            .send({email: 'client@gmail.com'})
+            .end((err,res)=>{
+                res.should.have.status(200)
+                res.body.should.have.property('success').equal(true)
+                res.body.should.have.property('message')
+                res.body.should.have.property('result')
+                tokenPassword = res.body.result
+                done()
+            })
+    })
+    
+    it("POST /api/user/reset/:token should not change password", done=>{
+        console.log(tokenPassword)
+        chai.request(server)
+            .post(`/api/user/reset/noiajhiusasaw33dqedqadaq5`)
+            .send({password: '12345'})
+            .end((err,res)=>{
+                res.should.have.status(404)
+                res.body.should.have.property('success').equal(false)
+                res.body.should.have.property('message').equal('The token is expired or invalid')
+                done()
+            })
+    })
+
+    it("POST /api/user/reset/:token should change password", done=>{
+        chai.request(server)
+            .post(`/api/user/reset/${tokenPassword}`)
+            .send({password: '12345'})
+            .end((err,res)=>{
+                res.should.have.status(201)
+                res.body.should.have.property('success').equal(true)
+                res.body.should.have.property('message').equal('Password successfully updated!')
+                done()
+            })
+    })
 })
