@@ -4,4 +4,3 @@ sendgrid.env
 .nyc_output
 sendgrid.env
 coverage
-
