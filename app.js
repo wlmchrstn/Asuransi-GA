@@ -1,3 +1,4 @@
+// /* istanbul ignore file */
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -15,13 +16,13 @@ var formRouter = require('./routes/v1/form');
 var app = express();
 
 var mongoose = require('mongoose');
-
+/* istanbul ignore next */
 var env = process.env.NODE_ENV || "development";
-
+/* istanbul ignore else */
 if (env == "development" || env == 'test') {
   require('dotenv').config()
 }
-
+/* istanbul ignore next */
 const configDB = {
   development: process.env.DB_DEV,
   test: process.env.DB_TEST || $DB_TEST,
@@ -61,17 +62,22 @@ app.use('/api/form', formRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
+  /* istanbul ignore next */
   next(createError(404));
 });
 
 // error handler
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
+  /* istanbul ignore next */
   res.locals.message = err.message;
+  /* istanbul ignore next */
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   // render the error page
+  /* istanbul ignore next */
   res.status(err.status || 500);
+  /* istanbul ignore next */
   res.render('error');
 });
 let port = process.env.PORT

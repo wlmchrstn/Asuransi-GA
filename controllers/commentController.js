@@ -5,13 +5,13 @@ const Insurance = require('../models/insurance')
 module.exports= {
     async addComment(req, res) {
         let insurance = await Insurance.findById(req.params.insurance)
-        if (!insurance) {return res.status(404).json(error('Insurance not found!', insurance, 404))}
+        if (!insurance) {return res.status(404).json(error('Insurance not found!', "-", 404))}
         Comment.create({
             users: req.decoded._id,
             insurances: req.params.insurance,
             comment: req.body.comment,
             rating: req.body.rating
-        })
+            })
             .then(result => {
                 res.status(201).json(success('Comment posted!', result))
             })
@@ -19,7 +19,9 @@ module.exports= {
                 res.status(422).json(error('Failed to post comment!', err, 422))
             })
     },
-    editComment(req, res) {
+    async editComment(req, res) {
+        let isValid = await Comment.findById(req.params.comment)
+        if (!isValid) return res.status(404).json(error('Comment not found!', '-', 404))
         let update = { new: true }
         Comment.findByIdAndUpdate(req.params.comment, req.body, update)
             .then(result => {
@@ -29,13 +31,12 @@ module.exports= {
                 res.status(422).json(error('Failed to update comment!', err, 422))
             })
     },
-    deleteComment(req, res) {
+    async deleteComment(req, res) {
+        let isValid = await Comment.findById(req.params.comment)
+        if (!isValid) return res.status(404).json(error('Comment not found!', '-', 404))
         Comment.findByIdAndDelete(req.params.comment)
             .then(result => {
-                res.status(200).json(success('Comment deleted!', result))
-            })
-            .catch(err => {
-                res.status(422).json(error('Failed to delete comment!', err, 422))
+                res.status(200).json(success('Comment deleted!'))
             })
     },
     getAllComment(req, res) {

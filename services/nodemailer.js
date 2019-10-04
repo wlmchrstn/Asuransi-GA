@@ -28,12 +28,12 @@ exports.sendResetPassword = async (email, res) => {
         from: 'AGA@insurance.com',
         to: email,
         subject: 'Reset Password',
-        html: `<p>Klik link dibawah ini untuk reset password</p>
-        <a href="http://asuransi-glints-academy.herokuapp.com/api/user/reset/${token}" target="_blank">Reset Password</a>`
+        html: `<p>Copy Link di bawah ini</p>
+                <p> ${token} </p>`
     })
     .then(() => res.status(200).json(
         success(`Email sent to ${email}`, token)
     ))
-    /* istanbul ignore next */
-    .catch(err => res.send(err))
+    .catch(/* istanbul ignore next */
+        err => res.send(err))
 }

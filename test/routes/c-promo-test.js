@@ -1,3 +1,5 @@
+process.env.NODE_ENV = 'test'
+
 var chaiHttp = require('chai-http');
 var chai = require('chai');
 var server = require('../../app');
@@ -57,7 +59,6 @@ describe('Insurance', function() {
             .set('Authorization', token)
             .end(function(err, res) {
                 insurance_id = res.body.result._id
-                console.log(res.body.result)
                 expect(res).to.have.status(201)
                 expect(res).to.be.an('object')
                 done()

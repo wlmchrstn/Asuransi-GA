@@ -199,6 +199,7 @@ module.exports = {
             bcrypt.compare(req.body.password, user.password, function(err, data){
                 if(data!=true) return res.status(403).json(error('Password incorrect!', err, 403))
                 let token = jwt.sign({_id: user._id, role: user.role}, process.env.SECRET_KEY, {expiresIn: '1h'})
+                res.setHeader('Authorization', token)
                 return res.status(200).json(success('Token created! Access given!', token, user._id, user.role))
             })
         
@@ -292,7 +293,7 @@ module.exports = {
    
     async changePassword (req, res) {
         try{
-            var token = req.params.token;
+            var token = req.body.token;
 
             let pwd = await bcrypt.hashSync(req.body.password, saltRounds)
 

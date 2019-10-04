@@ -5,6 +5,7 @@ exports.isAuthenticated = function (req, res, next) {
     var token = req.body.token || req.query.token || req.headers.authorization
     if (token) {
         jwt.verify(token, process.env.SECRET_KEY, function (err, decoded) {
+            /* istanbul ignore if */
             if (err) {
                 return res.json({message: 'Failed to authenticate token'})
             }

@@ -10,7 +10,7 @@ chai.use(chaiHttp);
 let token;
 let fakeToken = 'thisisfaketoken'
 let fakeId = '5d92cf8c3a0f164515577b21'
-let file = '/home/ayumhrn/project/backend/public/images/profpict.png'
+let file = process.env.PICT
 
 describe('Insurance', function() {
 
@@ -45,7 +45,7 @@ describe('Insurance', function() {
                 if (err) {
                     console.log(err)
                 }
-                token = res.header.authorization
+                token = res.headers.authorization
                 done()
                 
             })
@@ -166,7 +166,7 @@ describe('Insurance', function() {
 
         chai.request(server)
             .get(`/api/insurance/search?title=Asuransi Kesehatan`)
-            .end(function(err, res) {
+            .end(function(err, res) { 
                 expect(res).to.have.status(200)
                 expect(res).to.be.an('object')
                 done()
