@@ -293,7 +293,7 @@ module.exports = {
    
     async changePassword (req, res) {
         try{
-            var token = req.params.token;
+            var token = req.body.token;
 
             let pwd = await bcrypt.hashSync(req.body.password, saltRounds)
 

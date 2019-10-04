@@ -1,3 +1,4 @@
+// /* istanbul ignore file */
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -61,12 +62,14 @@ app.use('/api/form', formRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
+  /* istanbul ignore next */
   next(createError(404));
 });
 
 // error handler
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
+  /* istanbul ignore next */
   res.locals.message = err.message;
   /* istanbul ignore next */
   res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -74,6 +77,7 @@ app.use(function(err, req, res, next) {
   // render the error page
   /* istanbul ignore next */
   res.status(err.status || 500);
+  /* istanbul ignore next */
   res.render('error');
 });
 let port = process.env.PORT

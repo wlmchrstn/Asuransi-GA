@@ -15,23 +15,23 @@ let file = process.env.PICT
 describe('Insurance', function() {
 
 
-    // before(done => {
-    //     chai.request(server)
-    //         .post('/api/user/admin')
-    //         .send({
-    //             username: 'admin',
-    //             name: 'Ayu admin',
-    //             email: 'admin@gmail.com',
-    //             password: '12345'
-    //         })
-    //         .end(() => {
-    //             insurance.deleteMany({},
-    //                 {new: true})
-    //                 .exec(() => {
-    //                     done()
-    //                 })
-    //         })
-    // })
+    before(done => {
+        chai.request(server)
+            .post('/api/user/admin')
+            .send({
+                username: 'admin',
+                name: 'Ayu admin',
+                email: 'admin@gmail.com',
+                password: '12345'
+            })
+            .end(() => {
+                insurance.deleteMany({},
+                    {new: true})
+                    .exec(() => {
+                        done()
+                    })
+            })
+    })
 
 
     before(function (done) {
@@ -166,7 +166,7 @@ describe('Insurance', function() {
 
         chai.request(server)
             .get(`/api/insurance/search?title=Asuransi Kesehatan`)
-            .end(function(err, res) {
+            .end(function(err, res) { 
                 expect(res).to.have.status(200)
                 expect(res).to.be.an('object')
                 done()

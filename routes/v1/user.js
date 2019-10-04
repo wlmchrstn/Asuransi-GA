@@ -19,6 +19,6 @@ router.get('/selectAdmin/:id', isAuthenticated, superPermission, selectUser)
 router.post('/upload', isAuthenticated, upload.single('image'), uploadImage)
 router.get('/showAdmin/', isAuthenticated, superPermission, showAdmin)
 router.post('/reset-password', sendResetPassword);
-router.post('/reset/:token', changePassword);
+router.put('/reset', changePassword);
 
 module.exports = router
