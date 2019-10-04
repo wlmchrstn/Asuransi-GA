@@ -28,7 +28,7 @@ exports.sendResetPassword = async (email, res) => {
         from: 'AGA@insurance.com',
         to: email,
         subject: 'Reset Password',
-        html: `<p>Copy Link dibawah ini</p>
+        html: `<p>Copy Link di bawah ini</p>
                 <p> ${token} </p>`
     })
     .then(() => res.status(200).json(
