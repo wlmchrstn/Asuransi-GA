@@ -15,23 +15,23 @@ let file = '/home/ayumhrn/project/backend/public/images/profpict.png'
 describe('Insurance', function() {
 
 
-    before(done => {
-        chai.request(server)
-            .post('/api/user/admin')
-            .send({
-                username: 'admin',
-                name: 'Ayu admin',
-                email: 'admin@gmail.com',
-                password: '12345'
-            })
-            .end(() => {
-                insurance.deleteMany({},
-                    {new: true})
-                    .exec(() => {
-                        done()
-                    })
-            })
-    })
+    // before(done => {
+    //     chai.request(server)
+    //         .post('/api/user/admin')
+    //         .send({
+    //             username: 'admin',
+    //             name: 'Ayu admin',
+    //             email: 'admin@gmail.com',
+    //             password: '12345'
+    //         })
+    //         .end(() => {
+    //             insurance.deleteMany({},
+    //                 {new: true})
+    //                 .exec(() => {
+    //                     done()
+    //                 })
+    //         })
+    // })
 
 
     before(function (done) {
@@ -45,7 +45,7 @@ describe('Insurance', function() {
                 if (err) {
                     console.log(err)
                 }
-                token = res.header.authorization
+                token = res.headers.authorization
                 done()
                 
             })
