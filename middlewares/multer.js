@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 var multer = require('multer');
 var cloudinary = require('cloudinary');
 var path = require('path');

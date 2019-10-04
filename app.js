@@ -15,13 +15,13 @@ var formRouter = require('./routes/v1/form');
 var app = express();
 
 var mongoose = require('mongoose');
-
+/* istanbul ignore next */
 var env = process.env.NODE_ENV || "development";
-
+/* istanbul ignore else */
 if (env == "development" || env == 'test') {
   require('dotenv').config()
 }
-
+/* istanbul ignore next */
 const configDB = {
   development: process.env.DB_DEV,
   test: process.env.DB_TEST || $DB_TEST,
@@ -68,9 +68,11 @@ app.use(function(req, res, next) {
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
+  /* istanbul ignore next */
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   // render the error page
+  /* istanbul ignore next */
   res.status(err.status || 500);
   res.render('error');
 });

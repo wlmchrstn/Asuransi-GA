@@ -26,7 +26,6 @@ describe('COMMENT OPERATION', ()=> {
             })
     })
     
-    
     before(function (done) {
         chai.request(server)
             .post('/api/user/login')
@@ -97,6 +96,26 @@ describe('COMMENT OPERATION', ()=> {
             })
             .end((err, res)=> {
                 token = res.body.result.toString()
+                done()
+            })
+    })
+
+    it("NOT SUPER ADMIN", (done)=> {
+        chai.request(server)
+            .post('/api/user/admin')
+            .set('Authorization', token)
+            .end((err,res)=>{
+                expect(res.status).to.be.equal(403)
+                done()
+            })
+    })
+
+    it("NOT ADMIN", (done)=> {
+        chai.request(server)
+            .post('/api/insurance/create')
+            .set('Authorization', token)
+            .end((err,res)=>{
+                expect(res.status).to.be.equal(403)
                 done()
             })
     })

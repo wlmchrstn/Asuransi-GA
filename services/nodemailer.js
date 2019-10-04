@@ -34,6 +34,6 @@ exports.sendResetPassword = async (email, res) => {
     .then(() => res.status(200).json(
         success(`Email sent to ${email}`, token)
     ))
-    /* istanbul ignore next */
-    .catch(err => res.send(err))
+    .catch(/* istanbul ignore next */
+        err => res.send(err))
 }

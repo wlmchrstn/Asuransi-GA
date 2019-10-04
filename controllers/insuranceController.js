@@ -123,8 +123,7 @@ exports.uploadphoto = async (req, res) => {
                         )
                     })
             })
-            .catch(err => {
-                /* istanbul ignore next */
+            .catch(/* istanbul ignore next */err => {
                 res.send(err);
             })
     })
