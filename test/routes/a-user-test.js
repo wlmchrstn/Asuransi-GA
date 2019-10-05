@@ -358,7 +358,7 @@ describe ('USER CONTROLLER',()=>{
     it("POST /api/user/reset/:token should not change password", done=>{
         console.log(tokenPassword)
         chai.request(server)
-            .post(`/api/user/reset/noiajhiusasaw33dqedqadaq5`)
+            .put(`/api/user/reset`)
             .send({password: '12345'})
             .end((err,res)=>{
                 res.should.have.status(404)
@@ -368,12 +368,12 @@ describe ('USER CONTROLLER',()=>{
             })
     })
 
-    it("POST /api/user/reset/:token should change password", done=>{
+    it("POST /api/user/reset should change password", done=>{
         chai.request(server)
-            .post(`/api/user/reset/${tokenPassword}`)
-            .send({password: '12345'})
+            .put(`/api/user/reset`)
+            .send({password: '12345', token: tokenPassword})
             .end((err,res)=>{
-                res.should.have.status(201)
+                res.should.have.status(200)
                 res.body.should.have.property('success').equal(true)
                 res.body.should.have.property('message').equal('Password successfully updated!')
                 done()
