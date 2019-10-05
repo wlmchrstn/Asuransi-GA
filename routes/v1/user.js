@@ -16,7 +16,7 @@ router.get('/show', isAuthenticated, show)
 router.put('/update', isAuthenticated, update)
 router.delete('/deleteAdmin/:id', isAuthenticated, superPermission, deleteUser)
 router.get('/selectAdmin/:id', isAuthenticated, superPermission, selectUser)
-router.post('/upload', isAuthenticated, upload.single('image'), uploadImage)
+router.put('/upload', isAuthenticated, upload.single('image'), uploadImage)
 router.get('/showAdmin/', isAuthenticated, superPermission, showAdmin)
 router.post('/reset-password', sendResetPassword);
 router.put('/reset', changePassword);

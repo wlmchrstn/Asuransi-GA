@@ -300,7 +300,7 @@ module.exports = {
             var decoded = await jwt.verify(token, process.env.SECRET_KEY);
 
             await User.updateOne({_id: decoded._id},{password: pwd})
-            res.status(201).json(success('Password successfully updated!'))
+            res.status(200).json(success('Password successfully updated!'))
 
         }
         catch(err){
