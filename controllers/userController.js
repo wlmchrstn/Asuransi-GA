@@ -112,7 +112,7 @@ module.exports = {
             var from             = 'AGA@insurance.com'
             var subject          = 'Email verification in AGA';
 
-            var link             = "http://"+req.get('host')+"/apix/user/verify/"+token;
+            var link             = "http://"+req.get('host')+"/api/user/verify/"+token;
             var html             = 'Plese click link bellow, if you register at aga_insurance.com<br>';
                 html            += '<br><strong><a href='+link+'>'+"Verify Email"+'</a></strong>';
                 html            += '<br><br>Thanks';
@@ -143,8 +143,8 @@ module.exports = {
             if(Date.now()>users.expToken){
                 return res.status(400).json(error('Token expired, please resend email confirm', err.message, 400))
             }
-            let user = await User.findOneAndUpdate({token: req.params.token}, {isVerified: true})
-            res.status(200).json(success("email verified success", user))
+            await User.findOneAndUpdate({token: req.params.token}, {isVerified: true})
+            res.redirect('http://google.com')
             
         }
         catch(err){
