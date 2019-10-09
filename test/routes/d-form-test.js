@@ -49,10 +49,15 @@ describe('FORM OPERATION', ()=> {
         chai.request(server)
             .post('/api/insurance/create')
             .send({
-                title: 'Asuransi Kesehatan',
+                name_insurance: 'Asuransi Kesehatan',
+                type: 'kesehatan',
                 description: 'Asuransi Kesehatan',
+                premi: '200.000 per bulan',
                 price: '15000',
-                isPromo: 0
+                isPromo: 0,
+                time_insurance: 'Sampai usia 90 tahun',
+                range_age: '0 - 70 Tahun',
+                max_person: '5 Orang'
             })
             .set('Authorization', token)
             .end(function(err, res) {
