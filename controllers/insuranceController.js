@@ -1,4 +1,3 @@
-var mongoose = require('mongoose');
 var insurance = require('../models/insurance');
 var { success, error } = require('../helpers/response');
 var multer = require('multer');
@@ -9,11 +8,13 @@ var uploader = multer().single('image');
 exports.createInsurance = async (req, res) => {
 
     var {
-        title, description, image, price, isPromo
+        name_insurance, type, description, image, premi, price, isPromo,
+        time_insurance, range_age, max_person
     } = req.body
 
     var newInsurance = new insurance({
-        title, description, image, price, isPromo
+        name_insurance, type, description, image, premi, price, isPromo,
+        time_insurance, range_age, max_person
     })
 
     newInsurance.save()
