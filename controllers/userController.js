@@ -104,8 +104,8 @@ module.exports = {
                 birthPlace:req.body.birthPlace,
                 birthDate:req.body.birthDate,
                 token: token,
-                expToken: expToken
-
+                expToken: expToken,
+                saldo: req.body.saldo
             })
 
             var to               = req.body.email
