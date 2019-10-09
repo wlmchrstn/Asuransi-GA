@@ -8,7 +8,7 @@ var {permission} = require('../../middlewares/permission')
 
 router.post('/create', auth.isAuthenticated, permission, insuranceController.createInsurance);
 
-router.post('/:id', auth.isAuthenticated, permission, upload.single('image'), insuranceController.uploadphoto);
+router.put('/:id', auth.isAuthenticated, permission, upload.single('image'), insuranceController.uploadphoto);
 
 router.get('/', insuranceController.ShowAllInsurance);
 
