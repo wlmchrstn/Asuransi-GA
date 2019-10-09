@@ -356,7 +356,6 @@ describe ('USER CONTROLLER',()=>{
     })
     
     it("POST /api/user/reset/:token should not change password", done=>{
-        console.log(tokenPassword)
         chai.request(server)
             .put(`/api/user/reset`)
             .send({password: '12345'})
