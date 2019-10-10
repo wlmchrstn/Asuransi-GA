@@ -1,23 +1,53 @@
 const Form = require('../models/formInsurance.js');
+const User = require('../models/user');
+const Insurance = require('../models/insurance');
 const { success, error } = require('../helpers/response.js');
 
 module.exports = {
     async createForm(req, res) {
-        try{
+
+        try {
+
             let userId = req.decoded._id
+
             let form = await Form.create(req.body)
+
             form.users = userId
+
             form.insurances = req.params.insurance
+
             form.save()
+
+            let insurance = await Insurance.findById(req.params.insurance)
+
+            let user = await User.findById(userId)
+
+            if (user.saldo < insurance.price) {
+
+                return res.json(
+                    'Sorry, Your Saldo is not enough'
+                )
+            }
+
+            else {
+
+                let newTopUpsaldo = Number(user.saldo) - Number(insurance.price)
+
+                await User.findByIdAndUpdate(userId,
+                    { saldo: newTopUpsaldo },
+                    { new: true })
+
+            }
+
             res.status(201).json(success('Success to create form!', form))
         }
-        catch(err){
-            res.status(422).json(error('Failed to create form!', err, 422))
+        catch (err) {
+            res.status(422).json(error('Failed to create form!', err.message, 422))
         }
     },
 
     async getUserForm(req, res) {
-        Form.find({users: req.decoded._id})
+        Form.find({ users: req.decoded._id })
             .then(result => {
                 res.status(200).json(success('Here is your list!', result))
             })
@@ -25,7 +55,7 @@ module.exports = {
 
     async deleteForm(req, res) {
         let valid = await Form.findById(req.params.form)
-        if(!valid) return res.status(404).json(error('No form found!', "Form not found!", 404))
+        if (!valid) return res.status(404).json(error('No form found!', "Form not found!", 404))
         userId = req.decoded._id.toString();
         formId = valid.users.toString();
         if (userId !== formId) return res.status(403).json(error('This is not your form!', "-", 403))

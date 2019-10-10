@@ -56,7 +56,7 @@ const formSchema = new mongoose.Schema({
     },
     NPWP: {
         type: String,
-        required: false
+        default: '-'
     },
     address: {
         type: String,
@@ -68,7 +68,7 @@ const formSchema = new mongoose.Schema({
         minlength: 5,
         maxlength: 5   
     },
-    familyCardNumber: {
+    No_KK: {
         type: Number,
         required: true
     },
