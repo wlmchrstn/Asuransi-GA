@@ -25,7 +25,7 @@ module.exports = {
             if (user.saldo < insurance.price) {
 
                 return res.json(
-                    'Sorry, Your Saldo is not enough'
+                    `Sorry ${user.name}, Your Saldo is not enough`
                 )
             }
 
@@ -48,9 +48,46 @@ module.exports = {
 
     async getUserForm(req, res) {
         Form.find({ users: req.decoded._id })
+            .select('-__v')
             .then(result => {
                 res.status(200).json(success('Here is your list!', result))
             })
+    },
+
+    async buyInsurance(req, res) {
+
+        try {
+            
+            let userId = req.decoded._id
+
+            let insurance = await Insurance.findById(req.params.insurance)
+
+            let user = await User.findById(userId)
+
+            if (user.saldo < insurance.price) {
+                return res.json(
+                    `Hai ${user.name}, Your Saldo is Not Enough`
+                )
+            }
+
+            else {
+
+                let newTopUpsaldo = Number(user.saldo) - Number(insurance.price)
+
+                await User.findByIdAndUpdate(userId,
+                    { saldo: newTopUpsaldo },
+                    { new: true })
+
+                res.status(200).json(
+                    success('Insurance is actived', insurance.name_insurance)
+                )
+            }
+
+        }
+        catch{
+
+        }
+
     },
 
     async deleteForm(req, res) {

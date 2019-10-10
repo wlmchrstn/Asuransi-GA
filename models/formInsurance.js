@@ -47,8 +47,7 @@ const formSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        required: true,
-        enum: ['Single', 'Married', 'Other']
+        required: true
     },
     phone: {
         type: String,
@@ -75,6 +74,11 @@ const formSchema = new mongoose.Schema({
     email: {
         type: String,
         required: false
+    },
+    status_pembayaran: {
+        type: String,
+        enum: ['ACTIVE', 'PENDING', 'INACTIVE'],
+        default: 'PENDING'
     }
 })
 
