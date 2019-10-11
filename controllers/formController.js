@@ -18,27 +18,6 @@ module.exports = {
 
             form.save()
 
-            let insurance = await Insurance.findById(req.params.insurance)
-
-            let user = await User.findById(userId)
-
-            if (user.saldo < insurance.price) {
-
-                return res.json(
-                    `Sorry ${user.name}, Your Saldo is not enough`
-                )
-            }
-
-            else {
-
-                let newTopUpsaldo = Number(user.saldo) - Number(insurance.price)
-
-                await User.findByIdAndUpdate(userId,
-                    { saldo: newTopUpsaldo },
-                    { new: true })
-
-            }
-
             res.status(201).json(success('Success to create form!', form))
         }
         catch (err) {
@@ -86,7 +65,7 @@ module.exports = {
 
                 await Form.findByIdAndUpdate(req.params.form,
                     {
-                        status: "ACTIVE"
+                        status_pembayaran: "ACTIVE"
                     },
                     {
                         new: true
@@ -116,3 +95,4 @@ module.exports = {
             })
     }
 }
+
