@@ -3,15 +3,28 @@ const User = require('../models/user');
 const Insurance = require('../models/insurance');
 const { success, error } = require('../helpers/response.js');
 const schedule = require('node-schedule')
+const funcHelper = require('../helpers/funcHelper')
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-let cronJob = schedule.scheduleJob('5 * *', function(){
-    Form.find({})
+let cronJob = schedule.scheduleJob('5 * * * *', function(){
+    Form.find({status_pembayaran: 'ACTIVE'})
+        .populate('users')
         .then(result => {
             result.forEach(i => {
+     
                 let tanggal = i.tanggal_pembayaran.getDate()
                 let date = Date.now()
                 let today = date.getDate()
                 if(tanggal == today){
+
+                    var to               = i.users.email
+                    var from             = 'AGA@insurance.com'
+                    var subject          = 'Insurance is about to expired';
+        
+                    var html             = 'Your insurance is about to expired, please pay it before 7 days<br>';
+                        
+                    funcHelper.mail(to, from, subject, html)
                     
                 }
             })
