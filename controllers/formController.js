@@ -2,6 +2,21 @@ const Form = require('../models/formInsurance.js');
 const User = require('../models/user');
 const Insurance = require('../models/insurance');
 const { success, error } = require('../helpers/response.js');
+const schedule = require('node-schedule')
+
+let cronJob = schedule.scheduleJob('5 * *', function(){
+    Form.find({})
+        .then(result => {
+            result.forEach(i => {
+                let tanggal = i.tanggal_pembayaran.getDate()
+                let date = Date.now()
+                let today = date.getDate()
+                if(tanggal == today){
+                    
+                }
+            })
+        })
+})
 
 module.exports = {
     async createForm(req, res) {
@@ -84,9 +99,14 @@ module.exports = {
                     { saldo: newTopUpsaldo },
                     { new: true })
 
+                let date = new Date.now()
+                date.setDate(5)
+                date.save()
+
                 await Form.findByIdAndUpdate(req.params.form,
                     {
-                        status: "ACTIVE"
+                        status_pembayaran: "ACTIVE",
+                        tanggal_pembayaran: date
                     },
                     {
                         new: true
@@ -104,6 +124,45 @@ module.exports = {
 
     },
 
+    async payInsurance(req, res) {
+        try {
+            let userId = req.decoded._id
+            let user = await User.findById(userId)
+            let auth = form.users.toString()
+            let form = await Form.findById(req.params.form)
+            insuranceId = form.insurances.toString()
+            let insurance = await Insurance.findById(insuranceId)
+            
+            saldo = user.saldo
+            price = insurance.price
+
+            if(userId !== auth) {
+                return res.status(403).json(error('This is not your form', "-", 403))
+            }
+
+            if (saldo < price) {
+                return res.json(
+                    `Hai ${user.name}, Your Saldo is Not Enough`
+                )
+            }
+            else {
+                let newTopUpsaldo = Number(saldo) - Number(price)
+                await User.findByIdAndUpdate(userId,
+                    { saldo: newTopUpsaldo },
+                    { new: true })
+                
+                form.tanggal_pembayaran.setMonth((month + 1))
+                form.save()
+                res.status(200).json(
+                    success('Payment successful', insurance.name_insurance)
+                )
+            }
+        }
+        catch(err){
+            return res.status(406).json(error("Failed to pay insurance", err.message, 406))
+        }
+    },
+    
     async deleteForm(req, res) {
         let valid = await Form.findById(req.params.form)
         if (!valid) return res.status(404).json(error('No form found!', "Form not found!", 404))
