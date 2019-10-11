@@ -47,8 +47,7 @@ const formSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        required: true,
-        enum: ['Single', 'Married', 'Other']
+        required: true
     },
     phone: {
         type: String,
@@ -56,7 +55,7 @@ const formSchema = new mongoose.Schema({
     },
     NPWP: {
         type: String,
-        required: false
+        default: '-'
     },
     address: {
         type: String,
@@ -68,13 +67,18 @@ const formSchema = new mongoose.Schema({
         minlength: 5,
         maxlength: 5   
     },
-    familyCardNumber: {
+    No_KK: {
         type: Number,
         required: true
     },
     email: {
         type: String,
         required: false
+    },
+    status_pembayaran: {
+        type: String,
+        enum: ['ACTIVE', 'PENDING', 'INACTIVE'],
+        default: 'PENDING'
     }
 })
 

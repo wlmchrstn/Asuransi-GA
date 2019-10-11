@@ -62,6 +62,10 @@ const userSchema = new mongoose.Schema({
     expToken: {
         type: Date,
         required: false
+    },
+    saldo: {
+        type: Number,
+        default: 0
     }
 })
 
