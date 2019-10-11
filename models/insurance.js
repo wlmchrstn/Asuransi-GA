@@ -41,8 +41,7 @@ const insuranceSchema = mongoose.Schema({
         required: true
     },
     benefit: {
-        type: String,
-        required: true
+        type: String
     },
     currency: {
         type: String,
