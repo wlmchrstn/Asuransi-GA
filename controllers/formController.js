@@ -60,11 +60,17 @@ module.exports = {
             
             let userId = req.decoded._id
 
-            let insurance = await Insurance.findById(req.params.insurance)
+            let form = await Form.findById(req.params.form)
+
+            insuranceId = form.insurances.toString()
+
+            let insurance = await Insurance.findById(insuranceId)
 
             let user = await User.findById(userId)
 
-            if (user.saldo < insurance.price) {
+            saldo = user.saldo
+
+            if (saldo < insurance.price) {
                 return res.json(
                     `Hai ${user.name}, Your Saldo is Not Enough`
                 )
@@ -72,11 +78,19 @@ module.exports = {
 
             else {
 
-                let newTopUpsaldo = Number(user.saldo) - Number(insurance.price)
+                let newTopUpsaldo = Number(saldo) - Number(insurance.price)
 
                 await User.findByIdAndUpdate(userId,
                     { saldo: newTopUpsaldo },
                     { new: true })
+
+                await Form.findByIdAndUpdate(req.params.form,
+                    {
+                        status: "ACTIVE"
+                    },
+                    {
+                        new: true
+                    })
 
                 res.status(200).json(
                     success('Insurance is actived', insurance.name_insurance)
@@ -84,8 +98,8 @@ module.exports = {
             }
 
         }
-        catch{
-
+        catch(err){
+            return res.status(406).json(error("Failed to purchase insurance", err.message, 406))
         }
 
     },

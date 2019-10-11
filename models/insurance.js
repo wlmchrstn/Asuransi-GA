@@ -39,7 +39,15 @@ const insuranceSchema = mongoose.Schema({
     max_person: {
         type: String,
         required: true
-    } 
+    },
+    benefit: {
+        type: String,
+        required: true
+    },
+    currency: {
+        type: String,
+        default: "IDR"
+    }
 })
 
 var insurance = mongoose.model('insurance', insuranceSchema)

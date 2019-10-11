@@ -64,7 +64,8 @@ const userSchema = new mongoose.Schema({
         required: false
     },
     saldo: {
-        type: Number
+        type: Number,
+        default: 0
     }
 })
 
