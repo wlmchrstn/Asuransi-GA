@@ -9,12 +9,12 @@ exports.createInsurance = async (req, res) => {
 
     var {
         name_insurance, type, description, image, premi, price, isPromo,
-        time_insurance, range_age, max_person
+        time_insurance, range_age, max_person, benefit, currency
     } = req.body
 
     var newInsurance = new insurance({
         name_insurance, type, description, image, premi, price, isPromo,
-        time_insurance, range_age, max_person
+        time_insurance, range_age, max_person, benefit, currency
     })
 
     newInsurance.save()
