@@ -91,9 +91,8 @@ module.exports = {
                     { saldo: newTopUpsaldo },
                     { new: true })
 
-                let date = new Date.now()
+                let date = new Date()
                 date.setDate(5)
-                date.save()
 
                 await Form.findByIdAndUpdate(req.params.form,
                     {

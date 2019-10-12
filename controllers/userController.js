@@ -224,6 +224,8 @@ module.exports = {
         if(req.body.password){
             let pwd = await bcrypt.hashSync(req.body.password, saltRounds)
             req.body.password = pwd
+        }else if(!req.body.password){
+            return res.status(400).json(error("Failed to update! Password can't be blank!"))
         }
         if(req.body.name == "" || req.body.name == null){
             return res.status(400).json(error("Failed to updated! Name can't be blank!", "-", 400))

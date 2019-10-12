@@ -5,11 +5,6 @@ const insuranceSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    type: {
-        type: String,
-        enum: ['kesehatan', 'proteksi Jiwa', 'penyakit', 'tabungan'],
-        required: true
-    },
     description: {
         type: String,
         required: true
@@ -33,10 +28,6 @@ const insuranceSchema = mongoose.Schema({
         required: true
     },
     range_age: {
-        type: String,
-        required: true
-    },
-    max_person: {
         type: String,
         required: true
     },
