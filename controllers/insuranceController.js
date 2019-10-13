@@ -62,8 +62,12 @@ exports.ShowOneInsurance = async (req, res) => {
 
 exports.updateInsurance = async (req, res) => {
 
+    if(req.body.isPromo == null || req.body.isPromo == "") {
+        return res.status(400).json(error("Update Insurance Failed", "-", 400))
+    }
+    
     insurance.findByIdAndUpdate({ _id: req.params.id },
-        { $set: req.body }, { new: true })
+        { isPromo: req.body.isPromo }, { new: true })
         .then((insurance) => {
             return res.status(201).json(
                 success('Successfully updated!', insurance)

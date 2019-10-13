@@ -14,7 +14,7 @@ router.get('/', insuranceController.ShowAllInsurance);
 
 router.get('/detail/:id', insuranceController.ShowOneInsurance);
 
-router.put('/:id', auth.isAuthenticated, permission, insuranceController.updateInsurance);
+router.put('/update/:id', auth.isAuthenticated, permission, insuranceController.updateInsurance);
 
 router.delete('/delete/:id', insuranceController.deleteInsurance);
 
