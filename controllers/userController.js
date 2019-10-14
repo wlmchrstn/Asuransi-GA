@@ -246,6 +246,32 @@ module.exports = {
         }
     },
 
+    async updateSaldo(req, res) {
+        try{         
+            console.log(req.params.id)
+            
+            let findUser = await User.findById(req.params.id)
+
+            console.log(findUser.saldo)
+
+            let newSaldo = Number(findUser.saldo) + Number(req.body.saldo)
+
+            let user = await User.findByIdAndUpdate(req.params.id, {
+                $set: {saldo: newSaldo}
+            }, {new: true})
+
+            return res.status(201).json(
+                success('Updated Saldo succes', user)
+            )
+        }
+        catch{
+            return res.status(400).json(
+                error('Updated saldo failed', err.message, 400)
+            )
+        }
+
+    },
+
     async deleteUser(req, res){
         try{
             let user = await User.findByIdAndDelete(req.params.id)
