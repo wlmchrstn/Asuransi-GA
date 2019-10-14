@@ -62,8 +62,17 @@ exports.ShowOneInsurance = async (req, res) => {
 
 exports.updateInsurance = async (req, res) => {
 
+    if(req.body.isPromo == null || req.body.isPromo == "") {
+        return res.status(400).json(error("Update Insurance Failed", "-", 400))
+    }
+
+    if(req.body.price == null || req.body.price == "") {
+        return res.status(400).json(error("Update Insurance Failed", "-", 400))
+    }
+    
     insurance.findByIdAndUpdate({ _id: req.params.id },
-        { $set: req.body }, { new: true })
+        { isPromo: req.body.isPromo,
+        price: req.body.price }, { new: true })
         .then((insurance) => {
             return res.status(201).json(
                 success('Successfully updated!', insurance)
@@ -71,7 +80,7 @@ exports.updateInsurance = async (req, res) => {
         })
         .catch(err => {
             res.status(406).json(
-                error('Update Insurance Failed', err.message, 406)
+                error('Update Insurance Failed', "-", 406)
             )
         })
 }

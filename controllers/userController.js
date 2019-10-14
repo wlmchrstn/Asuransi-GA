@@ -224,9 +224,21 @@ module.exports = {
         if(req.body.password){
             let pwd = await bcrypt.hashSync(req.body.password, saltRounds)
             req.body.password = pwd
+        }else if(!req.body.password){
+            return res.status(400).json(error("Failed to update! Password can't be blank!"))
+        }
+        if(req.body.name == "" || req.body.name == null){
+            return res.status(400).json(error("Failed to updated! Name can't be blank!", "-", 400))
         }
         try{
-            let user = await User.findByIdAndUpdate(req.decoded._id, req.body)
+            let user = await User.findByIdAndUpdate(req.decoded._id, {
+                name: req.body.name,
+                password: req.body.password,
+                phone: req.body.phone,
+                address: req.body.address,
+                birthPlace: req.body.birthPlace,
+                birthDate: req.body.birthDate,
+            })
             res.status(200).json(success('Update user success', user))
         }
         catch(err){
