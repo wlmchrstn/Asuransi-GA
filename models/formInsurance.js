@@ -61,6 +61,9 @@ const formSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    city: {
+        type: String
+    },
     postalCode: {
         type: Number,
         required: true,
@@ -74,6 +77,12 @@ const formSchema = new mongoose.Schema({
     email: {
         type: String,
         required: false
+    },
+    job: {
+        type: String
+    },
+    position: {
+        type: String
     },
     status_pembayaran: {
         type: String,
