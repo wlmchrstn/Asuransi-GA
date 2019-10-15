@@ -25,21 +25,8 @@ const formSchema = new mongoose.Schema({
         enum: ['MALE', 'FEMALE']
     },
     birthDate: {
-        type: Number,
-        required: true,
-        min: 1,
-        max: 31
-    },
-    birthMonth: {
-        type: String,
-        required: true,
-        enum: ['JANUARY','FEBRUARY','MARCH','APRIL','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER']
-    },
-    birthYear: {
-        type: Number,
-        required: true,
-        min: 1901,
-        max: 2019
+        type: Date,
+        required: true
     },
     birthPlace: {
         type: String,
