@@ -26,6 +26,7 @@ module.exports = {
         let hash = bcrypt.hashSync('12345', saltRounds)
 
         let data = await User.create({
+
             username: 'super_admin',
             email: 'super@gmail.com',
             name: 'super admin',
@@ -41,11 +42,14 @@ module.exports = {
         })
 
         let result = {
+        
             username: data.username,
             name: data.name,
             gender: data.gender
+
         }    
         res.status(201).json(success("Super admin created!", result))
+        
     },
 
     async createAdmin(req, res){
@@ -54,7 +58,6 @@ module.exports = {
             let pwd = bcrypt.hashSync(req.body.password, saltRounds)
 
             let admin = await User.create({
-                NIK: req.body.NIK,
                 username:req.body.username,
                 email:req.body.email,
                 name:req.body.name,
@@ -73,6 +76,7 @@ module.exports = {
                 username: admin.username,
                 email: admin.email
             }
+
             res.status(201).json(success("Admin created!", result))   
         }
         catch(err){
@@ -129,6 +133,8 @@ module.exports = {
         }
     },
 
+    
+
     async verify(req, res){
         try {
             let token = req.params.token;
@@ -139,39 +145,11 @@ module.exports = {
             }
             await User.findOneAndUpdate({token: req.params.token}, {isVerified: true})
             res.redirect('http://google.com')
+            
         }
         catch(err){
             res.status(422).json(error("Invalid token", err.message, 422))
         }
-    },
-
-    async uploadImage(req, res){
-
-        var fileUp = req.file
-
-        if (!fileUp) {
-            return res.status(415).json(error('No file received: Unsupported Media Type', req.file, 415))
-        }
-
-        const dUri = new datauri()
-
-        uploader(req, res, err => {
-            var file = dUri.format(`${req.file.originalname}-${Date.now()}`, req.file.buffer);
-            cloudinary.uploader.upload(file.content)
-                .then(data => {
-                    User.findByIdAndUpdate({_id: req.decoded._id},
-                        {$set: {proof: data.secure_url}},
-                        {new: true})
-                        .then((user) => {
-                            return res.status(201).json(
-                                success('Image uploaded!', user)
-                            )
-                        })
-                })   
-                .catch(err => {
-                    res.status(400).json(error('Upload image falied', err, 400));
-                })
-        })
     },
 
     async resendVerify(req, res){
@@ -200,7 +178,9 @@ module.exports = {
                 username: user.username,
                 token: user.token
             }
+
             res.status(201).json(success("Email verification has been send!", result))
+
         }
         catch(err){
             res.status(400).json(error("Incorrect email", err, 400))
@@ -244,52 +224,14 @@ module.exports = {
         if(req.body.password){
             let pwd = await bcrypt.hashSync(req.body.password, saltRounds)
             req.body.password = pwd
-        }else if(!req.body.password){
-            return res.status(400).json(error("Failed to update! Password can't be blank!"))
-        }
-        if(req.body.name == "" || req.body.name == null){
-            return res.status(400).json(error("Failed to updated! Name can't be blank!", "-", 400))
         }
         try{
-            let user = await User.findByIdAndUpdate(req.decoded._id, {
-                name: req.body.name,
-                password: req.body.password,
-                phone: req.body.phone,
-                address: req.body.address,
-                birthPlace: req.body.birthPlace,
-                birthDate: req.body.birthDate,
-            })
+            let user = await User.findByIdAndUpdate(req.decoded._id, req.body)
             res.status(200).json(success('Update user success', user))
         }
         catch(err){
             res.status(400).json(error('Update user failed', err.message, 400))
         }
-    },
-
-    async updateSaldo(req, res) {
-        try{         
-            console.log(req.params.id)
-            
-            let findUser = await User.findById(req.params.id)
-
-            console.log(findUser.saldo)
-
-            let newSaldo = Number(findUser.saldo) + Number(req.body.saldo)
-
-            let user = await User.findByIdAndUpdate(req.params.id, {
-                $set: {saldo: newSaldo}
-            }, {new: true})
-
-            return res.status(201).json(
-                success('Updated Saldo succes', user)
-            )
-        }
-        catch{
-            return res.status(400).json(
-                error('Updated saldo failed', err.message, 400)
-            )
-        }
-
     },
 
     async deleteUser(req, res){
@@ -342,7 +284,6 @@ module.exports = {
         })
 
     },
-
     async sendResetPassword(req, res){
 
         var email = req.body.email;
