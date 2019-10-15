@@ -89,8 +89,8 @@ const formSchema = new mongoose.Schema({
     },
     status_pembayaran: {
         type: String,
-        enum: ['ACTIVE', 'PENDING', 'INACTIVE'],
-        default: 'PENDING'
+        enum: ['active', 'pending', 'inactive'],
+        default: 'pending'
     },
     tanggal_pembayaran: {
         type: Date
