@@ -13,6 +13,11 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+    NIK: {
+        type: String,
+        required: true,
+        unique: true
+    },
     name: {
         type: String,
         required: true
@@ -55,13 +60,9 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    token: {
+    proof: {
         type: String,
-        required: false
-    },
-    expToken: {
-        type: Date,
-        required: false
+        default: "https://res.cloudinary.com/ayumhrn/image/upload/v1569487841/fo1jogrqffevwvulwkyo.png"
     },
     saldo: {
         type: Number,

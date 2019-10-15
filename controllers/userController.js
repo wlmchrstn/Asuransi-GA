@@ -26,7 +26,6 @@ module.exports = {
         let hash = bcrypt.hashSync('12345', saltRounds)
 
         let data = await User.create({
-
             username: 'super_admin',
             email: 'super@gmail.com',
             name: 'super admin',
@@ -42,14 +41,11 @@ module.exports = {
         })
 
         let result = {
-        
             username: data.username,
             name: data.name,
             gender: data.gender
-
         }    
         res.status(201).json(success("Super admin created!", result))
-        
     },
 
     async createAdmin(req, res){
@@ -58,6 +54,7 @@ module.exports = {
             let pwd = bcrypt.hashSync(req.body.password, saltRounds)
 
             let admin = await User.create({
+                NIK: req.body.NIK,
                 username:req.body.username,
                 email:req.body.email,
                 name:req.body.name,
@@ -76,7 +73,6 @@ module.exports = {
                 username: admin.username,
                 email: admin.email
             }
-
             res.status(201).json(success("Admin created!", result))   
         }
         catch(err){
@@ -133,8 +129,6 @@ module.exports = {
         }
     },
 
-    
-
     async verify(req, res){
         try {
             let token = req.params.token;
@@ -145,11 +139,39 @@ module.exports = {
             }
             await User.findOneAndUpdate({token: req.params.token}, {isVerified: true})
             res.redirect('http://google.com')
-            
         }
         catch(err){
             res.status(422).json(error("Invalid token", err.message, 422))
         }
+    },
+
+    async uploadImage(req, res){
+
+        var fileUp = req.file
+
+        if (!fileUp) {
+            return res.status(415).json(error('No file received: Unsupported Media Type', req.file, 415))
+        }
+
+        const dUri = new datauri()
+
+        uploader(req, res, err => {
+            var file = dUri.format(`${req.file.originalname}-${Date.now()}`, req.file.buffer);
+            cloudinary.uploader.upload(file.content)
+                .then(data => {
+                    User.findByIdAndUpdate({_id: req.decoded._id},
+                        {$set: {proof: data.secure_url}},
+                        {new: true})
+                        .then((user) => {
+                            return res.status(201).json(
+                                success('Image uploaded!', user)
+                            )
+                        })
+                })   
+                .catch(err => {
+                    res.status(400).json(error('Upload image falied', err, 400));
+                })
+        })
     },
 
     async resendVerify(req, res){
@@ -178,9 +200,7 @@ module.exports = {
                 username: user.username,
                 token: user.token
             }
-
             res.status(201).json(success("Email verification has been send!", result))
-
         }
         catch(err){
             res.status(400).json(error("Incorrect email", err, 400))
@@ -322,6 +342,7 @@ module.exports = {
         })
 
     },
+
     async sendResetPassword(req, res){
 
         var email = req.body.email;
