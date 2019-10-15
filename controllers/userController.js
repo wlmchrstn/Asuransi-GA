@@ -248,11 +248,8 @@ module.exports = {
 
     async updateSaldo(req, res) {
         try{         
-            console.log(req.params.id)
-            
-            let findUser = await User.findById(req.params.id)
 
-            console.log(findUser.saldo)
+            let findUser = await User.findById(req.params.id)
 
             let newSaldo = Number(findUser.saldo) + Number(req.body.saldo)
 

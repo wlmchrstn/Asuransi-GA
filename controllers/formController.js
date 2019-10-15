@@ -8,7 +8,7 @@ const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 let cronJob = schedule.scheduleJob('5 * * * *', function(){
-    Form.find({status_pembayaran: 'ACTIVE'})
+    Form.find({status_pembayaran: 'active'})
         .populate('users')
         .then(result => {
             result.forEach(i => {
@@ -96,7 +96,7 @@ module.exports = {
 
                 await Form.findByIdAndUpdate(req.params.form,
                     {
-                        status_pembayaran: "ACTIVE",
+                        status_pembayaran: "active",
                         tanggal_pembayaran: date
                     },
                     {
