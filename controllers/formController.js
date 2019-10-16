@@ -61,6 +61,19 @@ module.exports = {
             })
     },
 
+    async getdetailForm(req, res) {
+        
+        let users = req.decoded._id
+
+        let form = req.params.form
+
+        Form.find(users, form)
+            .select('-__v')
+            .then(result => {
+                res.status(200).json(success('Here is your form!', result))
+            })
+    },
+
     async buyInsurance(req, res) {
 
         try {
