@@ -52,14 +52,14 @@ describe('Insurance', function() {
             .post('/api/insurance/create')
             .send({
                 name_insurance: 'Asuransi Kesehatan',
-                type: 'kesehatan',
                 description: 'Asuransi Kesehatan',
                 premi: '200.000 per bulan',
                 price: '15000',
                 isPromo: 0,
                 time_insurance: 'Sampai usia 90 tahun',
                 range_age: '0 - 70 Tahun',
-                max_person: '5 Orang'
+                benefit: 'Murah dan cepat',
+                currency: 'IDR'
             })
             .set('Authorization', token)
             .end(function(err, res) {

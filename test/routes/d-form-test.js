@@ -50,14 +50,14 @@ describe('FORM OPERATION', ()=> {
             .post('/api/insurance/create')
             .send({
                 name_insurance: 'Asuransi Kesehatan',
-                type: 'kesehatan',
                 description: 'Asuransi Kesehatan',
                 premi: '200.000 per bulan',
                 price: '15000',
                 isPromo: 0,
                 time_insurance: 'Sampai usia 90 tahun',
                 range_age: '0 - 70 Tahun',
-                max_person: '5 Orang'
+                benefit: 'Murah dan cepat',
+                currency: 'IDR'
             })
             .set('Authorization', token)
             .end(function(err, res) {
@@ -154,17 +154,18 @@ describe('FORM OPERATION', ()=> {
                 name: "william",
                 NIK: 123456789,
                 gender: "MALE",
-                birthDate: 27,
-                birthMonth: "APRIL",
-                birthYear: 2002,
+                birthDate: 2002-04-27,
                 birthPlace: "DUMAI",
                 status: "Single",
                 phone: 082278001173,
                 NPWP: "ABCDEFGH",
                 address: "BATAM",
+                city: "BATAM",
                 postalCode: 25122,
-                familyCardNumber: 1472583691,
-                email: "wlmchrstn@gmail.com"
+                No_KK: 1472583691,
+                email: "wlmchrstn@gmail.com",
+                job: "Wiraswata",
+                position: "Office"
             })
             .end((err, res)=> {
                 formId = res.body.result._id.toString()
