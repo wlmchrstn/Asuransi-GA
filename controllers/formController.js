@@ -62,15 +62,11 @@ module.exports = {
     },
 
     async getdetailForm(req, res) {
-        
-        let users = req.decoded._id
 
-        let form = req.params.form
-
-        Form.find(users, form)
+        Form.find({users: req.decoded._id, _id: req.params._id})
             .select('-__v')
-            .then(result => {
-                res.status(200).json(success('Here is your form!', result))
+            .then((form) => {
+                res.status(200).json(success('Here is your form!', form))
             })
     },
 
