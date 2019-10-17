@@ -239,7 +239,7 @@ module.exports = {
         }
     },
 
-    async updatePassowrd(req, res){
+    async updatePassword(req, res){
         if(req.body.password){
             let pwd = await bcrypt.hashSync(req.body.password, saltRounds)
             req.body.password = pwd
@@ -269,7 +269,7 @@ module.exports = {
             }, {new: true})
 
             return res.status(201).json(
-                success('Updated Saldo succes', user)
+                success('Updated saldo success', user)
             )
         }
         catch{
