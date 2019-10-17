@@ -44,10 +44,6 @@ mongoose.connect(dbConnection)
   })
 mongoose.Promise = Promise;
 
-setInterval(function() {
-  http.get('https://asuransi-glints-academy.herokuapp.com/api')
-}, 300000)
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -92,5 +88,9 @@ app.listen(port, () => {
   console.log(`Server Started at ${Date()}!`)
   console.log(`Listening on port ${port} in database ${env}!`)
 })
+
+setInterval(function() {
+  http.get('https://asuransi-glints-academy.herokuapp.com/api')
+}, 300000)
 
 module.exports = app;
