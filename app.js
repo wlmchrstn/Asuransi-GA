@@ -5,6 +5,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors');
+var http = require('http');
 
 var indexRouter = require('./routes/index');
 var userRouter = require('./routes/v1/user');
@@ -42,6 +43,10 @@ mongoose.connect(dbConnection)
     console.log('Database successfully connect!')
   })
 mongoose.Promise = Promise;
+
+setInterval(function() {
+  http.get('https://asuransi-glints-academy.herokuapp.com/api')
+}, 300000)
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
