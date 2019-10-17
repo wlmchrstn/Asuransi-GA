@@ -221,17 +221,63 @@ module.exports = {
 
     async update(req, res){
         /* istanbul ignore if */
-        if(req.body.password){
-            let pwd = await bcrypt.hashSync(req.body.password, saltRounds)
-            req.body.password = pwd
+        if(req.body.name == "" || req.body.name == null){
+            return res.status(400).json(error("Failed to updated! Name can't be blank!", "-", 400))
         }
         try{
-            let user = await User.findByIdAndUpdate(req.decoded._id, req.body)
+            let user = await User.findByIdAndUpdate(req.decoded._id, {
+                name: req.body.name,
+                phone: req.body.phone,
+                address: req.body.address,
+                birthPlace: req.body.birthPlace,
+                birthDate: req.body.birthDate,
+            })
             res.status(200).json(success('Update user success', user))
         }
         catch(err){
             res.status(400).json(error('Update user failed', err.message, 400))
         }
+    },
+
+    async updatePassword(req, res){
+        if(req.body.password){
+            let pwd = await bcrypt.hashSync(req.body.password, saltRounds)
+            req.body.password = pwd
+        }else if(!req.body.password){
+            return res.status(400).json(error("Failed to update! Password can't be blank!"))
+        }
+        try{
+            let user = await User.findByIdAndUpdate(req.decoded._id, {
+                password: req.body.password
+            }, {new: true})
+            res.status(200).json(success('Update user success', user))
+        }
+        catch(err){
+            res.status(400).json(error('Update user failed', err.message, 400))
+        }
+    },
+
+   async updateSaldo(req, res) {
+        try{         
+
+            let findUser = await User.findById(req.params.id)
+
+            let newSaldo = Number(findUser.saldo) + Number(req.body.saldo)
+
+            let user = await User.findByIdAndUpdate(req.params.id, {
+                $set: {saldo: newSaldo}
+            }, {new: true})
+
+            return res.status(201).json(
+                success('Updated saldo success', user)
+            )
+        }
+        catch{
+            return res.status(400).json(
+                error('Updated saldo failed', err.message, 400)
+            )
+        }
+
     },
 
     async deleteUser(req, res){

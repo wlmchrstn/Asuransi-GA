@@ -5,6 +5,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors');
+var http = require('http');
 
 var indexRouter = require('./routes/index');
 var userRouter = require('./routes/v1/user');
@@ -12,6 +13,7 @@ var insuranceRouter = require('./routes/v1/insurance');
 var promoRouter = require('./routes/v1/promo');
 var commentRouter = require('./routes/v1/comment');
 var formRouter = require('./routes/v1/form');
+var saldoRouter = require('./routes/v1/saldo');
 
 var app = express();
 
@@ -42,6 +44,10 @@ mongoose.connect(dbConnection)
   })
 mongoose.Promise = Promise;
 
+setInterval(function() {
+  http.get('https://asuransi-glints-academy.herokuapp.com/api')
+}, 300000)
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -59,6 +65,7 @@ app.use('/api/insurance', insuranceRouter);
 app.use('/api/promo', promoRouter);
 app.use('/api/comment', commentRouter);
 app.use('/api/form', formRouter);
+app.use('/api/saldo', saldoRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

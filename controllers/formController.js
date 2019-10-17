@@ -8,7 +8,7 @@ const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 let cronJob = schedule.scheduleJob('5 * * * *', function(){
-    Form.find({status_pembayaran: 'ACTIVE'})
+    Form.find({status_pembayaran: 'active'})
         .populate('users')
         .then(result => {
             result.forEach(i => {
@@ -61,6 +61,19 @@ module.exports = {
             })
     },
 
+    async getdetailForm(req, res) {
+        
+        let users = req.decoded._id
+
+        let form = req.params.form
+
+        Form.find(users, form)
+            .select('-__v')
+            .then(result => {
+                res.status(200).json(success('Here is your form!', result))
+            })
+    },
+
     async buyInsurance(req, res) {
 
         try {
@@ -96,7 +109,7 @@ module.exports = {
 
                 await Form.findByIdAndUpdate(req.params.form,
                     {
-                        status_pembayaran: "ACTIVE",
+                        status_pembayaran: "active",
                         tanggal_pembayaran: date
                     },
                     {
