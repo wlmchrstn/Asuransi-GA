@@ -17,7 +17,7 @@ const formSchema = new mongoose.Schema({
     },
     NIK: {
         type: Number,
-        required: true
+        required: true,
     },
     gender: {
         type: String,
@@ -54,9 +54,7 @@ const formSchema = new mongoose.Schema({
     },
     postalCode: {
         type: Number,
-        required: true,
-        minlength: 5,
-        maxlength: 5   
+        required: true
     },
     No_KK: {
         type: Number,

@@ -44,6 +44,18 @@ module.exports = {
 
             form.insurances = req.params.insurance
 
+            if (req.body.NIK.length !== 16) {
+                return res.status(406).json(
+                    error('Must have 16 characters', "", 406)
+                )
+            }
+
+            if (req.body.No_KK.length !== 16) {
+                return res.status(406).json(
+                    error('Must have 16 characters', "", 406)
+                )
+            }
+
             form.save()
 
             res.status(201).json(success('Success to create form!', form))
