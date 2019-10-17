@@ -90,7 +90,7 @@ app.listen(port, () => {
 })
 
 setInterval(function() {
-  http.get('https://asuransi-glints-academy.herokuapp.com/api')
+  http.get('http://asuransi-glints-academy.herokuapp.com/api')
 }, 300000)
 
 module.exports = app;
