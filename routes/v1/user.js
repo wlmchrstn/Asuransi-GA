@@ -3,7 +3,7 @@ const {isAuthenticated}= require('../../middlewares/auth');
 const {permission, superPermission} = require('../../middlewares/permission');
 const upload = require('../../middlewares/multer');
 const {createSuperAdmin, createAdmin, createClient, login, selectUser,
-        verify, resendVerify, show, update, updatePassowrd, updateSaldo, deleteUser,
+        verify, resendVerify, show, update, updatePassword, updateSaldo, deleteUser,
         uploadImage, showAdmin, sendResetPassword, changePassword} = require('../../controllers/userController')
 
 router.post('/super', createSuperAdmin)
