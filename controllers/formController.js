@@ -7,8 +7,8 @@ const funcHelper = require('../helpers/funcHelper')
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-let cronJob = schedule.scheduleJob('5 * * * * ', function () {
-    Form.find({ status_pembayaran: 'active' })
+let cronJob = schedule.scheduleJob('5 * * *', function(){
+    Form.find({status_pembayaran: 'active'})
         .populate('users')
         .then(result => {
             result.forEach(i => {
@@ -26,6 +26,23 @@ let cronJob = schedule.scheduleJob('5 * * * * ', function () {
 
                     funcHelper.mail(to, from, subject, html)
 
+                }
+            })
+        })
+})
+
+let inactive = schedule.scheduleJob('59 59 23 * * *', function(){
+    Form.find({status_pembayaran: 'active'})
+        .populate('users')
+        .then(result => {
+            result.forEach(i => {
+     
+                let tanggal = i.tanggal_pembayaran.getDate()
+                let date = Date.now()
+                let today = date.getDate()
+                if(tanggal == today){
+                    i.status_pembayaran = "INACTIVE"
+                    i.save()    
                 }
             })
         })
