@@ -7,25 +7,25 @@ const funcHelper = require('../helpers/funcHelper')
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-let cronJob = schedule.scheduleJob('5 * * * *', function(){
-    Form.find({status_pembayaran: 'active'})
+let cronJob = schedule.scheduleJob('5 * * * *', function () {
+    Form.find({ status_pembayaran: 'active' })
         .populate('users')
         .then(result => {
             result.forEach(i => {
-     
+
                 let tanggal = i.tanggal_pembayaran.getDate()
                 let date = Date.now()
                 let today = date.getDate()
-                if(tanggal == today){
+                if (tanggal == today) {
 
-                    var to               = i.users.email
-                    var from             = 'AGA@insurance.com'
-                    var subject          = 'Insurance is about to expired';
-        
-                    var html             = 'Your insurance is about to expired, please pay it before 7 days<br>';
-                        
+                    var to = i.users.email
+                    var from = 'AGA@insurance.com'
+                    var subject = 'Insurance is about to expired';
+
+                    var html = 'Your insurance is about to expired, please pay it before 7 days<br>';
+
                     funcHelper.mail(to, from, subject, html)
-                    
+
                 }
             })
         })
@@ -46,13 +46,13 @@ module.exports = {
 
             if (req.body.NIK.length !== 16) {
                 return res.status(406).json(
-                    error('Must have 16 characters', "", 406)
+                    error('NIK Must have 16 characters', "-", 406)
                 )
             }
 
             if (req.body.No_KK.length !== 16) {
                 return res.status(406).json(
-                    error('Must have 16 characters', "", 406)
+                    error('Nomor KK Must have 16 characters', "-", 406)
                 )
             }
 
@@ -66,7 +66,9 @@ module.exports = {
     },
 
     async getUserForm(req, res) {
+
         Form.find({ users: req.decoded._id })
+            .populate({ path: 'insurances', select: 'name_insurance' })
             .select('-__v')
             .then(result => {
                 res.status(200).json(success('Here is your list!', result))
@@ -75,7 +77,8 @@ module.exports = {
 
     async getdetailForm(req, res) {
 
-        Form.find({users: req.decoded._id, _id: req.params._id})
+        Form.find({ users: req.decoded._id, _id: req.params._id })
+            .populate({ path: 'insurances', select: 'name_insurance' })
             .select('-__v')
             .then((form) => {
                 res.status(200).json(success('Here is your form!', form))
@@ -85,7 +88,7 @@ module.exports = {
     async buyInsurance(req, res) {
 
         try {
-            
+
             let userId = req.decoded._id
 
             let form = await Form.findById(req.params.form)
@@ -130,7 +133,7 @@ module.exports = {
             }
 
         }
-        catch(err){
+        catch (err) {
             return res.status(406).json(error("Failed to purchase insurance", err.message, 406))
         }
 
@@ -144,11 +147,11 @@ module.exports = {
             let form = await Form.findById(req.params.form)
             insuranceId = form.insurances.toString()
             let insurance = await Insurance.findById(insuranceId)
-            
+
             saldo = user.saldo
             price = insurance.price
 
-            if(userId !== auth) {
+            if (userId !== auth) {
                 return res.status(403).json(error('This is not your form', "-", 403))
             }
 
@@ -162,7 +165,7 @@ module.exports = {
                 await User.findByIdAndUpdate(userId,
                     { saldo: newTopUpsaldo },
                     { new: true })
-                
+
                 form.tanggal_pembayaran.setMonth((month + 1))
                 form.save()
                 res.status(200).json(
@@ -170,11 +173,11 @@ module.exports = {
                 )
             }
         }
-        catch(err){
+        catch (err) {
             return res.status(406).json(error("Failed to pay insurance", err.message, 406))
         }
     },
-    
+
     async deleteForm(req, res) {
         let valid = await Form.findById(req.params.form)
         if (!valid) return res.status(404).json(error('No form found!', "Form not found!", 404))

@@ -4,7 +4,7 @@ require('mongoose-type-email');
 const formSchema = new mongoose.Schema({
     insurances: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Insurance'
+        ref: 'insurance'
     },
     users: {
         type: mongoose.Schema.Types.ObjectId,
@@ -34,7 +34,8 @@ const formSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        required: true
+        required: true,
+        enum: ['Single', 'Married']
     },
     phone: {
         type: String,
