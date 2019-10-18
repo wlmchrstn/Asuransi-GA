@@ -7,14 +7,14 @@ const funcHelper = require('../helpers/funcHelper')
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-let cronJob = schedule.scheduleJob('5 * * * *', function () {
+let cronJob = schedule.scheduleJob('5 * * * * ', function () {
     Form.find({ status_pembayaran: 'active' })
         .populate('users')
         .then(result => {
             result.forEach(i => {
 
                 let tanggal = i.tanggal_pembayaran.getDate()
-                let date = Date.now()
+                let date = new Date()
                 let today = date.getDate()
                 if (tanggal == today) {
 
