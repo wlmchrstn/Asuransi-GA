@@ -57,14 +57,14 @@ describe('Insurance', function() {
             .post('/api/insurance/create')
             .send({
                 name_insurance: 'Asuransi Kesehatan',
-                type: 'kesehatan',
                 description: 'Asuransi Kesehatan',
                 premi: '200.000 per bulan',
                 price: '15000',
                 isPromo: 0,
                 time_insurance: 'Sampai usia 90 tahun',
                 range_age: '0 - 70 Tahun',
-                max_person: '5 Orang'
+                benefit: 'Murah dan cepat',
+                currency: 'IDR'
             })
             .set('Authorization', token)
             .end(function(err, res) {
@@ -81,7 +81,6 @@ describe('Insurance', function() {
             .post('/api/insurance/create')
             .send({
                 name_insurance: '',
-                type: '',
                 price: ''
             })
             .set('Authorization', token)
@@ -95,7 +94,7 @@ describe('Insurance', function() {
     it('SHOW ALL INSURANCE SHOW OK', function(done) {
 
         chai.request(server)
-            .get('/api/insurance/')
+            .get('/api/insurance')
             .end(function(err, res) {
                 expect(res).to.have.status(200)
                 expect(res).to.be.an('object')
@@ -128,9 +127,10 @@ describe('Insurance', function() {
     it('UPDATE INSURANCE SHOULD SHOW OK', function(done) {
 
         chai.request(server)
-            .put(`/api/insurance/${insurance_id}`)
+            .put(`/api/insurance/update/${insurance_id}`)
             .set('Authorization', token)
             .send({
+                isPromo: 1,
                 price: "20000"
             })
             .end(function(err, res) {
@@ -143,10 +143,43 @@ describe('Insurance', function() {
     it('FAILED UPDATE INSURANCE SHOULD SHOW ERROR', function(done) {
 
         chai.request(server)
-            .put(`/api/insurance/${insurance_id}`)
+            .put(`/api/insurance/update/${insurance_id}`)
             .set('Authorization', token)
             .send({
-                price: "ab"
+                price: null,
+                isPromo: null
+            })
+            .end(function(err, res) {
+                expect(res).to.have.status(400)
+                expect(res).to.be.an('object')
+                done()
+            })
+    })
+
+    it('FAILED UPDATE INSURANCE SHOULD SHOW ERROR', function(done) {
+
+        chai.request(server)
+            .put(`/api/insurance/update/${insurance_id}`)
+            .set('Authorization', token)
+            .send({
+                price: "",
+                isPromo: ""
+            })
+            .end(function(err, res) {
+                expect(res).to.have.status(400)
+                expect(res).to.be.an('object')
+                done()
+            })
+    })
+
+    it('FAILED UPDATE INSURANCE SHOULD SHOW ERROR', function(done) {
+
+        chai.request(server)
+            .put(`/api/insurance/update/${insurance_id}`)
+            .set('Authorization', token)
+            .send({
+                price: "ab",
+                isPromo: "ab"
             })
             .end(function(err, res) {
                 expect(res).to.have.status(406)
@@ -158,7 +191,7 @@ describe('Insurance', function() {
     it('UPLOAD FOTO SHOULD SHOW OK', function () {
 
         chai.request(server)
-            .post(`/api/insurance/${insurance_id}`)
+            .put(`/api/insurance/${insurance_id}`)
             .attach('image', fs.readFileSync(`${file}`), 'profpict.png')
             .set('Authorization', token)
             .end(function (err, res) {

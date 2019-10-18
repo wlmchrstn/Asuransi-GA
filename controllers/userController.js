@@ -144,7 +144,7 @@ module.exports = {
                 return res.status(400).json(error('Token expired, please resend email confirm', err.message, 400))
             }
             await User.findOneAndUpdate({token: req.params.token}, {isVerified: true})
-            res.redirect('http://google.com')
+            res.redirect('https://staging-aga-project.herokuapp.com/')
             
         }
         catch(err){

@@ -8,13 +8,13 @@ var uploader = multer().single('image');
 exports.createInsurance = async (req, res) => {
 
     var {
-        name_insurance, type, description, image, premi, price, isPromo,
-        time_insurance, range_age, max_person, benefit, currency
+        name_insurance, description, image, premi, price, isPromo,
+        time_insurance, range_age, benefit, currency
     } = req.body
 
     var newInsurance = new insurance({
-        name_insurance, type, description, image, premi, price, isPromo,
-        time_insurance, range_age, max_person, benefit, currency
+        name_insurance, description, image, premi, price, isPromo,
+        time_insurance, range_age, benefit, currency
     })
 
     newInsurance.save()
@@ -65,7 +65,7 @@ exports.updateInsurance = async (req, res) => {
     if(req.body.isPromo == null || req.body.isPromo == "") {
         return res.status(400).json(error("Update Insurance Failed", "-", 400))
     }
-
+    /* istanbul ignore if */
     if(req.body.price == null || req.body.price == "") {
         return res.status(400).json(error("Update Insurance Failed", "-", 400))
     }
