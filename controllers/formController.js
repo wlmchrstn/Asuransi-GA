@@ -78,7 +78,7 @@ module.exports = {
     async getdetailForm(req, res) {
 
         Form.find({ users: req.decoded._id, _id: req.params._id })
-            .populate({ path: 'insurances', select: 'name_insurance' })
+            .populate({ path: 'insurances', select: 'name_insurance price image' })
             .select('-__v')
             .then((form) => {
                 res.status(200).json(success('Here is your form!', form))
