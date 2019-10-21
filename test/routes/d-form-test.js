@@ -62,6 +62,7 @@ describe('FORM OPERATION', ()=> {
             .set('Authorization', token)
             .end(function(err, res) {
                 insurance_id = res.body.result._id
+                console.log(insurance_id)
                 expect(res).to.have.status(201)
                 expect(res).to.be.an('object')
                 done()
@@ -146,30 +147,32 @@ describe('FORM OPERATION', ()=> {
             })
     })
 
-    it('CREATE FORM', (done)=> {
+    it('CREATE FORM', function(done) {
         chai.request(server)
             .post(`/api/form/${insurance_id}`)
-            .set('authorization', token)
             .send({
                 name: "william",
-                NIK: 123456789,
+                NIK: 1671064507980011,
                 gender: "MALE",
                 birthDate: 2002-04-27,
                 birthPlace: "DUMAI",
                 status: "Single",
                 phone: 082278001173,
-                NPWP: "ABCDEFGH",
+                NPWP: "1234566789012345",
                 address: "BATAM",
                 city: "BATAM",
                 postalCode: 25122,
-                No_KK: 1472583691,
+                No_KK: 1671064507980011,
                 email: "wlmchrstn@gmail.com",
                 job: "Wiraswata",
                 position: "Office"
             })
-            .end((err, res)=> {
-                formId = res.body.result._id.toString()
-                expect(res.status).to.equal(201)
+            .set('Authorization', clientToken)
+            .end(function (err, res) {
+                formId = res.body.result._id
+                console.log(formId)
+                expect(res).to.have.status(201)
+                expect(res).to.be.an('object')
                 done()
             })
     })
