@@ -12,28 +12,32 @@ const jwt = require('jsonwebtoken');
 
 chai.use(chaiHttp)
 
-describe ('USER CONTROLLER',()=>{
+describe('USER CONTROLLER', () => {
 
-    before((done)=>{
-        User.deleteMany({}, (err)=>{
+    before((done) => {
+        User.deleteMany({}, (err) => {
             done()
         })
     })
 
-    var testAdmin  =  {name   : 'admin',
-                      username: 'admin',
-                      email   : 'admin@gmail.com',
-                      password: '12345'}
+    var testAdmin = {
+        name: 'admin',
+        username: 'admin',
+        email: 'admin@gmail.com',
+        password: '12345'
+    }
 
-    var testClient =  {name   : 'client',
-                      username: 'client',
-                      email   : 'client@gmail.com',
-                      password: '12345'}
-    
-    it("POST /api/user/super should create super admin", done=>{
+    var testClient = {
+        name: 'client',
+        username: 'client',
+        email: 'client@gmail.com',
+        password: '12345'
+    }
+
+    it("POST /api/user/super should create super admin", done => {
         chai.request(server)
             .post('/api/user/super')
-            .end((err,res)=>{
+            .end((err, res) => {
                 res.should.have.status(201)
                 res.body.should.have.property('success').equal(true)
                 res.body.should.have.property('result')
@@ -41,10 +45,10 @@ describe ('USER CONTROLLER',()=>{
             })
     })
 
-    it("POST /api/user/super should not create super admin", done=>{
+    it("POST /api/user/super should not create super admin", done => {
         chai.request(server)
             .post('/api/user/super')
-            .end((err,res)=>{
+            .end((err, res) => {
                 res.should.have.status(400)
                 res.body.should.have.property('success').equal(false)
                 res.body.should.have.property('message').equal("You can only create super admin once")
@@ -52,11 +56,11 @@ describe ('USER CONTROLLER',()=>{
             })
     })
 
-    it("POST /api/user/login should not login", done=>{
+    it("POST /api/user/login should not login", done => {
         chai.request(server)
             .post('/api/user/login')
-            .send({username: 'super_admin', password: '123456'})
-            .end((err,res)=>{
+            .send({ username: 'super_admin', password: '123456' })
+            .end((err, res) => {
                 res.should.have.status(422)
                 res.body.should.have.property('success').equal(false)
                 res.body.should.have.property('message').equal('Failed to login!')
@@ -64,11 +68,11 @@ describe ('USER CONTROLLER',()=>{
             })
     })
 
-    it("POST /api/user/login should login", done=>{
+    it("POST /api/user/login should login", done => {
         chai.request(server)
             .post('/api/user/login')
-            .send({login: 'super_admin', password: '12345'})
-            .end((err,res)=>{
+            .send({ login: 'super_admin', password: '12345' })
+            .end((err, res) => {
                 res.should.have.status(200)
                 res.body.should.have.property('success').equal(true)
                 res.body.should.have.property('message').equal('Token created! Access given!')
@@ -80,11 +84,11 @@ describe ('USER CONTROLLER',()=>{
             })
     })
 
-    it("POST /api/user/admin should not create admin", done=>{
+    it("POST /api/user/admin should not create admin", done => {
         chai.request(server)
             .post('/api/user/admin')
             .set('Authorization', tokenLogin)
-            .end((err,res)=>{
+            .end((err, res) => {
                 res.should.have.status(422)
                 res.body.should.have.property('success').equal(false)
                 res.body.should.have.property('message').equal('Failed to create admin!')
@@ -92,12 +96,12 @@ describe ('USER CONTROLLER',()=>{
             })
     })
 
-    it("POST /api/user/admin should create admin", done=>{
+    it("POST /api/user/admin should create admin", done => {
         chai.request(server)
             .post('/api/user/admin')
             .set('Authorization', tokenLogin)
             .send(testAdmin)
-            .end((err,res)=>{
+            .end((err, res) => {
                 res.should.have.status(201)
                 res.body.should.have.property('success').equal(true)
                 res.body.should.have.property('message').equal("Admin created!")
@@ -107,11 +111,11 @@ describe ('USER CONTROLLER',()=>{
             })
     })
 
-    it("POST /api/user/show should show user profile", done=>{
+    it("POST /api/user/show should show user profile", done => {
         chai.request(server)
             .get('/api/user/show')
             .set('Authorization', tokenLogin)
-            .end((err,res)=>{
+            .end((err, res) => {
                 res.should.have.status(200)
                 res.body.should.have.property('success').equal(true)
                 res.body.should.have.property('message').equal('Show user details')
@@ -120,11 +124,11 @@ describe ('USER CONTROLLER',()=>{
             })
     })
 
-    it("POST /api/user/showAdmin should show all admin", done=>{
+    it("POST /api/user/showAdmin should show all admin", done => {
         chai.request(server)
             .get('/api/user/showAdmin')
             .set('Authorization', tokenLogin)
-            .end((err,res)=>{
+            .end((err, res) => {
                 res.should.have.status(200)
                 res.body.should.have.property('success').equal(true)
                 res.body.should.have.property('message').equal('Show all admin')
@@ -133,11 +137,11 @@ describe ('USER CONTROLLER',()=>{
             })
     })
 
-    it("POST /api/user/client should create client", done=>{
+    it("POST /api/user/client should create client", done => {
         chai.request(server)
             .post('/api/user/client')
             .send(testClient)
-            .end((err,res)=>{
+            .end((err, res) => {
                 res.should.have.status(201)
                 res.body.should.have.property('success').equal(true)
                 res.body.should.have.property('message').equal("Client created!")
@@ -147,11 +151,11 @@ describe ('USER CONTROLLER',()=>{
             })
     })
 
-    it("POST /api/user/login should not login because unverify email", done=>{
+    it("POST /api/user/login should not login because unverify email", done => {
         chai.request(server)
             .post('/api/user/login')
-            .send({login: 'client', password: '12345'})
-            .end((err,res)=>{
+            .send({ login: 'client', password: '12345' })
+            .end((err, res) => {
                 res.should.have.status(403)
                 res.body.should.have.property('success').equal(false)
                 res.body.should.have.property('message').equal('Please verify email first')
@@ -159,12 +163,12 @@ describe ('USER CONTROLLER',()=>{
                 done()
             })
     })
-    
-    it("POST /api/user/client should not create client", done=>{
+
+    it("POST /api/user/client should not create client", done => {
         chai.request(server)
             .post('/api/user/client')
-            .send({name: "agam"})
-            .end((err,res)=>{
+            .send({ name: "agam" })
+            .end((err, res) => {
                 res.should.have.status(422)
                 res.body.should.have.property('success').equal(false)
                 res.body.should.have.property('message').equal('Failed to create client!')
@@ -173,10 +177,10 @@ describe ('USER CONTROLLER',()=>{
             })
     })
 
-    it("GET /api/user/verify/:token should not verify email", done=>{
+    it("GET /api/user/verify/:token should not verify email", done => {
         chai.request(server)
             .get(`/api/user/verify/asjknkdg5a7ajk7`)
-            .end((err,res)=>{
+            .end((err, res) => {
                 res.should.have.status(422)
                 res.body.should.have.property('success').equal(false)
                 res.body.should.have.property('message').equal("Invalid token")
@@ -185,10 +189,10 @@ describe ('USER CONTROLLER',()=>{
             })
     })
 
-    it("GET /api/user/verify/:token should verify email", done=>{
+    it("GET /api/user/verify/:token should verify email", done => {
         chai.request(server)
             .get(`/api/user/verify/${tokenEmail}`)
-            .end((err,res)=>{
+            .end((err, res) => {
                 res.should.have.status(200)
                 res.body.should.have.property('success').equal(true)
                 res.body.should.have.property('message').equal("email verified success")
@@ -197,11 +201,11 @@ describe ('USER CONTROLLER',()=>{
             })
     })
 
-    it("POST /api/user/login should not login because unverify email", done=>{
+    it("POST /api/user/login should not login because unverify email", done => {
         chai.request(server)
             .post('/api/user/login')
-            .send({login: 'client', password: '1234567'})
-            .end((err,res)=>{
+            .send({ login: 'client', password: '1234567' })
+            .end((err, res) => {
                 res.should.have.status(403)
                 res.body.should.have.property('success').equal(false)
                 res.body.should.have.property('message').equal('Password incorrect!')
@@ -209,11 +213,11 @@ describe ('USER CONTROLLER',()=>{
             })
     })
 
-    it("POST /api/user/verify should not resend verify email", done=>{
+    it("POST /api/user/verify should not resend verify email", done => {
         chai.request(server)
             .post(`/api/user/verify`)
-            .send({email: 'agam@gmail.com'})
-            .end((err,res)=>{
+            .send({ email: 'agam@gmail.com' })
+            .end((err, res) => {
                 res.should.have.status(400)
                 res.body.should.have.property('success').equal(false)
                 res.body.should.have.property('message').equal("Incorrect email")
@@ -222,11 +226,11 @@ describe ('USER CONTROLLER',()=>{
             })
     })
 
-    it("POST /api/user/verify should resend verify email", done=>{
+    it("POST /api/user/verify should resend verify email", done => {
         chai.request(server)
             .post(`/api/user/verify`)
             .send(testClient)
-            .end((err,res)=>{
+            .end((err, res) => {
                 res.should.have.status(201)
                 res.body.should.have.property('success').equal(true)
                 res.body.should.have.property('message').equal("Email verification has been send!")
@@ -235,12 +239,15 @@ describe ('USER CONTROLLER',()=>{
             })
     })
 
-    it("PUT /api/user/update should update user", done=>{
+    it("PUT /api/user/update should update user", done => {
         chai.request(server)
-            .put(`/api/user/update`)
-            .send({phone: '082342543653'})
+            .put('/api/user/update')
+            .send({
+                name: 'Admin',
+                phone: '082342543653'
+            })
             .set('Authorization', tokenLogin)
-            .end((err,res)=>{
+            .end((err, res) => {
                 res.should.have.status(200)
                 res.body.should.have.property('success').equal(true)
                 res.body.should.have.property('message').equal('Update user success')
@@ -248,13 +255,16 @@ describe ('USER CONTROLLER',()=>{
                 done()
             })
     })
-    
-    it("PUT /api/user/update should not update user", done=>{
+
+    it("PUT /api/user/update should not update user", done => {
         chai.request(server)
             .put(`/api/user/update`)
-            .send({birthDate: "ahgsjsagk"})
+            .send({
+                name: "ayu",
+                birthDate: "ahgsjsagk"
+            })
             .set('Authorization', tokenLogin)
-            .end((err,res)=>{
+            .end((err, res) => {
                 res.should.have.status(400)
                 res.body.should.have.property('success').equal(false)
                 res.body.should.have.property('message').equal('Update user failed')
@@ -263,11 +273,11 @@ describe ('USER CONTROLLER',()=>{
             })
     })
 
-    it("GET /api/user/selectAdmin/:id should select admin", done=>{
+    it("GET /api/user/selectAdmin/:id should select admin", done => {
         chai.request(server)
             .get(`/api/user/selectAdmin/${admin._id}`)
             .set('Authorization', tokenLogin)
-            .end((err,res)=>{
+            .end((err, res) => {
                 res.should.have.status(200)
                 res.body.should.have.property('success').equal(true)
                 res.body.should.have.property('message').equal('Show user success')
@@ -276,11 +286,11 @@ describe ('USER CONTROLLER',()=>{
             })
     })
 
-    it("GET /api/user/selectAdmin/:id should not select admin", done=>{
+    it("GET /api/user/selectAdmin/:id should not select admin", done => {
         chai.request(server)
             .get(`/api/user/selectAdmin/5d95daf6c24bf672`)
             .set('Authorization', tokenLogin)
-            .end((err,res)=>{
+            .end((err, res) => {
                 res.should.have.status(400)
                 res.body.should.have.property('success').equal(false)
                 res.body.should.have.property('message').equal('Show user failed')
@@ -289,11 +299,11 @@ describe ('USER CONTROLLER',()=>{
             })
     })
 
-    it("DELETE /api/user/deleteAdmin/:id should not delete admin", done=>{
+    it("DELETE /api/user/deleteAdmin/:id should not delete admin", done => {
         chai.request(server)
             .delete(`/api/user/deleteAdmin/mdkskjasi7`)
             .set('Authorization', tokenLogin)
-            .end((err,res)=>{
+            .end((err, res) => {
                 res.should.have.status(400)
                 res.body.should.have.property('success').equal(false)
                 res.body.should.have.property('message').equal('Delete user failed')
@@ -302,11 +312,11 @@ describe ('USER CONTROLLER',()=>{
             })
     })
 
-    it("DELETE /api/user/deleteAdmin/:id should delete admin", done=>{
+    it("DELETE /api/user/deleteAdmin/:id should delete admin", done => {
         chai.request(server)
             .delete(`/api/user/deleteAdmin/${admin._id}`)
             .set('Authorization', tokenLogin)
-            .end((err,res)=>{
+            .end((err, res) => {
                 res.should.have.status(200)
                 res.body.should.have.property('success').equal(true)
                 res.body.should.have.property('message').equal('Delete user success')
@@ -315,12 +325,12 @@ describe ('USER CONTROLLER',()=>{
             })
     })
 
-    it("POST /api/user/admin should create admin", done=>{
+    it("POST /api/user/admin should create admin", done => {
         chai.request(server)
             .post('/api/user/admin')
             .set('Authorization', tokenLogin)
             .send(testAdmin)
-            .end((err,res)=>{
+            .end((err, res) => {
                 res.should.have.status(201)
                 res.body.should.have.property('success').equal(true)
                 res.body.should.have.property('message').equal("Admin created!")
@@ -329,10 +339,10 @@ describe ('USER CONTROLLER',()=>{
             })
     })
 
-    it("POST /api/user/reset-password should not send reset password email", done=>{
+    it("POST /api/user/reset-password should not send reset password email", done => {
         chai.request(server)
             .post(`/api/user/reset-password`)
-            .end((err,res)=>{
+            .end((err, res) => {
                 res.should.have.status(404)
                 res.body.should.have.property('success').equal(false)
                 res.body.should.have.property('message').equal('Register and verifvy email first')
@@ -341,11 +351,11 @@ describe ('USER CONTROLLER',()=>{
             })
     })
 
-    it("POST /api/user/reset-password should send reset password email", done=>{
+    it("POST /api/user/reset-password should send reset password email", done => {
         chai.request(server)
             .post(`/api/user/reset-password`)
-            .send({email: 'client@gmail.com'})
-            .end((err,res)=>{
+            .send({ email: 'client@gmail.com' })
+            .end((err, res) => {
                 res.should.have.status(200)
                 res.body.should.have.property('success').equal(true)
                 res.body.should.have.property('message')
@@ -354,12 +364,12 @@ describe ('USER CONTROLLER',()=>{
                 done()
             })
     })
-    
-    it("POST /api/user/reset/:token should not change password", done=>{
+
+    it("POST /api/user/reset/:token should not change password", done => {
         chai.request(server)
             .put(`/api/user/reset`)
-            .send({password: '12345'})
-            .end((err,res)=>{
+            .send({ password: '12345' })
+            .end((err, res) => {
                 res.should.have.status(404)
                 res.body.should.have.property('success').equal(false)
                 res.body.should.have.property('message').equal('The token is expired or invalid')
@@ -367,16 +377,16 @@ describe ('USER CONTROLLER',()=>{
             })
     })
 
-    it("POST /api/user/reset should change password", done=>{
+    it("POST /api/user/reset should change password", done => {
         chai.request(server)
             .put(`/api/user/reset`)
-            .send({password: '12345', token: tokenPassword})
-            .end((err,res)=>{
+            .send({ password: '12345', token: tokenPassword })
+            .end((err, res) => {
                 res.should.have.status(200)
                 res.body.should.have.property('success').equal(true)
                 res.body.should.have.property('message').equal('Password successfully updated!')
                 done()
             })
     })
-    
+
 })
