@@ -7,24 +7,6 @@ const expect = chai.expect;
 chai.use(chaiHttp)
 
 describe('COMMENT OPERATION', ()=> {
-
-    before(done => {
-        chai.request(server)
-            .post('/api/user/admin')
-            .send({
-                username: 'admin',
-                name: 'Ayu admin',
-                email: 'admin@gmail.com',
-                password: '12345'
-            })
-            .end(() => {
-                promo.deleteMany({},
-                    {new: true})
-                    .exec(() => {
-                        done()
-                    })
-            })
-    })
     
     before(function (done) {
         chai.request(server)
@@ -34,9 +16,6 @@ describe('COMMENT OPERATION', ()=> {
                 password: '12345'
             })
             .end(function (err, res) {
-                if (err) {
-                    console.log(err)
-                }
                 token = res.header.authorization
                 done()
                 
@@ -68,36 +47,10 @@ describe('COMMENT OPERATION', ()=> {
     
     before(done => {
         chai.request(server)
-            .post('/api/user/client')
-            .send({
-                name: 'Rinko',
-                username: 'rinko',
-                email: 'rinko@gmail.com',
-                password: 'rinko123'
-            })
-            .end((err, res)=> {
-                clientId = res.body.result._id
-                clientToken = res.body.result.token
-                expect(res.status).to.be.equal(201)
-                done()
-            })
-    })
-    
-    before(done => {
-        chai.request(server)
-            .get(`/api/user/verify/${clientToken}`)
-            .send({})
-            .end((err, res)=> {
-                done()
-            })
-    })
-    
-    before(done => {
-        chai.request(server)
             .post('/api/user/login')
             .send({
-                login: "rinko",
-                password: 'rinko123'
+                login: "wlmchrstn",
+                password: 'abc5dasar'
             })
             .end((err, res)=> {
                 token = res.body.result.toString()
