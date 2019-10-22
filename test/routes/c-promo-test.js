@@ -10,26 +10,6 @@ chai.use(chaiHttp);
 
 describe('Insurance', function() {
 
-
-    before(done => {
-        chai.request(server)
-            .post('/api/user/admin')
-            .send({
-                username: 'admin',
-                name: 'Ayu admin',
-                email: 'admin@gmail.com',
-                password: '12345'
-            })
-            .end(() => {
-                promo.deleteMany({},
-                    {new: true})
-                    .exec(() => {
-                        done()
-                    })
-            })
-    })
-
-
     before(function (done) {
         chai.request(server)
             .post('/api/user/login')

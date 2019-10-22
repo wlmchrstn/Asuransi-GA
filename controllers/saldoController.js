@@ -43,11 +43,11 @@ exports.uploadphoto = async (req, res) => {
 
 exports.create = async (req, res) => {
 
-    var value = req.body.value
+    var price = req.body.price
     var user = req.decoded._id
 
     var newSaldo = new Saldo ({
-        user, value, value, 
+        user, price 
     })
 
     newSaldo.save()
