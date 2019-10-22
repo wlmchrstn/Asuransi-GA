@@ -194,9 +194,6 @@ describe('USER CONTROLLER', () => {
             .get(`/api/user/verify/${tokenEmail}`)
             .end((err, res) => {
                 res.should.have.status(200)
-                res.body.should.have.property('success').equal(true)
-                res.body.should.have.property('message').equal("email verified success")
-                res.body.should.have.property('result')
                 done()
             })
     })
