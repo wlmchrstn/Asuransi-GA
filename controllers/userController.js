@@ -194,7 +194,12 @@ module.exports = {
                 if(data!=true) return res.status(403).json(error('Password incorrect!', err, 403))
                 let token = jwt.sign({_id: user._id, role: user.role}, process.env.SECRET_KEY, {expiresIn: '1h'})
                 res.setHeader('Authorization', token)
-                return res.status(200).json(success('Token created! Access given!', token, user._id, user.role))
+                let hasil = {
+                    token: token,
+                    _id: user._id,
+                    role: user.role
+                }
+                return res.status(200).json(success('Token created! Access given!', hasil))
             })
         
         }
@@ -238,17 +243,12 @@ module.exports = {
             let pwd = await bcrypt.hashSync(req.body.password, saltRounds)
             req.body.password = pwd
         }else if(!req.body.password){
-            return res.status(400).json(error("Failed to update! Password can't be blank!"))
+            return res.status(400).json(error("Failed to update! Password can't be blank!", "-", 400))
         }
-        try{
-            let user = await User.findByIdAndUpdate(req.decoded._id, {
-                password: req.body.password
-            }, {new: true})
-            res.status(200).json(success('Update user success', user))
-        }
-        catch(err){
-            res.status(400).json(error('Update user failed', err.message, 400))
-        }
+        let user = await User.findByIdAndUpdate(req.decoded._id, {
+            password: req.body.password
+        }, {new: true})
+        res.status(200).json(success('Update user success', user))
     },
 
    async updateSaldo(req, res) {

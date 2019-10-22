@@ -3,7 +3,7 @@ var chai = require('chai');
 var server = require('../../app');
 var expect = chai.expect;
 var fs = require('fs')
-
+var Insurance = require('../../models/insurance')
 chai.use(chaiHttp);
 
 let token;
@@ -23,7 +23,13 @@ describe('Insurance', function() {
             .end(function (err, res) {
                 token = res.headers.authorization
                 done()
-                
+            })
+    })
+
+    after(done => {
+        Insurance.deleteMany({})
+            .then(result => {
+                done()
             })
     })
 

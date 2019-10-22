@@ -131,6 +131,64 @@ describe('FORM OPERATION', ()=> {
             })
     })
 
+    it('NIK MUST 16', function(done) {
+        chai.request(server)
+            .post(`/api/form/${insurance_id}`)
+            .send({
+                name: "william",
+                NIK: 1671064507980011,
+                gender: "MALE",
+                birthDate: 2002-04-27,
+                birthPlace: "DUMAI",
+                status: "Single",
+                phone: 082278001173,
+                NPWP: "1234566789012345",
+                address: "BATAM",
+                city: "BATAM",
+                postalCode: 25122,
+                No_KK: '1671064507980011',
+                email: "wlmchrstn@gmail.com",
+                job: "Wiraswata",
+                position: "Office"
+            })
+            .set('Authorization', token)
+            .end(function (err, res) {
+                expect(res).to.have.status(406)
+                expect(res.body).to.be.an('object')
+                expect(res.body.message).to.be.equal('NIK Must have 16 characters')
+                done()
+            })
+    })
+
+    it('NO KK MUST 16', function(done) {
+        chai.request(server)
+            .post(`/api/form/${insurance_id}`)
+            .send({
+                name: "william",
+                NIK: '1671064507980011',
+                gender: "MALE",
+                birthDate: 2002-04-27,
+                birthPlace: "DUMAI",
+                status: "Single",
+                phone: 082278001173,
+                NPWP: "1234566789012345",
+                address: "BATAM",
+                city: "BATAM",
+                postalCode: 25122,
+                No_KK: 1671064507980011,
+                email: "wlmchrstn@gmail.com",
+                job: "Wiraswata",
+                position: "Office"
+            })
+            .set('Authorization', token)
+            .end(function (err, res) {
+                expect(res).to.have.status(406)
+                expect(res.body).to.be.an('object')
+                expect(res.body.message).to.be.equal('Nomor KK Must have 16 characters')
+                done()
+            })
+    })
+
     it('FAILED TO CREATE FORM', (done)=> {
         chai.request(server)
             .post(`/api/form/${insurance_id}`)
@@ -155,6 +213,16 @@ describe('FORM OPERATION', ()=> {
             })
     })
     
+    it('GET DETAIL FORM', (done)=> {
+        chai.request(server)
+            .get(`/api/form/${formId}`)
+            .set('authorization', token)
+            .end((err, res)=> {
+                expect(res.status).to.equal(200)
+                done()
+            })
+    })
+
     it('NOT FOUND TO DELETE FORM', (done)=> {
         chai.request(server)
             .delete(`/api/form/${fakeId}`)
