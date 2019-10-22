@@ -7,8 +7,8 @@ const expect = chai.expect;
 chai.use(chaiHttp)
 
 
-describe('FORM OPERATION', () => {
-
+describe('FORM OPERATION', ()=> {
+    
     before(done => {
         chai.request(server)
             .post('/api/user/admin')
@@ -20,7 +20,7 @@ describe('FORM OPERATION', () => {
             })
             .end(() => {
                 promo.deleteMany({},
-                    { new: true })
+                    {new: true})
                     .exec(() => {
                         done()
                     })
@@ -41,7 +41,7 @@ describe('FORM OPERATION', () => {
                 }
                 token = res.header.authorization
                 done()
-
+                
             })
     })
 
@@ -60,7 +60,7 @@ describe('FORM OPERATION', () => {
                 currency: 'IDR'
             })
             .set('Authorization', token)
-            .end(function (err, res) {
+            .end(function(err, res) {
                 insurance_id = res.body.result._id
                 console.log(insurance_id)
                 expect(res).to.have.status(201)
@@ -69,17 +69,16 @@ describe('FORM OPERATION', () => {
             })
     })
 
-    before(function (done) {
+    before(done => {
         chai.request(server)
             .post('/api/user/client')
             .send({
-                name: 'client',
-                username: 'client',
-                email: 'client@gmail.com',
-                password: '12345'
+                name: 'William',
+                username: 'wlmchrstn',
+                email: 'wlmchrstn@gmail.com',
+                password: 'abc5dasar'
             })
-            .end((err, res) => {
-                console.log(err)
+            .end((err, res)=> {
                 clientId = res.body.result._id
                 clientToken = res.body.result.token
                 expect(res.status).to.be.equal(201)
@@ -96,7 +95,7 @@ describe('FORM OPERATION', () => {
                 email: 'fake@gmail.com',
                 password: 'fakedasar'
             })
-            .end((err, res) => {
+            .end((err, res)=> {
                 fakeId = res.body.result._id
                 fakeToken = res.body.result.token
                 expect(res.status).to.be.equal(201)
@@ -108,7 +107,7 @@ describe('FORM OPERATION', () => {
         chai.request(server)
             .get(`/api/user/verify/${clientToken}`)
             .send({})
-            .end((err, res) => {
+            .end((err, res)=> {
                 done()
             })
     })
@@ -117,7 +116,7 @@ describe('FORM OPERATION', () => {
         chai.request(server)
             .get(`/api/user/verify/${fakeToken}`)
             .send({})
-            .end((err, res) => {
+            .end((err, res)=> {
                 done()
             })
     })
@@ -129,7 +128,7 @@ describe('FORM OPERATION', () => {
                 login: "wlmchrstn",
                 password: 'abc5dasar'
             })
-            .end((err, res) => {
+            .end((err, res)=> {
                 token = res.body.result.toString()
                 done()
             })
@@ -142,20 +141,20 @@ describe('FORM OPERATION', () => {
                 login: "fake",
                 password: 'fakedasar'
             })
-            .end((err, res) => {
+            .end((err, res)=> {
                 fakeClientToken = res.body.result.toString()
                 done()
             })
     })
 
-    it('CREATE FORM', function (done) {
+    it('CREATE FORM', function(done) {
         chai.request(server)
             .post(`/api/form/${insurance_id}`)
             .send({
                 name: "william",
                 NIK: 1671064507980011,
                 gender: "MALE",
-                birthDate: 2002 - 04 - 27,
+                birthDate: 2002-04-27,
                 birthPlace: "DUMAI",
                 status: "Single",
                 phone: 082278001173,
@@ -178,61 +177,61 @@ describe('FORM OPERATION', () => {
             })
     })
 
-    it('FAILED TO CREATE FORM', (done) => {
+    it('FAILED TO CREATE FORM', (done)=> {
         chai.request(server)
             .post(`/api/form/${insurance_id}`)
             .set('authorization', token)
             .send({
                 field: "isField"
             })
-            .end((err, res) => {
+            .end((err, res)=> {
                 expect(res.status).to.equal(422)
                 done()
             })
     })
 
-    it('GET USER FORM', (done) => {
+    it('GET USER FORM', (done)=> {
         chai.request(server)
             .get('/api/form')
             .set('authorization', token)
             .send()
-            .end((err, res) => {
+            .end((err, res)=> {
                 idForm = res.body.result[0]._id.toString()
                 expect(res.status).to.equal(200)
                 done()
             })
     })
-
-    it('NOT FOUND TO DELETE FORM', (done) => {
+    
+    it('NOT FOUND TO DELETE FORM', (done)=> {
         chai.request(server)
             .delete(`/api/form/${insurance_id}`)
             .set('authorization', token)
             .send()
-            .end((err, res) => {
+            .end((err, res)=> {
                 expect(res.status).to.equal(404)
                 done()
             })
     })
 
-    it('UNAUTHORIZE DELETE FORM', (done) => {
+    it('UNAUTHORIZE DELETE FORM', (done)=> {
         chai.request(server)
             .delete(`/api/form/${formId}`)
             .set('authorization', fakeClientToken)
             .send()
-            .end((err, res) => {
+            .end((err, res)=> {
                 expect(res.status).to.equal(403)
                 done()
             })
     })
 
-    it('DELETE FORM', (done) => {
+    it('DELETE FORM', (done)=> {
         chai.request(server)
             .delete(`/api/form/${idForm}`)
             .set('authorization', token)
             .send()
-            .end((err, res) => {
+            .end((err, res)=> {
                 expect(res.status).to.equal(200)
                 done()
             })
-    })
+    })    
 })
