@@ -1,7 +1,6 @@
 var chaiHttp = require('chai-http');
 var chai = require('chai');
 var server = require('../../app');
-var insurance = require('../../models/insurance');
 var expect = chai.expect;
 var fs = require('fs')
 
@@ -14,26 +13,6 @@ let file = process.env.PICT
 
 describe('Insurance', function() {
 
-
-    before(done => {
-        chai.request(server)
-            .post('/api/user/admin')
-            .send({
-                username: 'admin',
-                name: 'Ayu admin',
-                email: 'admin@gmail.com',
-                password: '12345'
-            })
-            .end(() => {
-                insurance.deleteMany({},
-                    {new: true})
-                    .exec(() => {
-                        done()
-                    })
-            })
-    })
-
-
     before(function (done) {
         chai.request(server)
             .post('/api/user/login')
@@ -42,9 +21,6 @@ describe('Insurance', function() {
                 password: '12345'
             })
             .end(function (err, res) {
-                if (err) {
-                    console.log(err)
-                }
                 token = res.headers.authorization
                 done()
                 

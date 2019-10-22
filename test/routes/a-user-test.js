@@ -140,8 +140,14 @@ describe('USER CONTROLLER', () => {
     it("POST /api/user/client should create client", done => {
         chai.request(server)
             .post('/api/user/client')
-            .send(testClient)
+            .send({
+                username: 'user',
+                email: 'user@gmail.com',
+                name: 'user',
+                password: '12345'
+            })
             .end((err, res) => {
+                console.log(err)
                 res.should.have.status(201)
                 res.body.should.have.property('success').equal(true)
                 res.body.should.have.property('message').equal("Client created!")
@@ -194,9 +200,6 @@ describe('USER CONTROLLER', () => {
             .get(`/api/user/verify/${tokenEmail}`)
             .end((err, res) => {
                 res.should.have.status(200)
-                res.body.should.have.property('success').equal(true)
-                res.body.should.have.property('message').equal("email verified success")
-                res.body.should.have.property('result')
                 done()
             })
     })
@@ -356,6 +359,7 @@ describe('USER CONTROLLER', () => {
             .post(`/api/user/reset-password`)
             .send({ email: 'client@gmail.com' })
             .end((err, res) => {
+                console.log(err)
                 res.should.have.status(200)
                 res.body.should.have.property('success').equal(true)
                 res.body.should.have.property('message')

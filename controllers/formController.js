@@ -7,33 +7,8 @@ const funcHelper = require('../helpers/funcHelper')
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-let sendEmail = schedule.scheduleJob('5 * * * * *' , function () {
-    var to = 'wlmchrstn@gmail.com'
-    var from = 'AGA@insurance.com'
-    var subject = 'Insurance is about to expired';
-    var html = 'Your insurance is about to expired, please pay it before 7 days<br>';
-    funcHelper.mail(to, from, subject, html)
-
-    // Form.find({ status_pembayaran: 'active' })
-    //     .populate('users')
-    //     .then(result => {
-    //         result.forEach(i => {
-    //             let tanggal = i.tanggal_pembayaran.getDate()
-    //             let date = new Date()
-    //             let today = date.getDate()
-    //             if (tanggal == today) {
-    //                 var to = i.users.email
-    //                 var from = 'AGA@insurance.com'
-    //                 var subject = 'Insurance is about to expired';
-    //                 var html = 'Your insurance is about to expired, please pay it before 7 days<br>';
-    //                 funcHelper.mail(to, from, subject, html)
-    //             }
-    //         })
-    //     })
-})
-
-let inactive = schedule.scheduleJob('59 59 23 * * *', function () {
-    Form.find({ status_pembayaran: 'active' })
+let sendEmail = schedule.scheduleJob('5 * * * ', function(){
+    Form.find({status_pembayaran: 'active'})
         .populate('users')
         .then(result => {
             result.forEach(i => {
@@ -41,7 +16,26 @@ let inactive = schedule.scheduleJob('59 59 23 * * *', function () {
                 let date = new Date()
                 let today = date.getDate()
                 if (tanggal == today) {
-                    i.status_pembayaran = "INACTIVE"
+                    var to = i.users.email
+                    var from = 'AGA@insurance.com'
+                    var subject = 'Insurance is about to expired';
+                    var html = 'Your insurance is about to expired, please pay it before 7 days<br>';
+                    funcHelper.mail(to, from, subject, html)
+                }
+            })
+        })
+})
+
+let inactive = schedule.scheduleJob('59 59 23 * * *', function(){
+    Form.find({status_pembayaran: 'active'})
+        .populate('users')
+        .then(result => {
+            result.forEach(i => {
+                let tanggal = i.tanggal_pembayaran.getDate()
+                let date = new Date()
+                let today = date.getDate()
+                if(tanggal == today){
+                    i.status_pembayaran = "inactive"
                     i.save()
                     var to = i.users.email
                     var from = 'AGA@insurance.com'
@@ -58,7 +52,7 @@ module.exports = {
         try {
             let userId = req.decoded._id
             let form = await Form.create(req.body)
-
+            
             form.users = userId
             form.insurances = req.params.insurance
 
@@ -144,7 +138,7 @@ module.exports = {
             let form = await Form.findById(req.params.form)
             auth = form.users.toString()
             insuranceId = form.insurances.toString()
-
+            
             let insurance = await Insurance.findById(insuranceId)
 
             saldo = user.saldo
@@ -179,7 +173,6 @@ module.exports = {
         if (!valid) return res.status(404).json(error('No form found!', "Form not found!", 404))
         userId = req.decoded._id.toString();
         formId = valid.users.toString();
-        if (userId !== formId) return res.status(403).json(error('This is not your form!', "-", 403))
         Form.findByIdAndDelete(req.params.form)
             .then(result => {
                 res.status(200).json(success('Form deleted!'))

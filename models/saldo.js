@@ -5,10 +5,6 @@ const saldoSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
-    value: {
-        type: Number,
-        required: true
-    },
     price: {
         type: Number,
         required: true

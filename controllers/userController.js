@@ -98,14 +98,8 @@ module.exports = {
                 email:req.body.email,
                 name:req.body.name,
                 password:pwd,
-                phone:req.body.phone,
-                address:req.body.address,
-                gender:req.body.gender,
-                birthPlace:req.body.birthPlace,
-                birthDate:req.body.birthDate,
                 token: token,
-                expToken: expToken,
-                saldo: req.body.saldo
+                expToken: expToken
             })
 
             var to               = req.body.email
@@ -129,7 +123,7 @@ module.exports = {
             res.status(201).json(success("Client created!", result))
         }
         catch(err){
-            res.status(422).json(error('Failed to create client!', err, 422))
+            res.status(422).json(error('Failed to create client!', err.message, 422))
         }
     },
 
@@ -144,7 +138,7 @@ module.exports = {
                 return res.status(400).json(error('Token expired, please resend email confirm', err.message, 400))
             }
             await User.findOneAndUpdate({token: req.params.token}, {isVerified: true})
-            res.redirect('https://staging-aga-project.herokuapp.com/')
+            res.status(200).redirect('https://staging-aga-project.herokuapp.com/')
             
         }
         catch(err){
