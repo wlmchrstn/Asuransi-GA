@@ -7,9 +7,9 @@ const funcHelper = require('../helpers/funcHelper')
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-schedule.scheduleJob('5 * * * ', function(){
+schedule.scheduleJob('5 * * * ', function () {
     /* istanbul ignore next */
-    Form.find({status_pembayaran: 'active'})
+    Form.find({ status_pembayaran: 'active' })
         .populate('users')
         .then(result => {
             result.forEach(i => {
@@ -27,16 +27,16 @@ schedule.scheduleJob('5 * * * ', function(){
         })
 })
 
-schedule.scheduleJob('59 59 23 * * *', function(){
+schedule.scheduleJob('59 59 23 * * *', function () {
     /* istanbul ignore next */
-    Form.find({status_pembayaran: 'active'})
+    Form.find({ status_pembayaran: 'active' })
         .populate('users')
         .then(result => {
             result.forEach(i => {
                 let tanggal = i.tanggal_pembayaran.getDate()
                 let date = new Date()
                 let today = date.getDate()
-                if(tanggal == today){
+                if (tanggal == today) {
                     i.status_pembayaran = "inactive"
                     i.save()
                     var to = i.users.email
@@ -54,7 +54,7 @@ module.exports = {
         try {
             let userId = req.decoded._id
             let form = await Form.create(req.body)
-            
+
             form.users = userId
             form.insurances = req.params.insurance
 
@@ -96,42 +96,39 @@ module.exports = {
     },
 
     async buyInsurance(req, res) {
-        try {
-            let userId = req.decoded._id
-            let form = await Form.findById(req.params.form)
-            insuranceId = form.insurances.toString()
 
-            let insurance = await Insurance.findById(insuranceId)
-            let user = await User.findById(userId)
-            saldo = user.saldo
+        let userId = req.decoded._id
+        let form = await Form.findById(req.params.form)
+        insuranceId = form.insurances.toString()
 
-            if (saldo < insurance.price) {
-                return res.json(
-                    `Hai ${user.name}, Your Saldo is Not Enough`
-                )
-            }
-            else {
-                let newTopUpsaldo = Number(saldo) - Number(insurance.price)
-                await User.findByIdAndUpdate(userId,
-                    { saldo: newTopUpsaldo },
-                    { new: true })
-                let date = new Date()
-                date.setDate(5)
-                await Form.findByIdAndUpdate(req.params.form,
-                    {
-                        status_pembayaran: "active",
-                        tanggal_pembayaran: date
-                    },
-                    {
-                        new: true
-                    })
-                res.status(200).json(success('Insurance is actived', insurance.name_insurance)
-                )
-            }
+        let insurance = await Insurance.findById(insuranceId)
+        let user = await User.findById(userId)
+        saldo = user.saldo
+
+        if (saldo < insurance.price) {
+            return res.json(
+                `Hai ${user.name}, Your Saldo is Not Enough`
+            )
         }
-        catch (err) {
-            return res.status(406).json(error("Failed to purchase insurance", err.message, 406))
-        }
+
+        let newTopUpsaldo = Number(saldo) - Number(insurance.price)
+        await User.findByIdAndUpdate(userId,
+            { saldo: newTopUpsaldo },
+            { new: true })
+        let date = new Date()
+        date.setDate(5)
+        await Form.findByIdAndUpdate(req.params.form,
+            {
+                status_pembayaran: "active",
+                tanggal_pembayaran: date
+            },
+            {
+                new: true
+            })
+        res.status(200).json(success('Insurance is actived', insurance.name_insurance)
+        )
+
+
     },
 
     async payInsurance(req, res) {
@@ -140,7 +137,7 @@ module.exports = {
             let form = await Form.findById(req.params.form)
             auth = form.users.toString()
             insuranceId = form.insurances.toString()
-            
+
             let insurance = await Insurance.findById(insuranceId)
 
             saldo = user.saldo

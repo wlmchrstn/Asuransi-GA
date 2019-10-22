@@ -234,6 +234,17 @@ describe('FORM OPERATION', ()=> {
             })
     })
 
+    it('BUY INSURANCE SHOULD SHOW OK', (done)=> {
+        chai.request(server)
+            .put(`/api/form/buy/${formId}`)
+            .set('Authorization', token)
+            .send()
+            .end((err, res)=> {
+                expect(res.status).to.equal(200)
+                done()
+            })
+    })
+
     it('UNAUTHORIZE DELETE FORM', (done)=> {
         chai.request(server)
             .delete(`/api/form/${formId}`)

@@ -127,8 +127,6 @@ module.exports = {
         }
     },
 
-    
-
     async verify(req, res){
         try {
             let token = req.params.token;
@@ -249,29 +247,6 @@ module.exports = {
             password: req.body.password
         }, {new: true})
         res.status(200).json(success('Update user success', user))
-    },
-
-   async updateSaldo(req, res) {
-        try{         
-
-            let findUser = await User.findById(req.params.id)
-
-            let newSaldo = Number(findUser.saldo) + Number(req.body.saldo)
-
-            let user = await User.findByIdAndUpdate(req.params.id, {
-                $set: {saldo: newSaldo}
-            }, {new: true})
-
-            return res.status(201).json(
-                success('Updated saldo success', user)
-            )
-        }
-        catch{
-            return res.status(400).json(
-                error('Updated saldo failed', err.message, 400)
-            )
-        }
-
     },
 
     async deleteUser(req, res){
