@@ -353,6 +353,7 @@ describe('USER CONTROLLER', () => {
             .post(`/api/user/reset-password`)
             .send({ email: 'client@gmail.com' })
             .end((err, res) => {
+                console.log(err)
                 res.should.have.status(200)
                 res.body.should.have.property('success').equal(true)
                 res.body.should.have.property('message')

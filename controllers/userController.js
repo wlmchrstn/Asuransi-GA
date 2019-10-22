@@ -123,7 +123,7 @@ module.exports = {
             res.status(201).json(success("Client created!", result))
         }
         catch(err){
-            res.status(422).json(error('Failed to create client!', err, 422))
+            res.status(422).json(error('Failed to create client!', err.message, 422))
         }
     },
 
