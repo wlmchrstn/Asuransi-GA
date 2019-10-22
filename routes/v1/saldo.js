@@ -7,14 +7,14 @@ const saldoController = require('../../controllers/saldoController');
 
 router.post('/', isAuthenticated, saldoController.create);
 
-router.get('/', permission, saldoController.showAll);
+router.get('/', isAuthenticated, permission, saldoController.showAll);
 
-router.put('/upload', isAuthenticated, upload.single('image'), saldoController.uploadphoto);
+router.put('/upload/:id', isAuthenticated, upload.single('image'), saldoController.uploadphoto);
 
-router.get('/:id', permission, saldoController.select);
+router.get('/:id', isAuthenticated, permission, saldoController.select);
 
 router.delete('/:id', isAuthenticated, saldoController.delete);
 
-router.post('/accept/:id', permission, saldoController.accept);
+router.put('/accept/:id', isAuthenticated, permission, saldoController.accept);
 
 module.exports = router

@@ -1,4 +1,5 @@
 const Saldo = require('../models/saldo');
+const User = require('../models/user');
 const { success, error } = require('../helpers/response');
 const multer = require('multer');
 const cloudinary = require('cloudinary');
@@ -43,11 +44,12 @@ exports.uploadphoto = async (req, res) => {
 
 exports.create = async (req, res) => {
 
-    var price = req.body.price
-    var user = req.decoded._id
+    var value = req.body.value
+    var users = req.decoded._id
+    console.log(users)
 
     var newSaldo = new Saldo ({
-        user, price 
+        users, value
     })
 
     newSaldo.save()
@@ -93,9 +95,13 @@ exports.accept = async (req, res) => {
 
     Saldo.findByIdAndUpdate(req.params.id, {isDone: true}, { new: true })
         .then((topup) => {
-            return res.status(200).json(
-                success('Request topup accepted!', topup)
-            )
+            User.findById(topup.users).then((user) => {
+                user.saldo += topup.value
+                user.save()
+                return res.status(200).json(
+                    success('Request topup accepted!', user)
+                )
+            })
         })
         .catch((err)=>{
             return res.status(404).json(
