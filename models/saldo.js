@@ -5,7 +5,7 @@ const saldoSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
-    price: {
+    value: {
         type: Number,
         required: true
     },
