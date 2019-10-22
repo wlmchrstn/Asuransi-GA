@@ -173,7 +173,6 @@ module.exports = {
         if (!valid) return res.status(404).json(error('No form found!', "Form not found!", 404))
         userId = req.decoded._id.toString();
         formId = valid.users.toString();
-        // if (userId !== formId) return res.status(403).json(error('This is not your form!', "-", 403))
         Form.findByIdAndDelete(req.params.form)
             .then(result => {
                 res.status(200).json(success('Form deleted!'))
