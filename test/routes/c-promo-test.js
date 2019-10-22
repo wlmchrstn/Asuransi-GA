@@ -18,9 +18,6 @@ describe('Insurance', function() {
                 password: '12345'
             })
             .end(function (err, res) {
-                if (err) {
-                    console.log(err)
-                }
                 token = res.header.authorization
                 done()
                 
@@ -60,5 +57,4 @@ describe('Insurance', function() {
                 done()
             })
     })
-
 })

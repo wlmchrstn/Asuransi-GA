@@ -21,9 +21,6 @@ describe('Insurance', function() {
                 password: '12345'
             })
             .end(function (err, res) {
-                if (err) {
-                    console.log(err)
-                }
                 token = res.headers.authorization
                 done()
                 
