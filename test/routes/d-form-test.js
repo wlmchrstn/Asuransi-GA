@@ -9,23 +9,23 @@ chai.use(chaiHttp)
 
 describe('FORM OPERATION', ()=> {
     
-    before(done => {
-        chai.request(server)
-            .post('/api/user/admin')
-            .send({
-                username: 'admin',
-                name: 'Ayu admin',
-                email: 'admin@gmail.com',
-                password: '12345'
-            })
-            .end(() => {
-                promo.deleteMany({},
-                    {new: true})
-                    .exec(() => {
-                        done()
-                    })
-            })
-    })
+    // before(done => {
+    //     chai.request(server)
+    //         .post('/api/user/admin')
+    //         .send({
+    //             username: 'admin',
+    //             name: 'Ayu admin',
+    //             email: 'admin@gmail.com',
+    //             password: '12345'
+    //         })
+    //         .end(() => {
+    //             promo.deleteMany({},
+    //                 {new: true})
+    //                 .exec(() => {
+    //                     done()
+    //                 })
+    //         })
+    // })
 
 
     before(function (done) {
@@ -169,8 +169,8 @@ describe('FORM OPERATION', ()=> {
             })
             .set('Authorization', clientToken)
             .end(function (err, res) {
+                console.log(res.body)
                 formId = res.body.result._id
-                console.log(formId)
                 expect(res).to.have.status(201)
                 expect(res).to.be.an('object')
                 done()
