@@ -99,6 +99,7 @@ module.exports = {
 
         let userId = req.decoded._id
         let form = await Form.findById(req.params.form)
+        if(!form) return res.status(404).json(error('Form not found', '-', 404))
         insuranceId = form.insurances.toString()
 
         let insurance = await Insurance.findById(insuranceId)
@@ -117,6 +118,7 @@ module.exports = {
             { new: true })
         let date = new Date()
         date.setDate(5)
+        date.setMonth(date.getMonth()+1)
         await Form.findByIdAndUpdate(req.params.form,
             {
                 status_pembayaran: "active",
@@ -127,8 +129,6 @@ module.exports = {
             })
         res.status(200).json(success('Insurance is actived', insurance.name_insurance)
         )
-
-
     },
 
     async payInsurance(req, res) {
@@ -152,12 +152,13 @@ module.exports = {
                 )
             }
             else {
-                let month = form.tanggal_pembayaran.getMonth()
+                let date = new Date(form.tanggal_pembayaran)
+                date.setMonth(date.getMonth()+1)
                 let newTopUpsaldo = Number(saldo) - Number(price)
                 await User.findByIdAndUpdate(user._id,
                     { saldo: newTopUpsaldo },
                     { new: true })
-                form.tanggal_pembayaran.setMonth((month + 1))
+                form.tanggal_pembayaran = date
                 form.save()
                 res.status(200).json(success('Payment successful', insurance.name_insurance))
             }
