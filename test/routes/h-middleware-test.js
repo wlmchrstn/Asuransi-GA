@@ -7,6 +7,7 @@ const User = require('../../models/user')
 chai.use(chaiHttp);
 
 describe("MIDDLEWARE OPERATION", ()=> {
+
     before(done=> {
         chai.request(server)
             .post('/api/user/login')
@@ -21,6 +22,26 @@ describe("MIDDLEWARE OPERATION", ()=> {
                     .then(
                         done()
                     )
+            })
+    })
+
+    it("NOT SUPER ADMIN", (done)=> {
+        chai.request(server)
+            .post('/api/user/admin')
+            .set('Authorization', token)
+            .end((err,res)=>{
+                expect(res.status).to.be.equal(403)
+                done()
+            })
+    })
+
+    it("NOT ADMIN", (done)=> {
+        chai.request(server)
+            .post('/api/insurance/create')
+            .set('Authorization', token)
+            .end((err,res)=>{
+                expect(res.status).to.be.equal(403)
+                done()
             })
     })
 

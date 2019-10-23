@@ -6,7 +6,7 @@ const funcHelper = require('../../helpers/funcHelper')
 const server = require('../../app')
 const chai = require('chai')
 const should = chai.should()
-const expect = chai.expect()
+const expect = chai.expect;
 const chaiHttp = require('chai-http')
 const jwt = require('jsonwebtoken');
 
@@ -77,9 +77,7 @@ describe('USER CONTROLLER', () => {
                 res.body.should.have.property('success').equal(true)
                 res.body.should.have.property('message').equal('Token created! Access given!')
                 res.body.should.have.property('result')
-                res.body.should.have.property('id')
-                res.body.should.have.property('role')
-                tokenLogin = res.body.result
+                tokenLogin = res.body.result.token
                 done()
             })
     })
@@ -140,14 +138,8 @@ describe('USER CONTROLLER', () => {
     it("POST /api/user/client should create client", done => {
         chai.request(server)
             .post('/api/user/client')
-            .send({
-                username: 'user',
-                email: 'user@gmail.com',
-                name: 'user',
-                password: '12345'
-            })
+            .send(testClient)
             .end((err, res) => {
-                console.log(err)
                 res.should.have.status(201)
                 res.body.should.have.property('success').equal(true)
                 res.body.should.have.property('message').equal("Client created!")
@@ -276,6 +268,32 @@ describe('USER CONTROLLER', () => {
             })
     })
 
+    it("PUT /api/user/update/password blank password", done => {
+        chai.request(server)
+            .put(`/api/user/update/password`)
+            .set('Authorization', tokenLogin)
+            .send()
+            .end((err, res)=> {
+                res.should.have.status(400)
+                expect(res.body.message).to.be.equal("Failed to update! Password can't be blank!")
+                done()
+            })
+    })
+
+    it("PUT /api/user/update/password update password", done => {
+        chai.request(server)
+            .put(`/api/user/update/password`)
+            .set('Authorization', tokenLogin)
+            .send({
+                password: "54321"
+            })
+            .end((err, res)=> {
+                res.should.have.status(200)
+                expect(res.body.message).to.be.equal("Update user success")
+                done()
+            })
+    })
+
     it("GET /api/user/selectAdmin/:id should select admin", done => {
         chai.request(server)
             .get(`/api/user/selectAdmin/${admin._id}`)
@@ -359,7 +377,6 @@ describe('USER CONTROLLER', () => {
             .post(`/api/user/reset-password`)
             .send({ email: 'client@gmail.com' })
             .end((err, res) => {
-                console.log(err)
                 res.should.have.status(200)
                 res.body.should.have.property('success').equal(true)
                 res.body.should.have.property('message')

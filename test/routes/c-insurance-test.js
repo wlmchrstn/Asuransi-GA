@@ -3,7 +3,7 @@ var chai = require('chai');
 var server = require('../../app');
 var expect = chai.expect;
 var fs = require('fs')
-
+var Insurance = require('../../models/insurance')
 chai.use(chaiHttp);
 
 let token;
@@ -11,7 +11,7 @@ let fakeToken = 'thisisfaketoken'
 let fakeId = '5d92cf8c3a0f164515577b21'
 let file = process.env.PICT
 
-describe('Insurance', function() {
+describe('Insurance', function(done) {
 
     before(function (done) {
         chai.request(server)
@@ -23,7 +23,13 @@ describe('Insurance', function() {
             .end(function (err, res) {
                 token = res.headers.authorization
                 done()
-                
+            })
+    })
+
+    after(done => {
+        Insurance.deleteMany({})
+            .then(result => {
+                done()
             })
     })
 

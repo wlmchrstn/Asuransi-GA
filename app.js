@@ -89,8 +89,9 @@ app.listen(port, () => {
   console.log(`Listening on port ${port} in database ${env}!`)
 })
 
+/* istanbul ignore next */
 setInterval(function() {
-  http.get('http://asuransi-glints-academy.herokuapp.com/api')
+  http.get(process.env.HOME)
 }, 300000)
 
 module.exports = app;

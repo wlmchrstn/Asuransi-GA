@@ -38,6 +38,7 @@ describe('COMMENT OPERATION', ()=> {
             .set('Authorization', token)
             .end(function(err, res) {
                 insurance_id = res.body.result._id
+                fakeInsuranceId = insurance_id.replace("5", "4")
                 expect(res).to.have.status(201)
                 expect(res).to.be.an('object')
                 done()
@@ -48,45 +49,20 @@ describe('COMMENT OPERATION', ()=> {
         chai.request(server)
             .post('/api/user/login')
             .send({
-                login: "wlmchrstn",
-                password: 'abc5dasar'
+                login: "client",
+                password: '12345'
             })
             .end((err, res)=> {
-                token = res.body.result.toString()
-                done()
-            })
-    })
-
-    it("NOT SUPER ADMIN", (done)=> {
-        chai.request(server)
-            .post('/api/user/admin')
-            .set('Authorization', token)
-            .end((err,res)=>{
-                expect(res.status).to.be.equal(403)
-                done()
-            })
-    })
-
-    it("NOT ADMIN", (done)=> {
-        chai.request(server)
-            .post('/api/insurance/create')
-            .set('Authorization', token)
-            .end((err,res)=>{
-                expect(res.status).to.be.equal(403)
+                token = res.body.result.token
                 done()
             })
     })
 
     it('INSURANCE NOT FOUND', (done)=> {
         chai.request(server)
-            .post(`/api/comment/${clientId}`)
-            .set('authorization', token)
-            .send({
-                users: clientId,
-                insurances: clientId,
-                comment: "ABCD",
-                rating: 5
-            })
+            .post(`/api/comment/${fakeInsuranceId}`)
+            .set('Authorization', token)
+            .send()
             .end((err, res)=> {
                 expect(res.status).to.be.equal(404)
                 done()
