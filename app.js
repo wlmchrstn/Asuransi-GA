@@ -91,7 +91,7 @@ app.listen(port, () => {
 
 /* istanbul ignore next */
 setInterval(function() {
-  http.get(process.env.HOME)
+  http.get(process.env.BE_HOME_URL)
 }, 300000)
 
 module.exports = app;
