@@ -240,13 +240,15 @@ module.exports = {
         if(req.body.password){
             let pwd = await bcrypt.hashSync(req.body.password.toString(), saltRounds)
             req.body.password = pwd
-        }else if(!req.body.password){
+            let user = await User.findByIdAndUpdate(req.decoded._id, {
+                password: req.body.password
+            }, {new: true})
+            res.status(200).json(success('Update user success', user))
+        }
+        /* istanbul ignore else */
+        else if(!req.body.password){
             return res.status(400).json(error("Failed to update! Password can't be blank!", "-", 400))
         }
-        let user = await User.findByIdAndUpdate(req.decoded._id, {
-            password: req.body.password
-        }, {new: true})
-        res.status(200).json(success('Update user success', user))
     },
 
     async deleteUser(req, res){
