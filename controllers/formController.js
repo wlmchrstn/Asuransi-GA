@@ -78,7 +78,7 @@ module.exports = {
 
     async getUserForm(req, res) {
         Form.find({ users: req.decoded._id })
-            .populate({ path: 'insurances', select: 'name_insurance' })
+            .populate({ path: 'insurances', select: 'name_insurance price' })
             .select('-__v')
             .then(result => {
                 res.status(200).json(success('Here is your list!', result))
@@ -99,6 +99,9 @@ module.exports = {
 
         let userId = req.decoded._id
         let form = await Form.findById(req.params.form)
+        if (!form) {
+            return res.status(404).json(error('Form Not Found', '-', 404))
+        }
         insuranceId = form.insurances.toString()
 
         let insurance = await Insurance.findById(insuranceId)
@@ -106,7 +109,7 @@ module.exports = {
         saldo = user.saldo
 
         if (saldo < insurance.price) {
-            return res.json(
+            return res.status(406).json(
                 `Hai ${user.name}, Your Saldo is Not Enough`
             )
         }
@@ -117,6 +120,7 @@ module.exports = {
             { new: true })
         let date = new Date()
         date.setDate(5)
+        date.setMonth(date.getMonth()+1)
         await Form.findByIdAndUpdate(req.params.form,
             {
                 status_pembayaran: "active",
@@ -127,15 +131,14 @@ module.exports = {
             })
         res.status(200).json(success('Insurance is actived', insurance.name_insurance)
         )
-
-
     },
 
     async payInsurance(req, res) {
-        try {
+
             let user = await User.findById(req.decoded._id)
             let form = await Form.findById(req.params.form)
             auth = form.users.toString()
+            id = user.id.toString()
             insuranceId = form.insurances.toString()
 
             let insurance = await Insurance.findById(insuranceId)
@@ -143,28 +146,26 @@ module.exports = {
             saldo = user.saldo
             price = insurance.price
 
-            if (user._id !== auth) {
+            if (id !== auth) {
                 return res.status(403).json(error('This is not your form', "-", 403))
             }
+            /*istanbul ignore if */
             if (saldo < price) {
-                return res.json(
+                return res.status(406).json(
                     `Hai ${user.name}, Your Saldo is Not Enough`
                 )
             }
             else {
-                let month = form.tanggal_pembayaran.getMonth()
+                let date = new Date(form.tanggal_pembayaran)
+                date.setMonth(date.getMonth()+1)
                 let newTopUpsaldo = Number(saldo) - Number(price)
                 await User.findByIdAndUpdate(user._id,
                     { saldo: newTopUpsaldo },
                     { new: true })
-                form.tanggal_pembayaran.setMonth((month + 1))
+                form.tanggal_pembayaran = date
                 form.save()
                 res.status(200).json(success('Payment successful', insurance.name_insurance))
             }
-        }
-        catch (err) {
-            return res.status(406).json(error("Failed to pay insurance", err.message, 406))
-        }
     },
 
     async deleteForm(req, res) {
