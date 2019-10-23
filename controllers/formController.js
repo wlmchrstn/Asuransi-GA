@@ -99,7 +99,13 @@ module.exports = {
 
         let userId = req.decoded._id
         let form = await Form.findById(req.params.form)
+<<<<<<< HEAD
         if(!form) return res.status(404).json(error('Form not found', '-', 404))
+=======
+        if (!form) {
+            return res.status(404).json(error('Form Not Found', '-', 404))
+        }
+>>>>>>> 5c9b4bb8f73ca3607bdbf943cd9adf19f0c6552e
         insuranceId = form.insurances.toString()
 
         let insurance = await Insurance.findById(insuranceId)
@@ -107,7 +113,7 @@ module.exports = {
         saldo = user.saldo
 
         if (saldo < insurance.price) {
-            return res.json(
+            return res.status(406).json(
                 `Hai ${user.name}, Your Saldo is Not Enough`
             )
         }
@@ -136,6 +142,7 @@ module.exports = {
             let user = await User.findById(req.decoded._id)
             let form = await Form.findById(req.params.form)
             auth = form.users.toString()
+            id = user.id.toString()
             insuranceId = form.insurances.toString()
 
             let insurance = await Insurance.findById(insuranceId)
@@ -143,11 +150,11 @@ module.exports = {
             saldo = user.saldo
             price = insurance.price
 
-            if (user._id !== auth) {
+            if (id !== auth) {
                 return res.status(403).json(error('This is not your form', "-", 403))
             }
             if (saldo < price) {
-                return res.json(
+                return res.status(406).json(
                     `Hai ${user.name}, Your Saldo is Not Enough`
                 )
             }
@@ -158,7 +165,12 @@ module.exports = {
                 await User.findByIdAndUpdate(user._id,
                     { saldo: newTopUpsaldo },
                     { new: true })
+<<<<<<< HEAD
                 form.tanggal_pembayaran = date
+=======
+                form.tanggal_pembayaran.setMonth((month + 1))
+                console.log(form.tanggal_pembayaran.setMonth((month + 1)))
+>>>>>>> 5c9b4bb8f73ca3607bdbf943cd9adf19f0c6552e
                 form.save()
                 res.status(200).json(success('Payment successful', insurance.name_insurance))
             }
