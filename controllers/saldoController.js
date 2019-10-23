@@ -46,7 +46,6 @@ exports.create = async (req, res) => {
 
     var value = req.body.value
     var users = req.decoded._id
-    console.log(users)
 
     var newSaldo = new Saldo ({
         users, value
@@ -103,11 +102,6 @@ exports.accept = async (req, res) => {
                 )
             })
         })
-        .catch((err)=>{
-            return res.status(404).json(
-                error('Invalid params.id', err.message, 404)
-            )
-        })
 }
 
 exports.delete = async (req, res) => {
@@ -116,11 +110,6 @@ exports.delete = async (req, res) => {
         .then((topup) => {
             return res.status(200).json(
                 success('Delete selected request topup!', topup)
-            )
-        })
-        .catch((err)=>{
-            return res.status(404).json(
-                error('Invalid params.id', err.message, 404)
             )
         })
 }

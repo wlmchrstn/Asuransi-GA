@@ -127,8 +127,6 @@ module.exports = {
         }
     },
 
-    
-
     async verify(req, res){
         try {
             let token = req.params.token;
@@ -138,7 +136,7 @@ module.exports = {
                 return res.status(400).json(error('Token expired, please resend email confirm', err.message, 400))
             }
             await User.findOneAndUpdate({token: req.params.token}, {isVerified: true})
-            res.status(200).redirect('https://staging-aga-project.herokuapp.com/')
+            res.status(200).redirect(process.env.FE_HOME_URL)
             
         }
         catch(err){
@@ -194,7 +192,12 @@ module.exports = {
                 if(data!=true) return res.status(403).json(error('Password incorrect!', err, 403))
                 let token = jwt.sign({_id: user._id, role: user.role}, process.env.SECRET_KEY, {expiresIn: '1h'})
                 res.setHeader('Authorization', token)
-                return res.status(200).json(success('Token created! Access given!', token, user._id, user.role))
+                let hasil = {
+                    token: token,
+                    _id: user._id,
+                    role: user.role
+                }
+                return res.status(200).json(success('Token created! Access given!', hasil))
             })
         
         }
@@ -235,43 +238,15 @@ module.exports = {
 
     async updatePassword(req, res){
         if(req.body.password){
-            let pwd = await bcrypt.hashSync(req.body.password, saltRounds)
+            let pwd = await bcrypt.hashSync(req.body.password.toString(), saltRounds)
             req.body.password = pwd
         }else if(!req.body.password){
-            return res.status(400).json(error("Failed to update! Password can't be blank!"))
+            return res.status(400).json(error("Failed to update! Password can't be blank!", "-", 400))
         }
-        try{
-            let user = await User.findByIdAndUpdate(req.decoded._id, {
-                password: req.body.password
-            }, {new: true})
-            res.status(200).json(success('Update user success', user))
-        }
-        catch(err){
-            res.status(400).json(error('Update user failed', err.message, 400))
-        }
-    },
-
-   async updateSaldo(req, res) {
-        try{         
-
-            let findUser = await User.findById(req.params.id)
-
-            let newSaldo = Number(findUser.saldo) + Number(req.body.saldo)
-
-            let user = await User.findByIdAndUpdate(req.params.id, {
-                $set: {saldo: newSaldo}
-            }, {new: true})
-
-            return res.status(201).json(
-                success('Updated saldo success', user)
-            )
-        }
-        catch{
-            return res.status(400).json(
-                error('Updated saldo failed', err.message, 400)
-            )
-        }
-
+        let user = await User.findByIdAndUpdate(req.decoded._id, {
+            password: req.body.password
+        }, {new: true})
+        res.status(200).json(success('Update user success', user))
     },
 
     async deleteUser(req, res){

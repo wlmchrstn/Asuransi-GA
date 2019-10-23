@@ -40,7 +40,7 @@ module.exports= {
             })
     },
     getAllComment(req, res) {
-        Comment.findOne({insurances: req.params.insurance})
+        Comment.find({insurances: req.params.insurance})
             .then(result => {
                 res.status(200).json(success('Here is the comment!', result))
             })

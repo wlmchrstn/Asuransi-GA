@@ -9,3 +9,5 @@ CLOUDINARY_API_SECRET = "PY0AeFB7C_hw8YhY43pZb9hLK6E"
 PICT='/home/william/Desktop/Materi/project/backend/public/images/profpict.png'
 HEROKU_API_KEY = '9e2cb4ef-71ea-44fb-8eb9-0fc84bfe19e8'
 ci.yml app.name = asuransi-glints-academy
+BE_HOME_URL = 'http://asuransi-glints-academy.herokuapp.com/api'
+FE_HOME_URL = 'https://staging-aga-project.herokuapp.com/'
