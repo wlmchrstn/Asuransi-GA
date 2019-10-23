@@ -144,7 +144,7 @@ module.exports = {
             saldo = user.saldo
             price = insurance.price
 
-            if (userId !== auth) {
+            if (user._id !== auth) {
                 return res.status(403).json(error('This is not your form', "-", 403))
             }
             if (saldo < price) {
@@ -155,7 +155,7 @@ module.exports = {
             else {
                 let month = form.tanggal_pembayaran.getMonth()
                 let newTopUpsaldo = Number(saldo) - Number(price)
-                await User.findByIdAndUpdate(userId,
+                await User.findByIdAndUpdate(user._id,
                     { saldo: newTopUpsaldo },
                     { new: true })
                 form.tanggal_pembayaran.setMonth((month + 1))

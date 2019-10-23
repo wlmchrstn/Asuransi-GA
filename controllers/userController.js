@@ -235,7 +235,7 @@ module.exports = {
 
     async updatePassword(req, res){
         if(req.body.password){
-            let pwd = await bcrypt.hashSync(req.body.password, saltRounds)
+            let pwd = await bcrypt.hashSync(req.body.password.toString(), saltRounds)
             req.body.password = pwd
         }else if(!req.body.password){
             return res.status(400).json(error("Failed to update! Password can't be blank!"))
