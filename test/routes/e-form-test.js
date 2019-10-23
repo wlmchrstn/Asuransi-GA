@@ -77,7 +77,7 @@ describe('FORM OPERATION', ()=> {
         chai.request(server)
             .post('/api/user/login')
             .send({
-                login: "client",
+                login: "user",
                 password: '12345'
             })
             .end((err, res)=> {
@@ -241,6 +241,18 @@ describe('FORM OPERATION', ()=> {
             .send()
             .end((err, res)=> {
                 expect(res).to.have.status(200)
+                expect(res).to.be.an('object')
+                done()
+            })
+    })
+
+    it('BUY INSURANCE THAT NOT EXIST SHOULD SHOW ERROR', (done)=> {
+        chai.request(server)
+            .put(`/api/form/buy/${clientId}`)
+            .set('Authorization', token)
+            .send()
+            .end((err, res)=> {
+                expect(res).to.have.status(404)
                 expect(res).to.be.an('object')
                 done()
             })

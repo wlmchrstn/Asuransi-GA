@@ -134,7 +134,7 @@ module.exports = {
     },
 
     async payInsurance(req, res) {
-        try {
+
             let user = await User.findById(req.decoded._id)
             let form = await Form.findById(req.params.form)
             auth = form.users.toString()
@@ -149,6 +149,7 @@ module.exports = {
             if (id !== auth) {
                 return res.status(403).json(error('This is not your form', "-", 403))
             }
+            /*istanbul ignore if */
             if (saldo < price) {
                 return res.status(406).json(
                     `Hai ${user.name}, Your Saldo is Not Enough`
@@ -165,10 +166,6 @@ module.exports = {
                 form.save()
                 res.status(200).json(success('Payment successful', insurance.name_insurance))
             }
-        }
-        catch (err) {
-            return res.status(406).json(error("Failed to pay insurance", err.message, 406))
-        }
     },
 
     async deleteForm(req, res) {

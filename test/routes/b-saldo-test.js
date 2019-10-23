@@ -29,8 +29,8 @@ describe('SALDO', function() {
         chai.request(server)
             .post('/api/user/client')
             .send({
-                name: 'client',
-                username: 'client',
+                name: 'user',
+                username: 'user',
                 email: 'user@gmail.com',
                 password: '12345'
             })
@@ -70,7 +70,7 @@ describe('SALDO', function() {
         chai.request(server)
             .post('/api/saldo')
             .send({
-                value: 12000000
+                value: 120000
             })
             .set('Authorization', token)
             .end(function (err, res) {
