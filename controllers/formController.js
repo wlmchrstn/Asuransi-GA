@@ -78,7 +78,7 @@ module.exports = {
 
     async getUserForm(req, res) {
         Form.find({ users: req.decoded._id })
-            .populate({ path: 'insurances', select: 'name_insurance' })
+            .populate({ path: 'insurances', select: 'name_insurance price' })
             .select('-__v')
             .then(result => {
                 res.status(200).json(success('Here is your list!', result))
@@ -99,13 +99,9 @@ module.exports = {
 
         let userId = req.decoded._id
         let form = await Form.findById(req.params.form)
-<<<<<<< HEAD
-        if(!form) return res.status(404).json(error('Form not found', '-', 404))
-=======
         if (!form) {
             return res.status(404).json(error('Form Not Found', '-', 404))
         }
->>>>>>> 5c9b4bb8f73ca3607bdbf943cd9adf19f0c6552e
         insuranceId = form.insurances.toString()
 
         let insurance = await Insurance.findById(insuranceId)
@@ -165,12 +161,7 @@ module.exports = {
                 await User.findByIdAndUpdate(user._id,
                     { saldo: newTopUpsaldo },
                     { new: true })
-<<<<<<< HEAD
                 form.tanggal_pembayaran = date
-=======
-                form.tanggal_pembayaran.setMonth((month + 1))
-                console.log(form.tanggal_pembayaran.setMonth((month + 1)))
->>>>>>> 5c9b4bb8f73ca3607bdbf943cd9adf19f0c6552e
                 form.save()
                 res.status(200).json(success('Payment successful', insurance.name_insurance))
             }

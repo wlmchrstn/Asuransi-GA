@@ -270,6 +270,18 @@ describe('FORM OPERATION', ()=> {
             })
     })
 
+    it('PAY INSURANCE THAT USER IS NOT SAME SHOULD SHOW ERROR', (done)=> {
+        chai.request(server)
+            .put(`/api/form/pay/${formId}`)
+            .set('Authorization', fakeToken)
+            .send()
+            .end((err, res)=> {
+                expect(res).to.have.status(403)
+                expect(res).to.be.an('object')
+                done()
+            })
+    })
+
     it('UNAUTHORIZE DELETE FORM', (done)=> {
         chai.request(server)
             .delete(`/api/form/${formId}`)
