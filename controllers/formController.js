@@ -7,8 +7,8 @@ const funcHelper = require('../helpers/funcHelper')
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
+/* istanbul ignore next */
 schedule.scheduleJob('5 * * * ', function () {
-    /* istanbul ignore next */
     Form.find({ status_pembayaran: 'active' })
         .populate('users')
         .then(result => {
@@ -27,8 +27,9 @@ schedule.scheduleJob('5 * * * ', function () {
         })
 })
 
+
+/* istanbul ignore next */
 schedule.scheduleJob('59 59 23 * * *', function () {
-    /* istanbul ignore next */
     Form.find({ status_pembayaran: 'active' })
         .populate('users')
         .then(result => {
@@ -120,7 +121,7 @@ module.exports = {
             { new: true })
         let date = new Date()
         date.setDate(5)
-        date.setMonth(date.getMonth()+1)
+        date.setMonth(date.getMonth() + 1)
         await Form.findByIdAndUpdate(req.params.form,
             {
                 status_pembayaran: "active",
@@ -135,37 +136,37 @@ module.exports = {
 
     async payInsurance(req, res) {
 
-            let user = await User.findById(req.decoded._id)
-            let form = await Form.findById(req.params.form)
-            auth = form.users.toString()
-            id = user.id.toString()
-            insuranceId = form.insurances.toString()
+        let user = await User.findById(req.decoded._id)
+        let form = await Form.findById(req.params.form)
+        auth = form.users.toString()
+        id = user.id.toString()
+        insuranceId = form.insurances.toString()
 
-            let insurance = await Insurance.findById(insuranceId)
+        let insurance = await Insurance.findById(insuranceId)
 
-            saldo = user.saldo
-            price = insurance.price
+        saldo = user.saldo
+        price = insurance.price
 
-            if (id !== auth) {
-                return res.status(403).json(error('This is not your form', "-", 403))
-            }
-            /*istanbul ignore if */
-            if (saldo < price) {
-                return res.status(406).json(
-                    `Hai ${user.name}, Your Saldo is Not Enough`
-                )
-            }
-            else {
-                let date = new Date(form.tanggal_pembayaran)
-                date.setMonth(date.getMonth()+1)
-                let newTopUpsaldo = Number(saldo) - Number(price)
-                await User.findByIdAndUpdate(user._id,
-                    { saldo: newTopUpsaldo },
-                    { new: true })
-                form.tanggal_pembayaran = date
-                form.save()
-                res.status(200).json(success('Payment successful', insurance.name_insurance))
-            }
+        if (id !== auth) {
+            return res.status(403).json(error('This is not your form', "-", 403))
+        }
+        /*istanbul ignore if */
+        if (saldo < price) {
+            return res.status(406).json(
+                `Hai ${user.name}, Your Saldo is Not Enough`
+            )
+        }
+        else {
+            let date = new Date(form.tanggal_pembayaran)
+            date.setMonth(date.getMonth() + 1)
+            let newTopUpsaldo = Number(saldo) - Number(price)
+            await User.findByIdAndUpdate(user._id,
+                { saldo: newTopUpsaldo },
+                { new: true })
+            form.tanggal_pembayaran = date
+            form.save()
+            res.status(200).json(success('Payment successful', insurance.name_insurance))
+        }
     },
 
     async deleteForm(req, res) {
