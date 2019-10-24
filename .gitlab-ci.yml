@@ -28,7 +28,6 @@ deploy-to-heroku:
     - apt-get install -y ruby-dev
     - gem install dpl
     - dpl --provider=heroku --app=$HEROKU_APPNAME --api-key=$HEROKU_APIKEY
-    - curl -X POST --data chat_id=$CHAT_ID --data-urlencode text="AGA | $CI_COMMIT_TITLE - Deployed to Heroku!" $TELEGRAM_BOT/sendMessage
   
   only:
     - master
