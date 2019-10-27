@@ -44,5 +44,11 @@ module.exports= {
             .then(result => {
                 res.status(200).json(success('Here is the comment!', result))
             })
+    },
+    showAll(req, res) {
+        Comment.find()
+            .then(result => {
+                res.status(200).json(success('Show all comment!', result))
+            })
     }
 }
