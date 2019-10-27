@@ -12,7 +12,7 @@ exports.isAuthenticated = function (req, res, next) {
             else {
                 req.decoded = decoded;
                 User.findById(req.decoded._id, (err, user)=>{
-                    if (!user) return res.status(403).json({message: "there is no user found"});
+                    if (!user) return res.status(403).json({message: `${err}`});
                     else next()
                 })
             }

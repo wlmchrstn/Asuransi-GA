@@ -324,5 +324,22 @@ module.exports = {
         catch(err){
             res.status(404).json(error('The token is expired or invalid', err, 404))
         }
-    }
+    },
+
+    async showClient(req, res){
+        let user = await User.find({role: 'User'})
+        res.status(200).json(success('Show all client', user))
+    },
+
+    async clientDetails(req, res){
+        try{
+
+            let user = await User.findById(req.params.id)
+            res.status(200).json(success('Show selected clients details', user))
+
+        }
+        catch(err){
+            res.status(404).json(error('Client not found', err, 404))  
+        }      
+    },
 }

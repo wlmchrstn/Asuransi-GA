@@ -1,5 +1,5 @@
 exports.permission = (req, res, next) => {
-    if (req.decoded.role !== 'Admin') {
+    if (req.decoded.role == 'User') {
         return res.status(403).json({
             message: 'You are not authorized'
         })

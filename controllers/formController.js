@@ -87,11 +87,14 @@ module.exports = {
     },
 
     async getdetailForm(req, res) {
-
+        
         Form.findOne({ users: req.decoded._id, _id: req.params._id })
             .populate({ path: 'insurances', select: 'name_insurance price image' })
             .select('-__v')
             .then((form) => {
+                if (!form) {
+                    return res.status(404).json(error('Form Not Found', '-', 404))
+                }
                 res.status(200).json(success('Here is your form!', form))
             })
     },
@@ -177,6 +180,25 @@ module.exports = {
         Form.findByIdAndDelete(req.params.form)
             .then(result => {
                 res.status(200).json(success('Form deleted!'))
+            })
+    },
+
+    async showAll(req, res) {
+        try {
+            let form = await Form.find({users: req.params.user_id})
+            res.status(200).json(success('Show all form from selected user!', form))
+        }
+        catch(err){
+            res.status(404).json(error('No user found!', err.mesage, 404))
+        }
+    },
+
+    async active(req, res) {
+        Form.find({ status_pembayaran: "active" })
+            .populate({ path: 'insurances', select: 'name_insurance price' })
+            .select('-__v')
+            .then(result => {
+                res.status(200).json(success('Here is your list!', result))
             })
     }
 }
