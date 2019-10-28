@@ -58,11 +58,11 @@ module.exports = {
             let exist = await User.findById(userId)
 
             let form = await Form.create({
-                name: exist.name,
+                name: req.body.name,
                 NIK: req.body.NIK,
-                gender: exist.gender,
-                birthDate: exist.birthDate,
-                birthPlace: exist.birthPlace,
+                gender: req.body.gender,
+                birthDate: req.body.birthDate,
+                birthPlace: req.body.birthPlace,
                 status: req.body.status,
                 phone: exist.phone,
                 NPWP: req.body.NPWP,
@@ -73,8 +73,8 @@ module.exports = {
                 email: exist.email,
                 job: req.body.job,
                 position: req.body.position,
-                isVerified: false,
-                reject: false
+                status_pembayaran: 'pending',
+                isVerified: false
             })
 
             form.users = userId
@@ -244,12 +244,14 @@ module.exports = {
 
         let form = await Form.findById(req.params.form)
 
+        let insurances = await Insurance.findById(form.insurances)
+
         Form.findByIdAndUpdate(req.params.form, { $set: {isVerified: true} }, { new: true })
             .then((result) => {
                 var to = form.email
                 var from = 'AGA@insurance.com'
-                var subject = 'Form Insurance is accepted'
-                var html = `Hi ${form.name}, your form is accepted. Now you can buy your insurance!`
+                var subject = `Form Insurance (${insurances.name_insurance}) is accepted`
+                var html = `Hi ${form.name}, your form (${insurances.name_insurance}) is accepted. Now you can buy your insurance!`
                 funcHelper.mail(to, from, subject, html)
 
                 return res.status(201).json(
@@ -262,12 +264,14 @@ module.exports = {
         
         let form = await Form.findById(req.params.form)
 
+        let insurances = await Insurance.findById(form.insurances)
+
         Form.findByIdAndUpdate(req.params.form, { $set: {isVerified: true, status_pembayaran: 'reject'} }, { new: true })
             .then((result) => {
                 var to = form.email
                 var from = 'AGA@insurance.com'
-                var subject = 'Form Insurance is reject'
-                var html = `Hi ${form.name}, your form (${form.insurances}) is rejected because data is not valid`
+                var subject = `Form Insurance (${insurances.name_insurance}) is reject`
+                var html = `Hi ${form.name}, your form (${insurances.name_insurance}) is rejected because data is not valid`
                 funcHelper.mail(to, from, subject, html)
 
                 return res.status(201).json(

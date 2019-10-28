@@ -12,8 +12,7 @@ const formSchema = new mongoose.Schema({
     },
     name: {
         type: String,
-        required: true,
-        uppercase: true
+        required: true
     },
     NIK: {
         type: Number,
