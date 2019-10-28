@@ -8,12 +8,12 @@ var uploader = multer().single('image');
 exports.createInsurance = async (req, res) => {
 
     var {
-        name_insurance, description, image, premi, price, isPromo,
+        name_insurance, description, image, premi, price, price_promo, isPromo,
         time_insurance, range_age, benefit, currency
     } = req.body
 
     var newInsurance = new insurance({
-        name_insurance, description, image, premi, price, isPromo,
+        name_insurance, description, image, premi, price, price_promo, isPromo,
         time_insurance, range_age, benefit, currency
     })
 
@@ -62,17 +62,18 @@ exports.ShowOneInsurance = async (req, res) => {
 
 exports.updateInsurance = async (req, res) => {
 
-    if(req.body.isPromo == null || req.body.isPromo == "") {
+    if(req.body.isPromo === null || req.body.isPromo === "") {
         return res.status(400).json(error("Update Insurance Failed", "-", 400))
     }
     /* istanbul ignore if */
-    if(req.body.price == null || req.body.price == "") {
+
+    if(req.body.price_promo === null || req.body.price_promo === "") {
         return res.status(400).json(error("Update Insurance Failed", "-", 400))
-    }
+    }   
     
     insurance.findByIdAndUpdate({ _id: req.params.id },
         { isPromo: req.body.isPromo,
-        price: req.body.price }, { new: true })
+        price_promo: req.body.price_promo }, { new: true })
         .then((insurance) => {
             return res.status(201).json(
                 success('Successfully updated!', insurance)
