@@ -224,6 +224,7 @@ module.exports = {
         try{
             let user = await User.findByIdAndUpdate(req.decoded._id, {
                 name: req.body.name,
+                gender: req.body.gender,
                 phone: req.body.phone,
                 address: req.body.address,
                 birthPlace: req.body.birthPlace,
