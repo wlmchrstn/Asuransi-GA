@@ -12,8 +12,7 @@ const formSchema = new mongoose.Schema({
     },
     name: {
         type: String,
-        required: true,
-        uppercase: true
+        required: true
     },
     NIK: {
         type: Number,
@@ -22,7 +21,7 @@ const formSchema = new mongoose.Schema({
     gender: {
         type: String,
         required: true,
-        enum: ['MALE', 'FEMALE']
+        enum: ['Male', 'Female']
     },
     birthDate: {
         type: Date,
@@ -75,11 +74,15 @@ const formSchema = new mongoose.Schema({
     },
     status_pembayaran: {
         type: String,
-        enum: ['active', 'pending', 'inactive'],
+        enum: ['active', 'pending', 'inactive', 'reject'],
         default: 'pending'
     },
     tanggal_pembayaran: {
         type: Date
+    },
+    isVerified: {
+        type: Boolean,
+        default: false
     }
 })
 
