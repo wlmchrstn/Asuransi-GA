@@ -194,11 +194,12 @@ module.exports = {
     },
 
     async active(req, res) {
-        Form.find({ status_pembayaran: "active" })
+        
+        Form.find({ status_pembayaran: 'active'})
             .populate({ path: 'insurances', select: 'name_insurance price' })
             .select('-__v')
             .then(result => {
-                res.status(200).json(success('Here is your list!', result))
+                res.status(200).json(success('Show all active form!', result))
             })
     }
 }

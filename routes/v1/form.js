@@ -10,7 +10,7 @@ router.delete('/:form', auth.isAuthenticated, formController.deleteForm)
 router.put('/buy/:form', auth.isAuthenticated, formController.buyInsurance)
 router.put('/pay/:form', auth.isAuthenticated, formController.payInsurance)
 router.get('/showAll/:user_id', auth.isAuthenticated, permission, formController.showAll)
-router.get('/active', auth.isAuthenticated, permission, formController.active)
+router.get('/active/all', auth.isAuthenticated, permission, formController.active)
 
 
 module.exports = router;
