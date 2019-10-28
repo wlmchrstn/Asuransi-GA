@@ -31,6 +31,16 @@ const formSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    age: {
+        type: Number,
+        required: true
+    },
+    blood_type: {
+        type: String,
+        enum: ['A', 'B', 'AB', 'O'],
+        uppercase: true,
+        required: true
+    },
     status: {
         type: String,
         required: true,
@@ -71,6 +81,13 @@ const formSchema = new mongoose.Schema({
     position: {
         type: String,
         required: true
+    },
+    penyakit_sekarang: {
+        type: String,
+        required: true
+    },
+    penyakit_dulu: {
+        type: String
     },
     status_pembayaran: {
         type: String,

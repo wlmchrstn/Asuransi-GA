@@ -20,8 +20,13 @@ const insuranceSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    price_promo: {
+        type: Number,
+        default: 0
+    },
     isPromo: {
-        type: Boolean
+        type: Boolean,
+        default: false
     },
     time_insurance: {
         type: String,

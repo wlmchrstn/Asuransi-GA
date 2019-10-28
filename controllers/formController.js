@@ -63,6 +63,8 @@ module.exports = {
                 gender: req.body.gender,
                 birthDate: req.body.birthDate,
                 birthPlace: req.body.birthPlace,
+                age: req.body.age,
+                blood_type: req.body.blood_type,
                 status: req.body.status,
                 phone: exist.phone,
                 NPWP: req.body.NPWP,
@@ -73,6 +75,8 @@ module.exports = {
                 email: exist.email,
                 job: req.body.job,
                 position: req.body.position,
+                penyakit_sekarang: req.body.penyakit_sekarang,
+                penyakit_dulu: req.body.penyakit_dulu,
                 status_pembayaran: 'pending',
                 isVerified: false
             })
@@ -152,19 +156,48 @@ module.exports = {
             )
         }
 
+        insuranceId = await form.insurances.toString()
+
+        let insurance = await Insurance.findById(insuranceId)
+
+
+        let user = await User.findById(userId)
+
+        saldo = user.saldo
+
+        if (saldo < insurance.price || saldo < insurance.price_promo) {
+            return res.status(406).json(
+                `Hai ${user.name}, Your Saldo is Not Enough`
+            )
+        }
+
+        if (insurance.isPromo === true) {
+
+            let newTopUpsaldo = Number(saldo) - Number(insurance.price_promo)
+
+            await User.findByIdAndUpdate(userId,
+                { saldo: newTopUpsaldo },
+                { new: true })
+
+            let date = new Date()
+
+            date.setDate(5)
+
+            date.setMonth(date.getMonth() + 1)
+
+            await Form.findByIdAndUpdate(req.params.form,
+                {
+                    status_pembayaran: "active",
+                    tanggal_pembayaran: date
+                },
+                {
+                    new: true
+                })
+            res.status(200).json(success('Insurance is actived', insurance.name_insurance)
+            )
+        }
+
         else {
-            insuranceId = form.insurances.toString()
-
-            let insurance = await Insurance.findById(insuranceId)
-            let user = await User.findById(userId)
-            saldo = user.saldo
-
-            if (saldo < insurance.price) {
-                return res.status(406).json(
-                    `Hai ${user.name}, Your Saldo is Not Enough`
-                )
-            }
-
             let newTopUpsaldo = Number(saldo) - Number(insurance.price)
             await User.findByIdAndUpdate(userId,
                 { saldo: newTopUpsaldo },
@@ -183,6 +216,7 @@ module.exports = {
             res.status(200).json(success('Insurance is actived', insurance.name_insurance)
             )
         }
+
     },
 
     async payInsurance(req, res) {
@@ -247,7 +281,7 @@ module.exports = {
 
         let insurances = await Insurance.findById(form.insurances)
 
-        Form.findByIdAndUpdate(req.params.form, { $set: {isVerified: true} }, { new: true })
+        Form.findByIdAndUpdate(req.params.form, { $set: { isVerified: true } }, { new: true })
             .then((result) => {
                 var to = form.email
                 var from = 'AGA@insurance.com'
@@ -262,12 +296,12 @@ module.exports = {
     },
 
     async reject(req, res) {
-        
+
         let form = await Form.findById(req.params.form)
 
         let insurances = await Insurance.findById(form.insurances)
 
-        Form.findByIdAndUpdate(req.params.form, { $set: {isVerified: true, status_pembayaran: 'reject'} }, { new: true })
+        Form.findByIdAndUpdate(req.params.form, { $set: { isVerified: true, status_pembayaran: 'reject' } }, { new: true })
             .then((result) => {
                 var to = form.email
                 var from = 'AGA@insurance.com'
