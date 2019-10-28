@@ -1,16 +1,18 @@
 const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator')
-require('mongoose-type-email');
+const validate = require('mongoose-validate')
 
 const userSchema = new mongoose.Schema({
     username:{
         type: String,
+        validate: [validate.alphanumeric, 'Username can only be alphanumeric!'],
         required: true,
         unique: true,
         lowercase: true
     },
     email: {
-        type: mongoose.SchemaTypes.Email,
+        type: String,
+        validate: [validate.email, 'Invalid E-mail type!'],
         required: true,
         unique: true
     },
@@ -20,7 +22,6 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        min: 6,
         required: true
     },
     phone: {

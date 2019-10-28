@@ -87,40 +87,41 @@ module.exports = {
     async createClient(req, res){
         try{
 
-            let pwd         = bcrypt.hashSync(req.body.password, saltRounds)
-
-            var token       = funcHelper.token(20);
-
-            var expToken    = new Date(new Date().setHours(new Date().getHours() + 6))
-
-            let user = await User.create({
-                username:req.body.username,
-                email:req.body.email,
-                name:req.body.name,
-                password:pwd,
-                token: token,
-                expToken: expToken
-            })
-
-            var to               = req.body.email
-            var from             = 'AGA@insurance.com'
-            var subject          = 'Email verification in AGA';
-
-            var link             = "http://"+req.get('host')+"/api/user/verify/"+token;
-            var html             = 'Plese click link bellow, if you register at aga_insurance.com<br>';
-                html            += '<br><strong><a href='+link+'>'+"Verify Email"+'</a></strong>';
-                html            += '<br><br>Thanks';
-                
-            await funcHelper.mail(to, from, subject, html)
-
-            let result = {
-                _id: user._id,
-                name: user.name,
-                username: user.username,
-                token: user.token
+            if(req.body.password.length <= 5 || req.body.password.length >= 33){
+                return res.status(400).json(error('Password must be between 6-32 characters', '-', 400))
             }
-
-            res.status(201).json(success("Client created!", result))
+            else{
+                let pwd         = bcrypt.hashSync(req.body.password, saltRounds)
+                var token       = funcHelper.token(20);
+                var expToken    = new Date(new Date().setHours(new Date().getHours() + 6))
+                let user = await User.create({
+                    username:req.body.username,
+                    email:req.body.email,
+                    name:req.body.name,
+                    password:pwd,
+                    token: token,
+                    expToken: expToken
+                })
+    
+                var to               = req.body.email
+                var from             = 'AGA@insurance.com'
+                var subject          = 'Email verification in AGA';
+    
+                var link             = "http://"+req.get('host')+"/api/user/verify/"+token;
+                var html             = 'Plese click link bellow, if you register at aga_insurance.com<br>';
+                    html            += '<br><strong><a href='+link+'>'+"Verify Email"+'</a></strong>';
+                    html            += '<br><br>Thanks';
+                    
+                await funcHelper.mail(to, from, subject, html)
+    
+                let result = {
+                    _id: user._id,
+                    name: user.name,
+                    username: user.username,
+                    token: user.token
+                }
+                res.status(201).json(success("Client created!", result))
+            }
         }
         catch(err){
             res.status(422).json(error('Failed to create client!', err.message, 422))
