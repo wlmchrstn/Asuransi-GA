@@ -5,6 +5,9 @@ const multer = require('multer');
 const cloudinary = require('cloudinary');
 const datauri = require('datauri');
 const uploader = multer().single('image');
+const funcHelper = require('../helpers/funcHelper');
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 exports.uploadphoto = async (req, res) => {
 
@@ -24,7 +27,7 @@ exports.uploadphoto = async (req, res) => {
         var file = dUri.format(`${req.file.originalname}-${Date.now()}`, req.file.buffer);
         cloudinary.uploader.upload(file.content)
             .then(data => {
-            /* istanbul ignore next */
+                /* istanbul ignore next */
                 Saldo.findByIdAndUpdate({ _id: req.params.id },
                     { $set: { image: data.secure_url } },
                     { new: true })
@@ -47,8 +50,10 @@ exports.create = async (req, res) => {
     var value = req.body.value
     var users = req.decoded._id
 
-    var newSaldo = new Saldo ({
-        users, value
+    var newSaldo = new Saldo({
+        users, value, 
+        isVerified: false,
+        status: 'pending'
     })
 
     newSaldo.save()
@@ -57,7 +62,7 @@ exports.create = async (req, res) => {
                 success('Request topup saldo success!', newSaldo)
             )
         })
-        .catch((err)=>{
+        .catch((err) => {
             return res.status(406).json(
                 error('Failed request topup saldo', err.message, 406)
             )
@@ -66,8 +71,19 @@ exports.create = async (req, res) => {
 
 exports.showAll = async (req, res) => {
 
-    Saldo.find()
+    Saldo.find({isVerified: false, status: 'pending'})
         .populate('users', 'name')
+        .select('-__v')
+        .then((topup) => {
+            return res.status(200).json(
+                success('Show all request topup!', topup)
+            )
+        })
+}
+
+exports.showAllinUser = async (req, res) => {
+
+    Saldo.find({ users: req.decoded._id }, {status: 'pending'})
         .select('-__v')
         .then((topup) => {
             return res.status(200).json(
@@ -84,7 +100,7 @@ exports.select = async (req, res) => {
                 success('Show selected request topup!', topup)
             )
         })
-        .catch((err)=>{
+        .catch((err) => {
             return res.status(404).json(
                 error('Invalid params.id', err.message, 404)
             )
@@ -93,7 +109,7 @@ exports.select = async (req, res) => {
 
 exports.accept = async (req, res) => {
 
-    Saldo.findByIdAndUpdate(req.params.id, {isDone: true}, { new: true })
+    Saldo.findByIdAndUpdate(req.params.id, { $set: {isVerified: true, status: 'accepted'}}, { new: true })
         .then((topup) => {
             User.findById(topup.users).then((user) => {
                 user.saldo += topup.value
@@ -103,11 +119,25 @@ exports.accept = async (req, res) => {
                 )
             })
         })
+
+    let saldo = await Saldo.findById(req.params.id)
+
+    let user = await User.findById(saldo.users)
+
+    var to = user.email
+    var from = 'AGA@insurance.com'
+    var subject = `Your Saldo is added!`
+    var html = `Hi ${user.name}, your request saldo is accepted by admin. Now you can buy your insurance!
+                    AGA Team`
+    funcHelper.mail(to, from, subject, html)
+
+    await Saldo.findByIdAndDelete(req.params.id)
+
 }
 
-exports.delete = async (req, res) => {
+exports.cancel = async (req, res) => {
 
-    Saldo.findOneAndDelete(req.params.id)
+    Saldo.findOneAndDelete({users: req.decoded.id}, req.params.id)
         .then((topup) => {
             return res.status(200).json(
                 success('Delete selected request topup!', topup)

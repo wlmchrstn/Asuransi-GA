@@ -9,6 +9,8 @@ router.post('/', isAuthenticated, saldoController.create);
 
 router.get('/', isAuthenticated, permission, saldoController.showAll);
 
+router.get('/all', isAuthenticated, saldoController.showAllinUser);
+
 router.put('/upload/:id', isAuthenticated, upload.single('image'), saldoController.uploadphoto);
 
 router.get('/:id', isAuthenticated, permission, saldoController.select);
