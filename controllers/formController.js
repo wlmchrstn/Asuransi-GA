@@ -314,7 +314,7 @@ module.exports = {
                 funcHelper.mail(to, from, subject, html)
 
                 return res.status(201).json(
-                    success('Form Updated!', result)
+                    success('Form Rejected!', result)
                 )
             })
     },
