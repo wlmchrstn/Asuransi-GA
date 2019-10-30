@@ -174,7 +174,7 @@ exports.cancel = async (req, res) => {
 
     console.log(req.params.id)
 
-    Saldo.findOneAndRemove(req.params.id)
+    Saldo.findByIdAndDelete(req.params.id)
         .then(() => {
             return res.status(200).json(
                 success('Delete selected request topup!')
