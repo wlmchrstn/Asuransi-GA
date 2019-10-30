@@ -9,13 +9,15 @@ router.post('/', isAuthenticated, saldoController.create);
 
 router.get('/', isAuthenticated, permission, saldoController.showAll);
 
-router.get('/all', isAuthenticated, saldoController.showAllinUser);
+router.get('/detail/pending', isAuthenticated, saldoController.showAllinUser);
+
+router.get('/detail/history', isAuthenticated, saldoController.showUserHistory);
 
 router.put('/upload/:id', isAuthenticated, upload.single('image'), saldoController.uploadphoto);
 
 router.get('/:id', isAuthenticated, permission, saldoController.select);
 
-router.delete('/:id', isAuthenticated, saldoController.delete);
+router.delete('/:id', isAuthenticated, saldoController.cancel);
 
 router.put('/accept/:id', isAuthenticated, permission, saldoController.accept);
 
