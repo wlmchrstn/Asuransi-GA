@@ -50,6 +50,12 @@ exports.create = async (req, res) => {
     var value = req.body.value
     var users = req.decoded._id
 
+    let valid = await Saldo.findOne({ users: users, status: 'pending'})
+    /* istanbul ignore else */
+    if(valid) {
+        return res.status(409).json(error('Failed to top-up, you still have pending request', '-', 409))
+    }
+
     var newSaldo = new Saldo({
         users, value, 
         isVerified: false,
@@ -83,12 +89,21 @@ exports.showAll = async (req, res) => {
 
 exports.showAllinUser = async (req, res) => {
 
-    Saldo.find({ users: req.decoded._id }, {status: 'pending'})
+    Saldo.findOne({ users: req.decoded._id }, {status: 'pending'})
         .select('-__v')
         .then((topup) => {
             return res.status(200).json(
                 success('Show all request topup!', topup)
             )
+        })
+}
+
+exports.showUserHistory = async (req, res) => {
+
+    Saldo.find({ users: res.decoded._id}, {status: 'accepted'||'declined'})
+        .select('-__v')
+        .then(result => {
+            return res.status(200).json(success('Show all top up history!', result))
         })
 }
 
@@ -140,7 +155,7 @@ exports.cancel = async (req, res) => {
     Saldo.findOneAndDelete({users: req.decoded.id}, req.params.id)
         .then((topup) => {
             return res.status(200).json(
-                success('Delete selected request topup!', topup)
+                success('Delete selected request topup!')
             )
         })
 }
