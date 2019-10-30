@@ -3,6 +3,10 @@ const User = require('../models/user');
 const Insurance = require('../models/insurance');
 const { success, error } = require('../helpers/response.js');
 const schedule = require('node-schedule')
+const multer = require('multer');
+const cloudinary = require('cloudinary');
+const datauri = require('datauri');
+const uploader = multer().single('image');
 const funcHelper = require('../helpers/funcHelper')
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -313,5 +317,77 @@ module.exports = {
                     success('Form Updated!', result)
                 )
             })
+    },
+
+    async upload_kk (req, res) {
+
+        var fileUp = req.file
+    
+        /*  istanbul ignore if */
+        if (!fileUp) {
+            return res.status(415).send({
+                success: false,
+                message: 'No file received: Unsupported Media Type'
+            })
+        }
+    
+        const dUri = new datauri()
+    
+        uploader(req, res, err => {
+            var file = dUri.format(`${req.file.originalname}-${Date.now()}`, req.file.buffer);
+            cloudinary.uploader.upload(file.content)
+                .then(data => {
+                    /* istanbul ignore next */
+                    Form.findByIdAndUpdate({ _id: req.params.id },
+                        { $set: { image_kk: data.secure_url } },
+                        { new: true })
+                        .then((form) => {
+                            /* istanbul ignore next */
+                            return res.status(201).json(
+                                success('Updated!', form)
+                            )
+                        })
+                })
+                .catch(/* istanbul ignore next */err => {
+                    res.send(err);
+                })
+        })
+    
+    },
+
+    async upload_npwp (req, res) {
+
+        var fileUp = req.file
+    
+        /*  istanbul ignore if */
+        if (!fileUp) {
+            return res.status(415).send({
+                success: false,
+                message: 'No file received: Unsupported Media Type'
+            })
+        }
+    
+        const dUri = new datauri()
+    
+        uploader(req, res, err => {
+            var file = dUri.format(`${req.file.originalname}-${Date.now()}`, req.file.buffer);
+            cloudinary.uploader.upload(file.content)
+                .then(data => {
+                    /* istanbul ignore next */
+                    Form.findByIdAndUpdate({ _id: req.params.id },
+                        { $set: { image_npwp: data.secure_url } },
+                        { new: true })
+                        .then((form) => {
+                            /* istanbul ignore next */
+                            return res.status(201).json(
+                                success('Updated!', form)
+                            )
+                        })
+                })
+                .catch(/* istanbul ignore next */err => {
+                    res.send(err);
+                })
+        })
+    
     }
 }

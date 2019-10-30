@@ -100,6 +100,14 @@ const formSchema = new mongoose.Schema({
     isVerified: {
         type: Boolean,
         default: false
+    },
+    image_kk: {
+        type: String,
+        required: false
+    },
+    image_npwp: {
+        type: String,
+        required: false
     }
 })
 
