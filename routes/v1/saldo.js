@@ -17,8 +17,10 @@ router.put('/upload/:id', isAuthenticated, upload.single('image'), saldoControll
 
 router.get('/:id', isAuthenticated, permission, saldoController.select);
 
-router.delete('/:id', isAuthenticated, saldoController.cancel);
+router.delete('/cancel/:id', isAuthenticated, saldoController.cancel);
 
 router.put('/accept/:id', isAuthenticated, permission, saldoController.accept);
+
+router.put('/declined/:id', isAuthenticated, permission, saldoController.declined);
 
 module.exports = router

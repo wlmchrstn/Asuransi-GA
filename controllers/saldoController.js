@@ -89,7 +89,7 @@ exports.showAll = async (req, res) => {
 
 exports.showAllinUser = async (req, res) => {
 
-    Saldo.findOne({ users: req.decoded._id }, {status: 'pending'})
+    Saldo.findOne({ users: req.decoded._id, status: 'pending'})
         .select('-__v')
         .then((topup) => {
             return res.status(200).json(
@@ -100,7 +100,7 @@ exports.showAllinUser = async (req, res) => {
 
 exports.showUserHistory = async (req, res) => {
 
-    Saldo.find({ users: res.decoded._id}, {status: 'accepted'||'declined'})
+    Saldo.find({ users: req.decoded._id, isVerified: true})
         .select('-__v')
         .then(result => {
             return res.status(200).json(success('Show all top up history!', result))
@@ -146,14 +146,36 @@ exports.accept = async (req, res) => {
                     AGA Team`
     funcHelper.mail(to, from, subject, html)
 
-    await Saldo.findByIdAndDelete(req.params.id)
+}
+
+exports.declined = async (req, res) => {
+
+    Saldo.findByIdAndUpdate(req.params.id, { $set: {isVerified: true, status: 'declined'}}, { new: true })
+    .then((topup) => {
+        return res.status(201).json(
+            success('Saldo is declined', topup)
+        )
+    })
+
+let saldo = await Saldo.findById(req.params.id)
+
+let user = await User.findById(saldo.users)
+
+var to = user.email
+var from = 'AGA@insurance.com'
+var subject = `Your Saldo is declined!`
+var html = `Sorry ${user.name}, your request saldo is declined by admin because the data is not valid.
+                AGA Team`
+funcHelper.mail(to, from, subject, html)
 
 }
 
 exports.cancel = async (req, res) => {
 
-    Saldo.findOneAndDelete({users: req.decoded.id}, req.params.id)
-        .then((topup) => {
+    console.log(req.params.id)
+
+    Saldo.findOneAndRemove(req.params.id)
+        .then(() => {
             return res.status(200).json(
                 success('Delete selected request topup!')
             )
