@@ -3,6 +3,10 @@ const User = require('../models/user');
 const Insurance = require('../models/insurance');
 const { success, error } = require('../helpers/response.js');
 const schedule = require('node-schedule')
+const multer = require('multer');
+const cloudinary = require('cloudinary');
+const datauri = require('datauri');
+const uploader = multer().single('image');
 const funcHelper = require('../helpers/funcHelper')
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -105,7 +109,7 @@ module.exports = {
     async getUserForm(req, res) {
         Form.find({ users: req.decoded._id })
             .populate({ path: 'insurances', select: 'name_insurance price' })
-            .select('-__v -reject')
+            .select('-__v -rejected')
             .then(result => {
                 res.status(200).json(success('Here is your list!', result))
             })
@@ -125,7 +129,7 @@ module.exports = {
 
         Form.findOne({ users: req.decoded._id, _id: req.params._id })
             .populate({ path: 'insurances', select: 'name_insurance price image' })
-            .select('-__v -reject')
+            .select('-__v -rejected')
             .then((form) => {
                 if (!form) {
                     return res.status(404).json(error('Form Not Found', '-', 404))
@@ -150,9 +154,9 @@ module.exports = {
             )
         }
 
-        if (form.status_pembayaran === 'reject') {
+        if (form.status_pembayaran === 'rejected') {
             return res.status(406).json(
-                error('Your Form is rejected from admin because the data is not valid', '', 406)
+                error('Your Form is rejecteded from admin because the data is not valid', '', 406)
             )
         }
 
@@ -301,17 +305,89 @@ module.exports = {
 
         let insurances = await Insurance.findById(form.insurances)
 
-        Form.findByIdAndUpdate(req.params.form, { $set: { isVerified: true, status_pembayaran: 'reject' } }, { new: true })
+        Form.findByIdAndUpdate(req.params.form, { $set: { isVerified: true, status_pembayaran: 'rejected' } }, { new: true })
             .then((result) => {
                 var to = form.email
                 var from = 'AGA@insurance.com'
-                var subject = `Form Insurance (${insurances.name_insurance}) is reject`
-                var html = `Hi ${form.name}, your form (${insurances.name_insurance}) is rejected because data is not valid`
+                var subject = `Form Insurance (${insurances.name_insurance}) is rejected`
+                var html = `Hi ${form.name}, your form (${insurances.name_insurance}) is rejecteded because data is not valid`
                 funcHelper.mail(to, from, subject, html)
 
                 return res.status(201).json(
                     success('Form Updated!', result)
                 )
             })
+    },
+
+    async upload_kk (req, res) {
+
+        var fileUp = req.file
+    
+        /*  istanbul ignore if */
+        if (!fileUp) {
+            return res.status(415).send({
+                success: false,
+                message: 'No file received: Unsupported Media Type'
+            })
+        }
+    
+        const dUri = new datauri()
+    
+        uploader(req, res, err => {
+            var file = dUri.format(`${req.file.originalname}-${Date.now()}`, req.file.buffer);
+            cloudinary.uploader.upload(file.content)
+                .then(data => {
+                    /* istanbul ignore next */
+                    Form.findByIdAndUpdate({ _id: req.params.id },
+                        { $set: { image_kk: data.secure_url } },
+                        { new: true })
+                        .then((form) => {
+                            /* istanbul ignore next */
+                            return res.status(201).json(
+                                success('Updated!', form)
+                            )
+                        })
+                })
+                .catch(/* istanbul ignore next */err => {
+                    res.send(err);
+                })
+        })
+    
+    },
+
+    async upload_npwp (req, res) {
+
+        var fileUp = req.file
+    
+        /*  istanbul ignore if */
+        if (!fileUp) {
+            return res.status(415).send({
+                success: false,
+                message: 'No file received: Unsupported Media Type'
+            })
+        }
+    
+        const dUri = new datauri()
+    
+        uploader(req, res, err => {
+            var file = dUri.format(`${req.file.originalname}-${Date.now()}`, req.file.buffer);
+            cloudinary.uploader.upload(file.content)
+                .then(data => {
+                    /* istanbul ignore next */
+                    Form.findByIdAndUpdate({ _id: req.params.id },
+                        { $set: { image_npwp: data.secure_url } },
+                        { new: true })
+                        .then((form) => {
+                            /* istanbul ignore next */
+                            return res.status(201).json(
+                                success('Updated!', form)
+                            )
+                        })
+                })
+                .catch(/* istanbul ignore next */err => {
+                    res.send(err);
+                })
+        })
+    
     }
 }

@@ -37,9 +37,9 @@ const formSchema = new mongoose.Schema({
     },
     blood_type: {
         type: String,
-        enum: ['A', 'B', 'AB', 'O'],
+        enum: ['A', 'B', 'AB', 'O', '-'],
         uppercase: true,
-        required: true
+        default: '-'
     },
     status: {
         type: String,
@@ -91,7 +91,7 @@ const formSchema = new mongoose.Schema({
     },
     status_pembayaran: {
         type: String,
-        enum: ['active', 'pending', 'inactive', 'reject'],
+        enum: ['active', 'pending', 'inactive', 'rejected'],
         default: 'pending'
     },
     tanggal_pembayaran: {
@@ -100,6 +100,14 @@ const formSchema = new mongoose.Schema({
     isVerified: {
         type: Boolean,
         default: false
+    },
+    image_kk: {
+        type: String,
+        required: false
+    },
+    image_npwp: {
+        type: String,
+        required: false
     }
 })
 

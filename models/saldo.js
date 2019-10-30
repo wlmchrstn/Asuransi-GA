@@ -13,9 +13,14 @@ const saldoSchema = new mongoose.Schema({
         type: String,
         required: false
     },
-    isDone:{
+    isVerified:{
         type: Boolean,
         default: false
+    },
+    status: {
+        type: String,
+        enum: ['pending', 'accepted', 'declined'],
+        default: 'pending'
     }
 })
 

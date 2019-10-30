@@ -213,7 +213,7 @@ module.exports = {
     },
 
     async showAdmin(req, res){
-        let user = await User.find({role: 'Admin'})
+        let user = await User.find({role: 'Admin'}).select('-__v -saldo')
         res.status(200).json(success('Show all admin', user))
     },
 
@@ -227,7 +227,7 @@ module.exports = {
                 name: req.body.name,
                 gender: req.body.gender,
                 phone: req.body.phone,
-                address: req.body.address,
+                address: req.body.address,  
                 birthPlace: req.body.birthPlace,
                 birthDate: req.body.birthDate,
             })
