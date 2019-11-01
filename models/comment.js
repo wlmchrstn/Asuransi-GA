@@ -15,7 +15,7 @@ const commentSchema = new mongoose.Schema({
     },
     rating: {
         type: Number,
-        enum:[1,2,3,4,5]
+        enum:[1,2,3,4,5,6,7,8,9,10]
     }
 })
 
