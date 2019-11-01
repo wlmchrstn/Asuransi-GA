@@ -47,6 +47,8 @@ module.exports= {
     },
     showAll(req, res) {
         Comment.find()
+            .populate({ path: 'users', select: 'name address' })
+            .select('-__v')
             .then(result => {
                 res.status(200).json(success('Show all comment!', result))
             })

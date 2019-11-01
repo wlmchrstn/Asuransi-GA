@@ -7,6 +7,6 @@ router.post('/:insurance', auth.isAuthenticated, commentRouter.addComment)
 router.put('/:comment', auth.isAuthenticated, commentRouter.editComment)
 router.delete('/:comment', auth.isAuthenticated, commentRouter.deleteComment)
 router.get('/:insurance', auth.isAuthenticated, commentRouter.getAllComment)
-router.get('/', auth.isAuthenticated, permission, commentRouter.showAll)
+router.get('/', auth.isAuthenticated, commentRouter.showAll)
 
 module.exports = router;
