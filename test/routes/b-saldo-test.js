@@ -32,7 +32,7 @@ describe('SALDO', function() {
                 name: 'user',
                 username: 'user',
                 email: 'user@gmail.com',
-                password: '12345'
+                password: '123456'
             })
             .end((err, res)=> {
                 clientId = res.body.result._id
@@ -57,7 +57,7 @@ describe('SALDO', function() {
             .post('/api/user/login')
             .send({
                 login: "user",
-                password: '12345'
+                password: '123456'
             })
             .end((err, res)=> {
                 token = res.headers.authorization.toString()
@@ -84,11 +84,11 @@ describe('SALDO', function() {
             })
     })
 
-    it('CREATE TOP UP SALDO', function(done) {
+    it('CREATE TOP UP SALDO INPUT FALSE', function(done) {
         chai.request(server)
             .post('/api/saldo')
             .send({
-                value: 'abc'
+                value: true
             })
             .set('Authorization', token)
             .end(function (err, res) {

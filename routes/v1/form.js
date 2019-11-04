@@ -16,6 +16,6 @@ router.put('/verify/:form', auth.isAuthenticated, permission, formController.ver
 router.put('/reject/:form', auth.isAuthenticated, permission, formController.reject);
 router.put('/upload/kk/:id', auth.isAuthenticated, upload.single('image'), formController.upload_kk);
 router.put('/upload/npwp/:id', auth.isAuthenticated, upload.single('image'), formController.upload_npwp);
-
+router.put('/review/:form', auth.isAuthenticated, formController.review);
 
 module.exports = router;

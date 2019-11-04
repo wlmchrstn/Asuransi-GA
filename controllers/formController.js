@@ -82,7 +82,8 @@ module.exports = {
                 penyakit_sekarang: req.body.penyakit_sekarang,
                 penyakit_dulu: req.body.penyakit_dulu,
                 status_pembayaran: 'pending',
-                isVerified: false
+                isVerified: false,
+                isReviewed: false
             })
 
             form.users = userId
@@ -104,6 +105,78 @@ module.exports = {
         catch (err) {
             res.status(422).json(error('Failed to create form!', err.message, 422))
         }
+    },
+
+    async upload_kk(req, res) {
+
+        var fileUp = req.file
+
+        /*  istanbul ignore if */
+        if (!fileUp) {
+            return res.status(415).send({
+                success: false,
+                message: 'No file received: Unsupported Media Type'
+            })
+        }
+
+        const dUri = new datauri()
+
+        uploader(req, res, err => {
+            var file = dUri.format(`${req.file.originalname}-${Date.now()}`, req.file.buffer);
+            cloudinary.uploader.upload(file.content)
+                .then(data => {
+                    /* istanbul ignore next */
+                    Form.findByIdAndUpdate({ _id: req.params.id },
+                        { $set: { image_kk: data.secure_url } },
+                        { new: true })
+                        .then((form) => {
+                            /* istanbul ignore next */
+                            return res.status(201).json(
+                                success('Updated!', form)
+                            )
+                        })
+                })
+                .catch(/* istanbul ignore next */err => {
+                    res.send(err);
+                })
+        })
+
+    },
+
+    async upload_npwp(req, res) {
+
+        var fileUp = req.file
+
+        /*  istanbul ignore if */
+        if (!fileUp) {
+            return res.status(415).send({
+                success: false,
+                message: 'No file received: Unsupported Media Type'
+            })
+        }
+
+        const dUri = new datauri()
+
+        uploader(req, res, err => {
+            var file = dUri.format(`${req.file.originalname}-${Date.now()}`, req.file.buffer);
+            cloudinary.uploader.upload(file.content)
+                .then(data => {
+                    /* istanbul ignore next */
+                    Form.findByIdAndUpdate({ _id: req.params.id },
+                        { $set: { image_npwp: data.secure_url } },
+                        { new: true })
+                        .then((form) => {
+                            /* istanbul ignore next */
+                            return res.status(201).json(
+                                success('Updated!', form)
+                            )
+                        })
+                })
+                .catch(/* istanbul ignore next */err => {
+                    res.send(err);
+                })
+        })
+
     },
 
     async getUserForm(req, res) {
@@ -270,8 +343,8 @@ module.exports = {
     },
 
     async active(req, res) {
-        
-        Form.find({ status_pembayaran: 'active'})
+
+        Form.find({ status_pembayaran: 'active' })
             .populate({ path: 'insurances', select: 'name_insurance price' })
             .select('-__v')
             .then(result => {
@@ -319,75 +392,13 @@ module.exports = {
             })
     },
 
-    async upload_kk (req, res) {
+    async review(req, res) {
 
-        var fileUp = req.file
-    
-        /*  istanbul ignore if */
-        if (!fileUp) {
-            return res.status(415).send({
-                success: false,
-                message: 'No file received: Unsupported Media Type'
+        Form.findByIdAndUpdate(req.params.form, {$set: {isReviewed: true}}, {new:true})
+            .then((form) => {
+                return res.status(201).json(
+                    success('You can give feedback of our insurance!', form)
+                )
             })
-        }
-    
-        const dUri = new datauri()
-    
-        uploader(req, res, err => {
-            var file = dUri.format(`${req.file.originalname}-${Date.now()}`, req.file.buffer);
-            cloudinary.uploader.upload(file.content)
-                .then(data => {
-                    /* istanbul ignore next */
-                    Form.findByIdAndUpdate({ _id: req.params.id },
-                        { $set: { image_kk: data.secure_url } },
-                        { new: true })
-                        .then((form) => {
-                            /* istanbul ignore next */
-                            return res.status(201).json(
-                                success('Updated!', form)
-                            )
-                        })
-                })
-                .catch(/* istanbul ignore next */err => {
-                    res.send(err);
-                })
-        })
-    
-    },
-
-    async upload_npwp (req, res) {
-
-        var fileUp = req.file
-    
-        /*  istanbul ignore if */
-        if (!fileUp) {
-            return res.status(415).send({
-                success: false,
-                message: 'No file received: Unsupported Media Type'
-            })
-        }
-    
-        const dUri = new datauri()
-    
-        uploader(req, res, err => {
-            var file = dUri.format(`${req.file.originalname}-${Date.now()}`, req.file.buffer);
-            cloudinary.uploader.upload(file.content)
-                .then(data => {
-                    /* istanbul ignore next */
-                    Form.findByIdAndUpdate({ _id: req.params.id },
-                        { $set: { image_npwp: data.secure_url } },
-                        { new: true })
-                        .then((form) => {
-                            /* istanbul ignore next */
-                            return res.status(201).json(
-                                success('Updated!', form)
-                            )
-                        })
-                })
-                .catch(/* istanbul ignore next */err => {
-                    res.send(err);
-                })
-        })
-    
     }
 }
