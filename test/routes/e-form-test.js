@@ -57,6 +57,7 @@ describe('FORM OPERATION', ()=> {
             })
             .end((err, res)=> {
                 clientId = res.body.result._id
+                clientFake = clientId.replace("5", "4")
                 clientToken = res.body.result.token
                 expect(res.status).to.be.equal(201)
                 done()
@@ -77,11 +78,12 @@ describe('FORM OPERATION', ()=> {
         chai.request(server)
             .post('/api/user/login')
             .send({
-                login: "user",
-                password: '12345'
+                login: "client",
+                password: '123456'
             })
             .end((err, res)=> {
-                token = res.header.authorization.toString()
+                token = res.header.authorization
+                userId = res.body.result._id
                 expect(token).to.be.a('string')
                 done()
             })
@@ -107,11 +109,13 @@ describe('FORM OPERATION', ()=> {
             .send({
                 name: "william",
                 NIK: '1671064507980011',
-                gender: "MALE",
+                gender: "Male",
                 birthDate: 2002-04-27,
                 birthPlace: "DUMAI",
+                age: 17,
+                blood_type: 'A',
                 status: "Single",
-                phone: 082278001173,
+                phone: '082278001173',
                 NPWP: "1234566789012345",
                 address: "BATAM",
                 city: "BATAM",
@@ -119,7 +123,9 @@ describe('FORM OPERATION', ()=> {
                 No_KK: '1671064507980011',
                 email: "wlmchrstn@gmail.com",
                 job: "Wiraswata",
-                position: "Office"
+                position: "Office",
+                penyakit_sekarang: 'maag',
+                penyakit_dulu: 'tidak ada'
             })
             .set('Authorization', token)
             .end(function (err, res) {
@@ -137,11 +143,13 @@ describe('FORM OPERATION', ()=> {
             .send({
                 name: "william",
                 NIK: 1671064507980011,
-                gender: "MALE",
+                gender: "Male",
                 birthDate: 2002-04-27,
                 birthPlace: "DUMAI",
+                age: 17,
+                blood_type: 'A',
                 status: "Single",
-                phone: 082278001173,
+                phone: '082278001173',
                 NPWP: "1234566789012345",
                 address: "BATAM",
                 city: "BATAM",
@@ -149,7 +157,12 @@ describe('FORM OPERATION', ()=> {
                 No_KK: '1671064507980011',
                 email: "wlmchrstn@gmail.com",
                 job: "Wiraswata",
-                position: "Office"
+                position: "Office",
+                penyakit_sekarang: 'maag',
+                penyakit_dulu: 'tidak ada',
+                status_pembayaran: 'pending',
+                isVerified: false,
+                isRewiewed: false
             })
             .set('Authorization', token)
             .end(function (err, res) {
@@ -166,11 +179,13 @@ describe('FORM OPERATION', ()=> {
             .send({
                 name: "william",
                 NIK: '1671064507980011',
-                gender: "MALE",
+                gender: "Male",
                 birthDate: 2002-04-27,
                 birthPlace: "DUMAI",
+                age: 17,
+                blood_type: 'A',
                 status: "Single",
-                phone: 082278001173,
+                phone: '082278001173',
                 NPWP: "1234566789012345",
                 address: "BATAM",
                 city: "BATAM",
@@ -178,7 +193,9 @@ describe('FORM OPERATION', ()=> {
                 No_KK: 1671064507980011,
                 email: "wlmchrstn@gmail.com",
                 job: "Wiraswata",
-                position: "Office"
+                position: "Office",
+                penyakit_sekarang: 'maag',
+                penyakit_dulu: 'tidak ada'
             })
             .set('Authorization', token)
             .end(function (err, res) {
@@ -222,6 +239,78 @@ describe('FORM OPERATION', ()=> {
                 done()
             })
     })
+
+    it('GET DETAIL FORM THAT NOT EXIST SHOULD SHOW ERR', (done)=> {
+        chai.request(server)
+            .get(`/api/form/${fakeId}`)
+            .set('authorization', token)
+            .end((err, res)=> {
+                expect(res.status).to.equal(404)
+                done()
+            })
+    })
+
+    it('SHOW ALL FORM FROM USER BY ADMIN SHOULD SHOW OK', (done)=> {
+        chai.request(server)
+            .get(`/api/form/showAll/${userId}`)
+            .set('authorization', adminToken)
+            .end((err, res)=> {
+                expect(res).to.have.status(200)
+                done()
+            })
+    })
+
+    
+    it('SHOW ALL FORM FROM USER THAT NOT EXIST BY ADMIN SHOULD SHOW OK', (done)=> {
+        chai.request(server)
+            .get(`/api/form/showAll/${clientFake}`)
+            .set('authorization', adminToken)
+            .end((err, res)=> {
+                expect(res).to.have.status(404)
+                done()
+            })
+    })
+
+    it('SHOW ALL FORM FROM THAT ACTIVE SHOW OK', (done)=> {
+        chai.request(server)
+            .get(`/api/form/active/all`)
+            .set('authorization', adminToken)
+            .end((err, res)=> {
+                expect(res).to.have.status(200)
+                done()
+            })
+    })
+
+    it('VERIFY FROM SHOW OK', (done)=> {
+        chai.request(server)
+            .put(`/api/form/verify/${formId}`)
+            .set('authorization', adminToken)
+            .end((err, res)=> {
+                expect(res).to.have.status(201)
+                done()
+            })
+    })
+
+    it('REJECT FROM SHOW OK', (done)=> {
+        chai.request(server)
+            .put(`/api/form/reject/${formId}`)
+            .set('authorization', adminToken)
+            .end((err, res)=> {
+                expect(res).to.have.status(201)
+                done()
+            })
+    })
+
+    it('UPDATE REVIEW FROM SHOW OK', (done)=> {
+        chai.request(server)
+            .put(`/api/form/review/${formId}`)
+            .set('authorization', adminToken)
+            .end((err, res)=> {
+                expect(res).to.have.status(201)
+                done()
+            })
+    })
+
 
     it('NOT FOUND TO DELETE FORM', (done)=> {
         chai.request(server)

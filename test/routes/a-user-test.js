@@ -31,7 +31,12 @@ describe('USER CONTROLLER', () => {
         name: 'client',
         username: 'client',
         email: 'client@gmail.com',
-        password: '123456'
+        password: '123456',
+        gender: 'Male',
+        phone: 082286984644,
+        address: 'Batam',
+        birthPlace: 'Batam',
+        birthDate: '1998-07-05'
     }
 
     it("POST /api/user/super should create super admin", done => {
