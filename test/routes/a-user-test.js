@@ -71,7 +71,7 @@ describe('USER CONTROLLER', () => {
     it("POST /api/user/login should login", done => {
         chai.request(server)
             .post('/api/user/login')
-            .send({ login: 'super_admin', password: '12345' })
+            .send({ login: 'superadmin', password: '12345' })
             .end((err, res) => {
                 res.should.have.status(200)
                 res.body.should.have.property('success').equal(true)
@@ -152,7 +152,7 @@ describe('USER CONTROLLER', () => {
     it("POST /api/user/login should not login because unverify email", done => {
         chai.request(server)
             .post('/api/user/login')
-            .send({ login: 'client', password: '12345' })
+            .send({ login: 'client', password: '123456' })
             .end((err, res) => {
                 res.should.have.status(403)
                 res.body.should.have.property('success').equal(false)
@@ -196,7 +196,7 @@ describe('USER CONTROLLER', () => {
             })
     })
 
-    it("POST /api/user/login should not login because unverify email", done => {
+    it("POST /api/user/login should not login because wrong password", done => {
         chai.request(server)
             .post('/api/user/login')
             .send({ login: 'client', password: '1234567' })
@@ -285,7 +285,7 @@ describe('USER CONTROLLER', () => {
             .put(`/api/user/update/password`)
             .set('Authorization', tokenLogin)
             .send({
-                password: "54321"
+                password: "654321"
             })
             .end((err, res)=> {
                 res.should.have.status(200)
@@ -401,7 +401,7 @@ describe('USER CONTROLLER', () => {
     it("POST /api/user/reset should change password", done => {
         chai.request(server)
             .put(`/api/user/reset`)
-            .send({ password: '12345', token: tokenPassword })
+            .send({ password: '123456', token: tokenPassword })
             .end((err, res) => {
                 res.should.have.status(200)
                 res.body.should.have.property('success').equal(true)

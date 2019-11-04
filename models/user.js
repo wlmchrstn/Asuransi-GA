@@ -5,7 +5,7 @@ const validate = require('mongoose-validate')
 const userSchema = new mongoose.Schema({
     username:{
         type: String,
-        // validate: [validate.alphanumeric, 'Username can only be alphanumeric!'],
+        validate: [validate.alphanumeric, 'Username can only be alphanumeric!'],
         required: true,
         unique: true,
         lowercase: true

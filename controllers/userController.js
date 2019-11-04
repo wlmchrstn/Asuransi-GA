@@ -27,7 +27,7 @@ module.exports = {
 
         let data = await User.create({
 
-            username: 'super_admin',
+            username: 'superadmin',
             email: 'super@gmail.com',
             name: 'super admin',
             password: hash,
