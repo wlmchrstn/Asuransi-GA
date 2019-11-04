@@ -50,7 +50,7 @@ describe('COMMENT OPERATION', ()=> {
             .post('/api/user/login')
             .send({
                 login: "client",
-                password: '12345'
+                password: '123456'
             })
             .end((err, res)=> {
                 token = res.body.result.token

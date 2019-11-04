@@ -4,7 +4,10 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const server = require('../../app');
 const expect = chai.expect;
+const fs = require('fs')
 chai.use(chaiHttp)
+
+let file = process.env.PICT
 
 
 describe('FORM OPERATION', ()=> {
@@ -206,6 +209,30 @@ describe('FORM OPERATION', ()=> {
             })
     })
 
+    it('UPLOAD FOTO KK SHOULD SHOW OK', function () {
+
+        chai.request(server)
+            .put(`/api/form/upload/kk/${formId}`)
+            .attach('image', fs.readFileSync(`${file}`), 'profpict.png')
+            .set('Authorization', token)
+            .end(function (err, res) {
+                expect(res).to.have.status(201)
+                expect(res).to.be.an('object')
+            })
+    })
+
+    it('UPLOAD FOTO NPWP SHOULD SHOW OK', function () {
+
+        chai.request(server)
+            .put(`/api/form/upload/npwp/${formId}`)
+            .attach('image', fs.readFileSync(`${file}`), 'profpict.png')
+            .set('Authorization', token)
+            .end(function (err, res) {
+                expect(res).to.have.status(201)
+                expect(res).to.be.an('object')
+            })
+    })
+
     it('FAILED TO CREATE FORM', (done)=> {
         chai.request(server)
             .post(`/api/form/${insurance_id}`)
@@ -385,11 +412,11 @@ describe('FORM OPERATION', ()=> {
 
     it('UNAUTHORIZE DELETE FORM', (done)=> {
         chai.request(server)
-            .delete(`/api/form/${formId}`)
-            .set('Authorization', fakeToken)
+            .delete(`/api/form/${fakeId}`)
+            .set('Authorization', token)
             .send()
             .end((err, res)=> {
-                expect(res.status).to.equal(403)
+                expect(res.status).to.equal(404)
                 done()
             })
     })
