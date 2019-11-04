@@ -70,7 +70,7 @@ module.exports = {
                 age: req.body.age,
                 blood_type: req.body.blood_type,
                 status: req.body.status,
-                phone: exist.phone,
+                phone: req.body.phone,
                 NPWP: req.body.NPWP,
                 address: req.body.address,
                 city: req.body.city,
@@ -190,7 +190,7 @@ module.exports = {
 
     async showAll(req, res) {
         try {
-            let form = await Form.find({ users: req.params.user_id })
+            let form = await Form.findById({ users: req.params.user_id })
             res.status(200).json(success('Show all form from selected user!', form))
         }
         catch (err) {
