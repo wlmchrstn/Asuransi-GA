@@ -42,6 +42,7 @@ describe('Insurance', function(done) {
                 description: 'Asuransi Kesehatan',
                 premi: '200.000 per bulan',
                 price: '15000',
+                price_promo: '0',
                 isPromo: 0,
                 time_insurance: 'Sampai usia 90 tahun',
                 range_age: '0 - 70 Tahun',
@@ -113,7 +114,7 @@ describe('Insurance', function(done) {
             .set('Authorization', token)
             .send({
                 isPromo: 1,
-                price: "20000"
+                price_promo: "20000"
             })
             .end(function(err, res) {
                 expect(res).to.have.status(201)
@@ -128,7 +129,7 @@ describe('Insurance', function(done) {
             .put(`/api/insurance/update/${insurance_id}`)
             .set('Authorization', token)
             .send({
-                price: null,
+                price_promo: null,
                 isPromo: null
             })
             .end(function(err, res) {

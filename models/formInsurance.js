@@ -101,6 +101,10 @@ const formSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    isReviewed: {
+        type: Boolean,
+        default: false
+    },
     image_kk: {
         type: String,
         required: false
