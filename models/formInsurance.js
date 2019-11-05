@@ -112,6 +112,11 @@ const formSchema = new mongoose.Schema({
     image_npwp: {
         type: String,
         required: false
+    },
+    proof: {
+        type: String,
+        required: false,
+        default: '-'
     }
 })
 

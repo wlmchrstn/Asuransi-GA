@@ -353,23 +353,30 @@ module.exports = {
     },
 
     async verify(req, res) {
-
         let form = await Form.findById(req.params.form)
-
         let insurances = await Insurance.findById(form.insurances)
-
-        Form.findByIdAndUpdate(req.params.form, { $set: { isVerified: true } }, { new: true })
-            .then((result) => {
-                var to = form.email
-                var from = 'AGA@insurance.com'
-                var subject = `Form Insurance (${insurances.name_insurance}) is accepted`
-                var html = `Hi ${form.name}, your form (${insurances.name_insurance}) is accepted. Now you can buy your insurance!`
-                funcHelper.mail(to, from, subject, html)
-
-                return res.status(201).json(
-                    success('Form Updated!', result)
-                )
+        let data = await Form.findByIdAndUpdate(req.params.form, { $set: { isVerified: true } }, { new: true }) 
+        if(data) {
+            var to = form.email
+            var from = 'AGA@insurance.com'
+            var subject = `Form Insurance (${insurances.name_insurance}) is accepted`
+            var html = `Hi ${form.name}, your form (${insurances.name_insurance}) is accepted. Now you can buy your insurance!`
+            funcHelper.mail(to, from, subject, html)
+            const dUri = new datauri()
+            uploader(req, res, err => {
+                var file = dUri.format(`${req.file.originalname}-${Date.now()}`, req.file.buffer);
+                cloudinary.uploader.upload(file.content)
+                    .then(result => {
+                        /* istanbul ignore next */
+                        data.proof = result.secure_url
+                        data.save()
+                        res.status(201).json(success('Form Updated!', data))
+                    })
+                    .catch(/* istanbul ignore next */err => {
+                        res.send(err);
+                    })
             })
+        }
     },
 
     async reject(req, res) {
