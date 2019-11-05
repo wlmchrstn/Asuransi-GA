@@ -23,7 +23,7 @@ module.exports = {
             return res.status(400).json(error("You can only create super admin once", "-", 400))
         }
         
-        let hash = bcrypt.hashSync('12345', saltRounds)
+        let hash = bcrypt.hashSync('123456', saltRounds)
 
         let data = await User.create({
 
