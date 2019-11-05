@@ -70,7 +70,7 @@ module.exports = {
                 age: req.body.age,
                 blood_type: req.body.blood_type,
                 status: req.body.status,
-                phone: req.body.phone,
+                phone: exist.phone,
                 NPWP: req.body.NPWP,
                 address: req.body.address,
                 city: req.body.city,
