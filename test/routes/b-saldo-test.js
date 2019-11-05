@@ -39,34 +39,33 @@ describe('SALDO', function() {
             })
     })
 
+    it('CREATE TOP UP SALDO INPUT FALSE', function(done) {
+        chai.request(server)
+            .post('/api/saldo')
+            .send({
+                
+            })
+            .set('Authorization', token)
+            .end(function (err, res) {
+                expect(res).to.have.status(406)
+                expect(res).to.be.an('object')
+                done()
+            })
+    })
+
     it('CREATE TOP UP SALDO', function(done) {
         chai.request(server)
             .post('/api/saldo')
             .send({
-                value: 120000,
+                value: 1200000,
                 isVerified: false,
                 status: 'pending'
             })
             .set('Authorization', token)
             .end(function (err, res) {
                 saldoId = res.body.result._id
-                console.log(saldoId)
                 fakeId = saldoId.replace("5", "4")
                 expect(res).to.have.status(201)
-                expect(res).to.be.an('object')
-                done()
-            })
-    })
-
-    it('CREATE TOP UP SALDO INPUT FALSE', function(done) {
-        chai.request(server)
-            .post('/api/saldo')
-            .send({
-                value: 'abc'
-            })
-            .set('Authorization', token)
-            .end(function (err, res) {
-                expect(res).to.have.status(406)
                 expect(res).to.be.an('object')
                 done()
             })
@@ -81,6 +80,21 @@ describe('SALDO', function() {
             .end(function (err, res) {
                 expect(res).to.have.status(201)
                 expect(res).to.be.an('object')
+            })
+    })
+
+    it('CREATE TOP UP SALDO', function(done) {
+        chai.request(server)
+            .post('/api/saldo')
+            .send({
+                value: 1200000,
+                isVerified: false,
+                status: 'pending'
+            })
+            .set('Authorization', token)
+            .end(function (err, res) {
+                expect(res.status).to.equal(409)
+                done()
             })
     })
 

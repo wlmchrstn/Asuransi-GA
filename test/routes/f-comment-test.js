@@ -102,7 +102,7 @@ describe('COMMENT OPERATION', ()=> {
             .put(`/api/comment/${commentId}`)
             .set('authorization', token)
             .send({
-                comment: 'abcd',
+                comment: ['abcd,','abasd'],
                 rating: "abcd"
             })
             .end((err, res)=> {
@@ -158,11 +158,20 @@ describe('COMMENT OPERATION', ()=> {
             })
     })
 
-    it('GET ALL COMMENT', (done)=> {
+    it('GET ALL INSURANCE COMMENT', (done)=> {
         chai.request(server)
             .get(`/api/comment/${insurance_id}`)
             .set('authorization', token)
             .send()
+            .end((err, res)=> {
+                expect(res.status).to.be.equal(200)
+                done()
+            })
+    })
+
+    it('GET ALL COMMENT', (done)=> {
+        chai.request(server)
+            .get('/api/comment/')
             .end((err, res)=> {
                 expect(res.status).to.be.equal(200)
                 done()
