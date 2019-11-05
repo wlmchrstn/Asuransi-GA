@@ -1,23 +1,31 @@
 const Comment = require('../models/comment.js');
 const { success, error } = require('../helpers/response.js');
-const Insurance = require('../models/insurance')
-
+const Insurance = require('../models/insurance');
+const Form = require('../models/formInsurance');
 module.exports= {
     async addComment(req, res) {
-        let insurance = await Insurance.findById(req.params.insurance)
-        if (!insurance) {return res.status(404).json(error('Insurance not found!', "-", 404))}
-        Comment.create({
-            users: req.decoded._id,
-            insurances: req.params.insurance,
-            comment: req.body.comment,
-            rating: req.body.rating
-            })
-            .then(result => {
-                res.status(201).json(success('Comment posted!', result))
-            })
-            .catch(err => {
-                res.status(422).json(error('Failed to post comment!', err, 422))
-            })
+        let form = await Form.findById(req.params.form)
+        if((form.status_pembayaran === 'pending') || (form.status_pembayaran === 'inactive') || (form.status_pembayaran === 'rejected')){
+            return res.status(403).json(error('You are not allowed to give review. Either your form is rejected or buy the insurance first!', '-', 400))
+        }
+        else if(form.isReviewed === true){
+            return res.status(409).json(error('You already reviewed this insurance', '-', 409))
+        }else {
+            Comment.create({
+                users: req.decoded._id,
+                insurances: form.insurances,
+                comment: req.body.comment,
+                rating: req.body.rating
+                })
+                .then(result => {
+                    form.isReviewed = true
+                    form.save()
+                    res.status(201).json(success('Comment posted!', result))
+                })
+                .catch(err => {
+                    res.status(422).json(error('Failed to post comment!', err, 422))
+                })
+        }
     },
     async editComment(req, res) {
         let isValid = await Comment.findById(req.params.comment)

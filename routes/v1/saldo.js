@@ -23,4 +23,6 @@ router.put('/accept/:id', isAuthenticated, permission, saldoController.accept);
 
 router.put('/declined/:id', isAuthenticated, permission, saldoController.declined);
 
+router.get('/show/pending', isAuthenticated, saldoController.check);
+
 module.exports = router

@@ -1,5 +1,4 @@
 process.env.NODE_ENV = 'test'
-const promo = require('../../models/insurance');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const server = require('../../app');
@@ -8,7 +7,6 @@ const fs = require('fs')
 chai.use(chaiHttp)
 
 let file = process.env.PICT
-
 
 describe('FORM OPERATION', ()=> {
     

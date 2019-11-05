@@ -39,6 +39,16 @@ describe('SALDO', function() {
             })
     })
 
+    it('SHOW NO PENDING REQUEST', function(done) {
+        chai.request(server)
+            .get('/api/saldo/show/pending')
+            .set('Authorization', token)
+            .end((err, res)=> {
+                expect(res.status).to.equal(404)
+                done()
+            })
+    })
+    
     it('CREATE TOP UP SALDO INPUT FALSE', function(done) {
         chai.request(server)
             .post('/api/saldo')
@@ -94,6 +104,16 @@ describe('SALDO', function() {
             .set('Authorization', token)
             .end(function (err, res) {
                 expect(res.status).to.equal(409)
+                done()
+            })
+    })
+
+    it('SHOW PENDING REQUEST', function(done) {
+        chai.request(server)
+            .get('/api/saldo/show/pending')
+            .set('Authorization', token)
+            .end((err, res)=> {
+                expect(res.status).to.equal(200)
                 done()
             })
     })
