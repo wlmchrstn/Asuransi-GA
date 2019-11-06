@@ -344,7 +344,7 @@ module.exports = {
 
     async active(req, res) {
 
-        Form.find({ status_pembayaran: 'active' })
+        Form.find({$or: [{status_pembayaran: 'active'} , {status_pembayaran: 'inactive'}]})
             .populate({ path: 'insurances', select: 'name_insurance price' })
             .select('-__v')
             .then(result => {
