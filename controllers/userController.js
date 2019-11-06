@@ -54,7 +54,7 @@ module.exports = {
 
     async createAdmin(req, res){
         try{
-
+            
             let pwd = bcrypt.hashSync(req.body.password, saltRounds)
 
             let admin = await User.create({
