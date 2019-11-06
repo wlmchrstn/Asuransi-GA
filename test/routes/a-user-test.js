@@ -31,7 +31,12 @@ describe('USER CONTROLLER', () => {
         name: 'client',
         username: 'client',
         email: 'client@gmail.com',
-        password: '123456'
+        password: '123456',
+        gender: 'Male',
+        phone: 082286984644,
+        address: 'Batam',
+        birthPlace: 'Batam',
+        birthDate: '1998-07-05'
     }
 
     it("POST /api/user/super should create super admin", done => {
@@ -144,7 +149,8 @@ describe('USER CONTROLLER', () => {
                 res.body.should.have.property('success').equal(true)
                 res.body.should.have.property('message').equal("Client created!")
                 res.body.should.have.property('result')
-                tokenEmail = res.body.result.token
+                tokenEmail  = res.body.result.token
+                clientId    = res.body.result._id
                 done()
             })
     })
@@ -175,6 +181,19 @@ describe('USER CONTROLLER', () => {
             })
     })
 
+    it("POST /api/user/client should not create client", done => {
+        chai.request(server)
+            .post('/api/user/client')
+            .send({ name: "agam", password: "12345" })
+            .end((err, res) => {
+                res.should.have.status(400)
+                res.body.should.have.property('success').equal(false)
+                res.body.should.have.property('message').equal('Password must be between 6-32 characters')
+                res.body.should.have.property('error')
+                done()
+            })
+    })
+
     it("GET /api/user/verify/:token should not verify email", done => {
         chai.request(server)
             .get(`/api/user/verify/asjknkdg5a7ajk7`)
@@ -191,7 +210,8 @@ describe('USER CONTROLLER', () => {
         chai.request(server)
             .get(`/api/user/verify/${tokenEmail}`)
             .end((err, res) => {
-                res.should.have.status(200)
+                expect(res.status).to.equal(200)
+                // expect(res).to.redirectTo(process.env.FE_HOME_URL)
                 done()
             })
     })
@@ -406,6 +426,45 @@ describe('USER CONTROLLER', () => {
                 res.should.have.status(200)
                 res.body.should.have.property('success').equal(true)
                 res.body.should.have.property('message').equal('Password successfully updated!')
+                done()
+            })
+    })
+
+    it("GET /api/user/showClient should show all client", done => {
+        chai.request(server)
+            .get(`/api/user/showClient`)
+            .set('Authorization', tokenLogin)
+            .end((err, res) => {
+                res.should.have.status(200)
+                res.body.should.have.property('success').equal(true)
+                res.body.should.have.property('message').equal('Show all client')
+                res.body.should.have.property('result')
+                done()
+            })
+    })
+
+    it("GET /api/user/showClient/:id should select client", done => {
+        chai.request(server)
+            .get(`/api/user/showClient/${clientId}`)
+            .set('Authorization', tokenLogin)
+            .end((err, res) => {
+                res.should.have.status(200)
+                res.body.should.have.property('success').equal(true)
+                res.body.should.have.property('message').equal('Show selected clients details')
+                res.body.should.have.property('result')
+                done()
+            })
+    })
+
+    it("GET /api/user/showClient/:id should not select client because wrong id", done => {
+        chai.request(server)
+            .get(`/api/user/showClient/nkasdui7adiujh889`)
+            .set('Authorization', tokenLogin)
+            .end((err, res) => {
+                res.should.have.status(404)
+                res.body.should.have.property('success').equal(false)
+                res.body.should.have.property('message').equal('Client not found')
+                res.body.should.have.property('error')
                 done()
             })
     })

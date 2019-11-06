@@ -27,36 +27,9 @@ describe('SALDO', function() {
 
     before(done => {
         chai.request(server)
-            .post('/api/user/client')
-            .send({
-                name: 'user',
-                username: 'user',
-                email: 'user@gmail.com',
-                password: '123456'
-            })
-            .end((err, res)=> {
-                clientId = res.body.result._id
-                clientToken = res.body.result.token
-                expect(res.status).to.be.equal(201)
-                done()
-            })
-    })
-
-    before(done => {
-        chai.request(server)
-            .get(`/api/user/verify/${clientToken}`)
-            .send({})
-            .end((err, res)=> {
-                expect(res.status).to.equal(200)
-                done()
-            })
-    })
-
-    before(done => {
-        chai.request(server)
             .post('/api/user/login')
             .send({
-                login: "user",
+                login: "client",
                 password: '123456'
             })
             .end((err, res)=> {
@@ -66,33 +39,43 @@ describe('SALDO', function() {
             })
     })
 
-    it('CREATE TOP UP SALDO', function(done) {
+    it('SHOW NO PENDING REQUEST', function(done) {
+        chai.request(server)
+            .get('/api/saldo/show/pending')
+            .set('Authorization', token)
+            .end((err, res)=> {
+                expect(res.status).to.equal(404)
+                done()
+            })
+    })
+    
+    it('CREATE TOP UP SALDO INPUT FALSE', function(done) {
         chai.request(server)
             .post('/api/saldo')
             .send({
-                value: 120000
+                
             })
             .set('Authorization', token)
             .end(function (err, res) {
-                saldoId = res.body.result._id
-                console.log(saldoId)
-                fakeId = saldoId.replace("5", "4")
-                console.log(fakeId)
-                expect(res).to.have.status(201)
+                expect(res).to.have.status(406)
                 expect(res).to.be.an('object')
                 done()
             })
     })
 
-    it('CREATE TOP UP SALDO INPUT FALSE', function(done) {
+    it('CREATE TOP UP SALDO', function(done) {
         chai.request(server)
             .post('/api/saldo')
             .send({
-                value: true
+                value: 1200000,
+                isVerified: false,
+                status: 'pending'
             })
             .set('Authorization', token)
             .end(function (err, res) {
-                expect(res).to.have.status(406)
+                saldoId = res.body.result._id
+                fakeId = saldoId.replace("5", "4")
+                expect(res).to.have.status(201)
                 expect(res).to.be.an('object')
                 done()
             })
@@ -110,11 +93,60 @@ describe('SALDO', function() {
             })
     })
 
+    it('CREATE TOP UP SALDO', function(done) {
+        chai.request(server)
+            .post('/api/saldo')
+            .send({
+                value: 1200000,
+                isVerified: false,
+                status: 'pending'
+            })
+            .set('Authorization', token)
+            .end(function (err, res) {
+                expect(res.status).to.equal(409)
+                done()
+            })
+    })
+
+    it('SHOW PENDING REQUEST', function(done) {
+        chai.request(server)
+            .get('/api/saldo/show/pending')
+            .set('Authorization', token)
+            .end((err, res)=> {
+                expect(res.status).to.equal(200)
+                done()
+            })
+    })
+
     it('SHOW ALL REQ SALDO SHOULD SHOW OK', function (done) {
 
         chai.request(server)
             .get('/api/saldo')
             .set('Authorization', adminToken)
+            .end(function (err, res) {
+                expect(res).to.have.status(200)
+                expect(res).to.be.an('object')
+                done()
+            })
+    })
+
+    it('SHOW ALL REQ SALDO IN USER SHOULD SHOW OK', function (done) {
+
+        chai.request(server)
+            .get('/api/saldo/detail/pending')
+            .set('Authorization', token)
+            .end(function (err, res) {
+                expect(res).to.have.status(200)
+                expect(res).to.be.an('object')
+                done()
+            })
+    })
+
+    it('SHOW ALL USER HISTROY IN USER SHOULD SHOW OK', function (done) {
+
+        chai.request(server)
+            .get('/api/saldo/detail/history')
+            .set('Authorization', token)
             .end(function (err, res) {
                 expect(res).to.have.status(200)
                 expect(res).to.be.an('object')
@@ -133,6 +165,8 @@ describe('SALDO', function() {
                 done()
             })
     })
+
+    
 
     it('SHOW ONE REQ SALDO THAT NOT EXIST SHOULD SHOW ERROR', function (done) {
 
@@ -158,10 +192,23 @@ describe('SALDO', function() {
             })
     })
 
-    it('DElETE REQ SALDO SHOULD SHOW OK', function (done) {
+    it('DECLINED SALDO SHOULD SHOW OK', function (done) {
 
         chai.request(server)
-            .delete(`/api/saldo/${saldoId}`)
+            .put(`/api/saldo/declined/${saldoId}`)
+            .set('Authorization', adminToken)
+            .end(function (err, res) {
+                expect(res).to.have.status(201)
+                expect(res).to.be.an('object')
+                done()
+            })
+    })
+
+
+    it('CANCEL REQ SALDO SHOULD SHOW OK', function (done) {
+
+        chai.request(server)
+            .delete(`/api/saldo/cancel/${saldoId}`)
             .set('Authorization', token)
             .end(function (err, res) {
                 expect(res).to.have.status(200)

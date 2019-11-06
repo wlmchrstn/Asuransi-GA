@@ -172,12 +172,24 @@ funcHelper.mail(to, from, subject, html)
 
 exports.cancel = async (req, res) => {
 
-    console.log(req.params.id)
-
     Saldo.findByIdAndDelete(req.params.id)
         .then(() => {
             return res.status(200).json(
                 success('Delete selected request topup!')
             )
         })
+}
+
+exports.check = async (req, res) => {
+    let saldo = await Saldo.findOne({
+        isVerified: false,
+        users: req.decoded._id,
+        status: 'pending'
+    })
+    if(!saldo) {
+        return res.status(404).json(error('You dont have pending request!', '-', 404))
+    }
+    else{
+        return res.status(200).json(success('Here is the pending request!', saldo))
+    }
 }

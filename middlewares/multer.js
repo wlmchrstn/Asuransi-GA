@@ -17,7 +17,7 @@ var storage = multer.memoryStorage({
     },
     fileFilter: function (req, file, inst) {
 
-        var allowedType = /jpeg|jpg|png|img/
+        var allowedType = /jpeg|jpg|png|img|pdf/
         var extFile = allowedType.test(path.extname(file.originalname).toLowerCase())
         var mimeType = allowedType.test(file.mimetype)
 
