@@ -70,7 +70,7 @@ module.exports = {
                 age: req.body.age,
                 blood_type: req.body.blood_type,
                 status: req.body.status,
-                phone: req.body.phone,
+                phone: exist.phone,
                 NPWP: req.body.NPWP,
                 address: req.body.address,
                 city: req.body.city,
@@ -189,13 +189,8 @@ module.exports = {
     },
 
     async showAll(req, res) {
-        try {
-            let form = await Form.findById({ users: req.params.user_id })
+            let form = await Form.find({ users: req.params.user_id })
             res.status(200).json(success('Show all form from selected user!', form))
-        }
-        catch (err) {
-            res.status(404).json(error('No user found!', err.mesage, 404))
-        }
     },
 
     async getdetailForm(req, res) {
@@ -212,68 +207,40 @@ module.exports = {
     },
 
     async buyInsurance(req, res) {
-
         let userId = req.decoded._id
-
         let form = await Form.findById(req.params.form)
-
         if (!form) {
             return res.status(404).json(error('Form Not Found', '-', 404))
         }
-
         if (form.isVerified === false) {
-            return res.status(406).json(
-                error('Your Form is still not accept by admin', '', 406)
-            )
+            return res.status(406).json(error('Your Form is still not accept by admin', '', 406))
         }
-
         if (form.status_pembayaran === 'rejected') {
-            return res.status(406).json(
-                error('Your Form is rejecteded from admin because the data is not valid', '', 406)
-            )
+            return res.status(406).json(error('Your Form is rejecteded from admin because the data is not valid', '', 406))
         }
-
         insuranceId = await form.insurances.toString()
-
         let insurance = await Insurance.findById(insuranceId)
-
-
         let user = await User.findById(userId)
-
         saldo = user.saldo
-
         if (saldo < insurance.price || saldo < insurance.price_promo) {
-            return res.status(406).json(
-                `Hai ${user.name}, Your Saldo is Not Enough`
-            )
+            return res.status(406).json(error(`Hai ${user.name}, Your Saldo is Not Enough`, '-', 406))
         }
-
         if (insurance.isPromo === true) {
-
             let newTopUpsaldo = Number(saldo) - Number(insurance.price_promo)
-
             await User.findByIdAndUpdate(userId,
                 { saldo: newTopUpsaldo },
                 { new: true })
-
             let date = new Date()
-
             date.setDate(5)
-
             date.setMonth(date.getMonth() + 1)
-
             await Form.findByIdAndUpdate(req.params.form,
                 {
                     status_pembayaran: "active",
                     tanggal_pembayaran: date
                 },
-                {
-                    new: true
-                })
-            res.status(200).json(success('Insurance is actived', insurance.name_insurance)
-            )
+                { new: true })
+            res.status(200).json(success('Insurance is actived', insurance.name_insurance))
         }
-
         else {
             let newTopUpsaldo = Number(saldo) - Number(insurance.price)
             await User.findByIdAndUpdate(userId,
@@ -287,13 +254,9 @@ module.exports = {
                     status_pembayaran: "active",
                     tanggal_pembayaran: date
                 },
-                {
-                    new: true
-                })
-            res.status(200).json(success('Insurance is actived', insurance.name_insurance)
-            )
+                { new: true })
+            res.status(200).json(success('Insurance is actived', insurance.name_insurance))
         }
-
     },
 
     async payInsurance(req, res) {
@@ -353,23 +316,31 @@ module.exports = {
     },
 
     async verify(req, res) {
-
         let form = await Form.findById(req.params.form)
-
         let insurances = await Insurance.findById(form.insurances)
-
-        Form.findByIdAndUpdate(req.params.form, { $set: { isVerified: true } }, { new: true })
-            .then((result) => {
-                var to = form.email
-                var from = 'AGA@insurance.com'
-                var subject = `Form Insurance (${insurances.name_insurance}) is accepted`
-                var html = `Hi ${form.name}, your form (${insurances.name_insurance}) is accepted. Now you can buy your insurance!`
-                funcHelper.mail(to, from, subject, html)
-
-                return res.status(201).json(
-                    success('Form Updated!', result)
-                )
+        let data = await Form.findByIdAndUpdate(req.params.form, { $set: { isVerified: true } }, { new: true }) 
+        /* istanbul ignore else */
+        if(data) {
+            var to = form.email
+            var from = 'AGA@insurance.com'
+            var subject = `Form Insurance (${insurances.name_insurance}) is accepted`
+            var html = `Hi ${form.name}, your form (${insurances.name_insurance}) is accepted. Now you can buy your insurance!`
+            funcHelper.mail(to, from, subject, html)
+            const dUri = new datauri()
+            uploader(req, res, err => {
+                var file = dUri.format(`${req.file.originalname}-${Date.now()}`, req.file.buffer);
+                cloudinary.uploader.upload(file.content)
+                    .then(result => {
+                        /* istanbul ignore next */
+                        data.proof = result.secure_url
+                        data.save()
+                        res.status(201).json(success('Form Updated!', data))
+                    })
+                    .catch(/* istanbul ignore next */err => {
+                        res.send(err);
+                    })
             })
+        }
     },
 
     async reject(req, res) {
