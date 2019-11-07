@@ -189,12 +189,8 @@ module.exports = {
     },
 
     async showAll(req, res) {
-        Form.find({ users: req.params.user_id })
-            .populate({ path: 'insurances', select: 'name_insurance' })
-            .select('-__v')
-            .then(result => {
-                res.status(200).json(success('Show all form from selected user!', form))
-            })
+            let form = await Form.find({ users: req.params.user_id }).populate('insurances', 'name_insurance')
+            res.status(200).json(success('Show all form from selected user!', form))
     },
 
     async getdetailForm(req, res) {
