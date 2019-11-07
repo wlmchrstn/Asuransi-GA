@@ -101,6 +101,7 @@ exports.showAllinUser = async (req, res) => {
 exports.showUserHistory = async (req, res) => {
 
     Saldo.find({ users: req.decoded._id, isVerified: true})
+        .sort({createdAt: -1})
         .select('-__v')
         .then(result => {
             return res.status(200).json(success('Show all top up history!', result))

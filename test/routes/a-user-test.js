@@ -76,7 +76,7 @@ describe('USER CONTROLLER', () => {
     it("POST /api/user/login should login", done => {
         chai.request(server)
             .post('/api/user/login')
-            .send({ login: 'superadmin', password: '12345' })
+            .send({ login: 'superadmin', password: '123456' })
             .end((err, res) => {
                 res.should.have.status(200)
                 res.body.should.have.property('success').equal(true)

@@ -22,6 +22,8 @@ const saldoSchema = new mongoose.Schema({
         enum: ['pending', 'accepted', 'declined'],
         default: 'pending'
     }
+}, {
+    timestamps: true
 })
 
 var Saldo = mongoose.model('Saldo', saldoSchema)
