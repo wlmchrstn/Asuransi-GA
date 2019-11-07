@@ -67,7 +67,6 @@ module.exports = {
                 gender: req.body.gender,
                 birthDate: req.body.birthDate,
                 birthPlace: req.body.birthPlace,
-                age: req.body.age,
                 blood_type: req.body.blood_type,
                 status: req.body.status,
                 phone: exist.phone,
