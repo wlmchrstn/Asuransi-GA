@@ -31,10 +31,6 @@ const formSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    age: {
-        type: Number,
-        required: true
-    },
     blood_type: {
         type: String,
         enum: ['A', 'B', 'AB', 'O', '-'],
