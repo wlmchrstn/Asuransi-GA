@@ -182,6 +182,7 @@ module.exports = {
     async getUserForm(req, res) {
         Form.find({ users: req.decoded._id })
             .populate({ path: 'insurances', select: 'name_insurance price' })
+            .sort({createdAt: -1})
             .select('-__v -rejected')
             .then(result => {
                 res.status(200).json(success('Here is your list!', result))

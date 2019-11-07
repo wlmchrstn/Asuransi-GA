@@ -118,6 +118,8 @@ const formSchema = new mongoose.Schema({
         required: false,
         default: '-'
     }
+}, {
+    timestamps: true
 })
 
 var Form = mongoose.model('Form', formSchema);
