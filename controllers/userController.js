@@ -191,7 +191,7 @@ module.exports = {
 
             bcrypt.compare(req.body.password, user.password, function(err, data){
                 if(data!=true) return res.status(403).json(error('Password incorrect!', err, 403))
-                let token = jwt.sign({_id: user._id, role: user.role}, process.env.SECRET_KEY, {expiresIn: '1h'})
+                let token = jwt.sign({_id: user._id, role: user.role}, process.env.SECRET_KEY, {expiresIn: '24h'})
                 res.setHeader('Authorization', token)
                 let hasil = {
                     token: token,
