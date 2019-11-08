@@ -206,7 +206,6 @@ describe('USER CONTROLLER', () => {
             .get(`/api/user/verify/${tokenEmail}`)
             .end((err, res) => {
                 expect(res.status).to.equal(200)
-                // expect(res).to.redirectTo(process.env.FE_HOME_URL)
                 done()
             })
     })
