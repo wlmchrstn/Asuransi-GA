@@ -189,7 +189,7 @@ module.exports = {
     },
 
     async showAll(req, res) {
-            let form = await Form.find({ users: req.params.user_id }).populate('insurances', 'name_insurance')
+            let form = await Form.find({ users: req.params.user_id }).populate('insurances', 'name_insurance').sort({createdAt: -1})
             res.status(200).json(success('Show all form from selected user!', form))
     },
 

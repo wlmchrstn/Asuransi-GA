@@ -31,12 +31,7 @@ describe('USER CONTROLLER', () => {
         name: 'client',
         username: 'client',
         email: 'client@gmail.com',
-        password: '123456',
-        gender: 'Male',
-        phone: 082286984644,
-        address: 'Batam',
-        birthPlace: 'Batam',
-        birthDate: '1998-07-05'
+        password: '123456'
     }
 
     it("POST /api/user/super should create super admin", done => {
@@ -149,8 +144,8 @@ describe('USER CONTROLLER', () => {
                 res.body.should.have.property('success').equal(true)
                 res.body.should.have.property('message').equal("Client created!")
                 res.body.should.have.property('result')
-                tokenEmail  = res.body.result.token
-                clientId    = res.body.result._id
+                tokenEmail = res.body.result.token
+                clientId = res.body.result._id
                 done()
             })
     })
@@ -211,7 +206,6 @@ describe('USER CONTROLLER', () => {
             .get(`/api/user/verify/${tokenEmail}`)
             .end((err, res) => {
                 expect(res.status).to.equal(200)
-                // expect(res).to.redirectTo(process.env.FE_HOME_URL)
                 done()
             })
     })
