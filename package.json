@@ -25,7 +25,7 @@
     "istanbul": "^0.4.5",
     "jade": "~1.11.0",
     "jsonwebtoken": "^8.5.1",
-    "jspdf": "^1.5.3",
+    "jspdf": "^2.5.1",
     "mongoose": "^5.7.1",
     "mongoose-paginate": "^5.0.3",
     "mongoose-type-email": "^1.0.11",
